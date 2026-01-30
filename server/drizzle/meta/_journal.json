@@ -15,14 +15,6 @@
       "when": 1768325120863,
       "tag": "0001_add_user_plan",
       "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1768325313914,
-      "tag": "0002_data_set_admin_lifetime",
-      "breakpoints": true
     }
   ]
 }
-
