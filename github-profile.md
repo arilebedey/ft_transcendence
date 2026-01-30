@@ -1,3 +1,5 @@
+### If you your GitHub profile doesn't appear as a contributor in the repo
+
 **Authentication when pushing:**
 
 GitHub uses either:
@@ -19,7 +21,6 @@ The commit's author email must match an email on their GitHub account. This is s
    ```
 
 2. **That email must be added to their GitHub account:**
-
    - Settings → Emails → Add email
    - It doesn't need to be their primary email, just verified
 
