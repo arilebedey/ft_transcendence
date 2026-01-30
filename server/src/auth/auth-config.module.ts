@@ -28,13 +28,13 @@ import { PlanGuard } from '../subscriptions/guards/plan.guard';
             autoSignIn: true,
             enabled: true,
           },
-          socialProviders: {
-            google: {
-              clientId: readSecret('google-client-id.txt'),
-              clientSecret: readSecret('google-client-secret.txt'),
-              prompt: 'select_account',
-            },
-          },
+          // socialProviders: {
+          //   google: {
+          //     clientId: readSecret('google-client-id.txt'),
+          //     clientSecret: readSecret('google-client-secret.txt'),
+          //     prompt: 'select_account',
+          //   },
+          // },
           trustedOrigins: [
             configService.getOrThrow('CLIENT_URL'),
             'stashed://',
