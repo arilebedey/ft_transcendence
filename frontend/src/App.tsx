@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { authClient } from "./lib/auth-client";
 import LoginForm from "./components/LoginForm";
 import SignUpForm from "./components/SignUpForm";
+import Loading from "./components/Loading";
 
 function App() {
   const { data: session, isPending: isLoading } = authClient.useSession();
   const [activeForm, setActiveForm] = useState<"login" | "signup">("signup");
   const [delayLoading, setDelayLoading] = useState(true);
 
+  /*
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isLoading) {
+
       setDelayLoading(true);
     } else {
       timer = setTimeout(() => {
@@ -19,14 +22,34 @@ function App() {
     }
     return () => clearTimeout(timer);
   }, [isLoading]);
+*/
 
+  // Test VERSION
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      if (isLoading) {
+        setDelayLoading(true);
+      } else {
+        await sleep(2000); // 2s
+        if (mounted) setDelayLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [isLoading]);
+
+  // Test VERSION
   if (delayLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="rounded-xl bg-green-900 p-5">Loading 😊</div>
+        <Loading label="Loading" size="md" />
       </div>
     );
   }
+
+
 
   if (session) {
     return (
