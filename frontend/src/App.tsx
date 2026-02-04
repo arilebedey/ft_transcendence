@@ -9,21 +9,6 @@ function App() {
   const [activeForm, setActiveForm] = useState<"login" | "signup">("signup");
   const [delayLoading, setDelayLoading] = useState(true);
 
-  /*
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isLoading) {
-
-      setDelayLoading(true);
-    } else {
-      timer = setTimeout(() => {
-        setDelayLoading(false);
-      }, 110);
-    }
-    return () => clearTimeout(timer);
-  }, [isLoading]);
-*/
-
   // Test VERSION
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 

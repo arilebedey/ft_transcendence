@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
+import FormField from "./FormField";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -23,32 +24,22 @@ export default function LoginForm() {
 
   return (
     <form className="space-y-4 w-full max-w-md mx-auto" onSubmit={handleSubmit}>
-      <div>
-        <label className="mt-3 block text-sm font-medium" htmlFor="email">
-          Email
-          <input
-            className="mt-2 p-2 text-base w-full border border-amber-600 rounded-md outline-none"
-            type="email"
-            id="email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label className="mt-3 block text-sm font-medium" htmlFor="password">
-          Password
-          <input
-            className="mt-2 p-2 text-base w-full border border-amber-600 rounded-md outline-none"
-            type="password"
-            id="password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-      </div>
+      <FormField
+        label="Email"
+        id="email"
+        type="email"
+        value={email}
+        required
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <FormField
+        label="Password"
+        id="password"
+        type="password"
+        value={password}
+        required
+        onChange={(e) => setPassword(e.target.value)}
+      />
       <button
         className="w-full mt-4 text-lg px-4 p-2 rounded-md bg-amber-500 disabled:opacity-50"
         type="submit"
