@@ -29,29 +29,38 @@ nvm use 25.5.0
 
 ### 4. Launch PostgreSQL DB in Docker
 
-Run the docker container that houses the db and pgadmin interface:
+Run the docker container that houses the db and the pgadmin interface:
 
 ```sh
 # at root of repo (where compose file is located)
-docker compose up -d
+make
+```
+
+If you're at 42, the docker version doesn't match the daemon, so use this hack before running the command:
+
+```sh
+make fix-docker
+# or
+export DOCKER_API_VERSION=1.44
 ```
 
 ### 5. Launch the NestJS server
 
 ```sh
 cd server
+nvm use
 npm install
 npm run dev
 ```
 
 ### 6. Test the NestJS server
 
-Test auth module
+Test auth module:
 
 ```sh
 curl http://localhost:3000/api/auth/ok
-// should return
-// {"ok":true}%
+# should return:
+# `{"ok":true}%`
 ```
 
 ### 7. Apply the drizzle schema
@@ -68,7 +77,8 @@ npx drizzle-kit migrate
 ### 8. Launch the front-end
 
 ```sh
-cd front
+cd frontend
+nvm use
 npm install
 npm run dev
 ```
@@ -87,4 +97,4 @@ Sign up with a name, email and password.
 
 Watch the server for errors (you already launched it 😜)
 
-Changes to source files will appeart instantly in the webpage.
+Changes to source files will appear instantly in the webpage.
