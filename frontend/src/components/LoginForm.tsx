@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { authClient } from "../lib/auth-client";
+<<<<<<< HEAD
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -19,6 +20,9 @@ const loginSchema = z.object({
     .string()
     .min(8, { error: "Password must be at least 8 characters." }),
 });
+=======
+import FormField from "./FormField";
+>>>>>>> 973cbee (Working on reusable components && general graphic identity)
 
 export default function LoginForm() {
   const [submitError, setSubmitError] = useState("");
@@ -45,6 +49,7 @@ export default function LoginForm() {
   });
 
   return (
+<<<<<<< HEAD
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
@@ -135,5 +140,32 @@ export default function LoginForm() {
         </Button>
       </CardFooter>
     </Card>
+=======
+    <form className="space-y-4 w-full max-w-md mx-auto" onSubmit={handleSubmit}>
+      <FormField
+        label="Email"
+        id="email"
+        type="email"
+        value={email}
+        required
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <FormField
+        label="Password"
+        id="password"
+        type="password"
+        value={password}
+        required
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button
+        className="w-full mt-4 text-lg px-4 p-2 rounded-md bg-amber-500 disabled:opacity-50"
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? "Signing In..." : "Sign In"}
+      </button>
+    </form>
+>>>>>>> 973cbee (Working on reusable components && general graphic identity)
   );
 }
