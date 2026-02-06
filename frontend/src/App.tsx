@@ -9,6 +9,9 @@ import { Network } from "./pages/Network";
 import { Legal } from "./pages/Legal";
 import { NotFound } from "./pages/NotFound";
 import { BottomNav } from "./components/BottomNav";
+import { Auth } from "./pages/Auth";
+import { Profile } from "./pages/Profile";
+import { Dashboard } from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,9 @@ export const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/network" element={<Network />} />
               <Route path="/legal" element={<Legal />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <BottomNav />
