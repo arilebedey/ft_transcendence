@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -9,26 +8,11 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "strict": true,
-=======
-  "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
-  "compilerOptions": {
->>>>>>> 6b6eef6 (Add front-end proposition. Working on plugging back-end)
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-<<<<<<< HEAD
     "types": ["vite/client"]
   },
   "include": ["src", "vite.config.ts"]
-=======
-    "noImplicitAny": false,
-    "noUnusedParameters": false,
-    "skipLibCheck": true,
-    "allowJs": true,
-    "noUnusedLocals": false,
-    "strictNullChecks": false
-  }
->>>>>>> 6b6eef6 (Add front-end proposition. Working on plugging back-end)
 }
