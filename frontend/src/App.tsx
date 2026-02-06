@@ -11,7 +11,7 @@ import { NotFound } from "./pages/NotFound";
 import { BottomNav } from "./components/BottomNav";
 import { Auth } from "./pages/Auth";
 import { Profile } from "./pages/Profile";
-import { Dashboard } from "./pages/Dashboard";
+/* import { Dashboard } from "./pages/Dashboard";*/
 
 const queryClient = new QueryClient();
 
