@@ -12,16 +12,18 @@ export function HeaderBrand({ label = "T", avatarUrl }: Props) {
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    try {
-      const raw = localStorage.getItem("cozy:user");
-      if (raw) {
-        navigate("/profile");
-      } else {
-        navigate("/auth");
+    (async () => {
+      try {
+        const res = await fetch('/api/users/session', { credentials: 'include' });
+        if (res.ok) {
+          navigate('/profile');
+        } else {
+          navigate('/auth');
+        }
+      } catch (err) {
+        navigate('/auth');
       }
-    } catch (err) {
-      navigate("/auth");
-    }
+    })();
   };
 
   return (
