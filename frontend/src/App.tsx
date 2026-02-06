@@ -29,7 +29,7 @@ export const App = () => (
               <Route path="/legal" element={<Legal />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
-             {/*  <Route path="/dashboard" element={<Dashboard />} /> */}
+              {/* <Route path="/dashboard" element={<Dashboard />} /> */}
               <Route path="*" element={<NotFound />} />
             </Routes>
             <BottomNav />

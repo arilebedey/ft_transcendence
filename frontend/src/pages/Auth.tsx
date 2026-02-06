@@ -8,7 +8,7 @@ export function Auth() {
   const [active, setActive] = useState<"login" | "signup">("signup");
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-start justify-center pt-20 p-6">
       <Card className="w-full max-w-md">
         <CardHeader className="flex items-center justify-between">
           <CardTitle>{active === "login" ? "Sign in" : "Create account"}</CardTitle>
