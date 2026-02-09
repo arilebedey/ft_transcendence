@@ -11,6 +11,7 @@ errors=()
 
 if [ ! -s "$SECRETS_DIR/db_password.txt" ]; then
   errors+=("Please write postgres password at $SECRETS_DIR/db_password.txt")
+  errors+=("The dev DB password should be \`dev_password\`")
 fi
 
 if [ ! -s "$SECRETS_DIR/pgadmin_password.txt" ]; then
