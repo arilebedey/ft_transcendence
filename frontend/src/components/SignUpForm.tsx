@@ -1,76 +1,173 @@
 import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import * as z from "zod";
 import { authClient } from "../lib/auth-client";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+
+const signUpSchema = z.object({
+  name: z
+    .string()
+    .min(2, { error: "Name must be at least 2 characters." })
+    .max(50, { error: "Name must be at most 50 characters." }),
+  email: z.email({ error: "Invalid email address." }),
+  password: z
+    .string()
+    .min(8, { error: "Password must be at least 8 characters." })
+    .max(128, { error: "Password must be at most 128 characters." }),
+});
 
 export default function SignUpForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      await authClient.signUp.email({
-        name,
-        email,
-        password,
-      });
-    } catch (err) {
-      console.error("Sign up failed:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validators: {
+      onSubmit: signUpSchema,
+    },
+    onSubmit: async ({ value }) => {
+      setSubmitError("");
+      try {
+        await authClient.signUp.email({
+          name: value.name,
+          email: value.email,
+          password: value.password,
+        });
+      } catch (err) {
+        setSubmitError(err instanceof Error ? err.message : "Sign up failed");
+      }
+    },
+  });
 
   return (
-    <form className="space-y-4 w-full max-w-md mx-auto" onSubmit={handleSubmit}>
-      <div>
-        <label className="mt-3 block text-sm font-medium" htmlFor="name">
-          Name
-          <input
-            className="mt-2 p-2 text-base w-full border border-amber-600 rounded-md outline-none"
-            type="text"
-            id="name"
-            value={name}
-            required
-            onChange={(e) => setName(e.target.value)}
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Sign Up</CardTitle>
+        <CardDescription>Create an account to get started.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form
+          id="signup-form"
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
+        >
+          <form.Field
+            name="name"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor={field.name}>
+                    Name
+                  </label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="text"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    placeholder="John Doe"
+                  />
+                  {isInvalid && field.state.meta.errors && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]?.message}
+                    </p>
+                  )}
+                </div>
+              );
+            }}
           />
-        </label>
-      </div>
-      <div>
-        <label className="mt-3 block text-sm font-medium" htmlFor="email">
-          Email
-          <input
-            className="mt-2 p-2 text-base w-full border border-amber-600 rounded-md outline-none"
-            type="email"
-            id="email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
+          <form.Field
+            name="email"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor={field.name}>
+                    Email
+                  </label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="email"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    placeholder="you@example.com"
+                  />
+                  {isInvalid && field.state.meta.errors && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]?.message}
+                    </p>
+                  )}
+                </div>
+              );
+            }}
           />
-        </label>
-      </div>
-      <div>
-        <label className="mt-3 block text-sm font-medium" htmlFor="password">
-          Password
-          <input
-            className="mt-2 p-2 text-base w-full border border-amber-600 rounded-md outline-none"
-            type="password"
-            id="password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
+          <form.Field
+            name="password"
+            children={(field) => {
+              const isInvalid =
+                field.state.meta.isTouched && !field.state.meta.isValid;
+              return (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor={field.name}>
+                    Password
+                  </label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    placeholder="••••••••"
+                  />
+                  {isInvalid && field.state.meta.errors && (
+                    <p className="text-sm text-destructive">
+                      {field.state.meta.errors[0]?.message}
+                    </p>
+                  )}
+                </div>
+              );
+            }}
           />
-        </label>
-      </div>
-      <button
-        className="w-full mt-4 text-lg px-4 p-2 rounded-md bg-amber-500 disabled:opacity-50"
-        type="submit"
-        disabled={isLoading}
-      >
-        {isLoading ? "Creating account..." : "Sign Up"}
-      </button>
-    </form>
+          {submitError && (
+            <p className="text-sm text-destructive">{submitError}</p>
+          )}
+        </form>
+      </CardContent>
+      <CardFooter>
+        <Button
+          type="submit"
+          form="signup-form"
+          className="w-full"
+          disabled={form.state.isSubmitting}
+        >
+          {form.state.isSubmitting ? "Creating account..." : "Sign Up"}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }
