@@ -4,7 +4,7 @@ import { FriendsList } from "@/components/FriendsList";
 /* import { useLanguage } from "@/contexts/LanguageContext"; */
 
 export const Network = () => {
-  const { t } = useLanguage();
+/*   const { t } = useLanguage(); */
   
   return (
     <Layout>

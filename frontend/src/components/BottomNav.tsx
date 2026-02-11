@@ -15,8 +15,8 @@ const navItems = [
 
 export function BottomNav() {
   const location = useLocation();
-  const { t } = useLanguage();
-
+/*   const { t } = useLanguage();
+ */
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
@@ -34,7 +34,7 @@ export function BottomNav() {
               )}
             >
               <item.icon className={cn("h-6 w-6", isActive && "animate-pulse-glow")} />
-              <span className="text-xs font-medium">{t(item.labelKey)}</span>
+{/*               <span className="text-xs font-medium">{t(item.labelKey)}</span> */}
             </Link>
           );
         })}

@@ -11,11 +11,12 @@ const trends = [
 ];
 
 export function TrendingList() {
-  const { t } = useLanguage();
+/*   const { t } = useLanguage(); */
   
   const formatPosts = (count: number) => {
     const formatted = count >= 1000 ? `${(count / 1000).toFixed(1)}K` : count.toString();
-    return `${formatted} ${t("network.posts")}`;
+    //return `${formatted} ${t("network.posts")}`;
+    return `${formatted}`;
   };
 
   return (
@@ -23,7 +24,7 @@ export function TrendingList() {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <TrendingUp className="h-5 w-5 text-primary" />
-          {t("network.trending")}
+{/*           {t("network.trending")} */}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">

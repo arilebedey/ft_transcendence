@@ -14,14 +14,14 @@ const friends = [
 ];
 
 export function FriendsList() {
-  const { t } = useLanguage();
+/*   const { t } = useLanguage(); */
   
   return (
     <Card className="animate-fade-in">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <UserPlus className="h-5 w-5 text-primary" />
-          {t("network.friends")}
+{/*           {t("network.friends")} */}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1">

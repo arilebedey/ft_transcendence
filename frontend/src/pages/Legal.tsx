@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Shield, Info } from "lucide-react";
 
 export const Legal = () => {
-  const { t } = useLanguage();
+/*   const { t } = useLanguage(); */
 
   const sections = [
     {
@@ -38,19 +38,19 @@ export const Legal = () => {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <section.icon className="h-5 w-5 text-primary" />
-                {t(section.titleKey)}
+{/*                 {t(section.titleKey)} */}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                {t(section.contentKey)}
+{/*                 {t(section.contentKey)} */}
               </p>
             </CardContent>
           </Card>
         ))}
 
         <p className="text-center text-sm text-muted-foreground pt-4">
-          {t("legal.copyright")}
+{/*           {t("legal.copyright")} */}
         </p>
       </div>
     </Layout>

@@ -19,8 +19,8 @@ export const App = () => (
   <QueryClientProvider client={queryClient}>
 {/*     <LanguageProvider> */}
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
+        {/* <Toaster /> */}
+        {/* <Sonner /> */}
         <BrowserRouter>
           <div className="min-h-screen bg-background">
             <Routes>

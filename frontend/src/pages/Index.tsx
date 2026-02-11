@@ -37,7 +37,7 @@ const posts = [
 ];
 
 export const Index = () => {
-  const { t } = useLanguage();
+/*   const { t } = useLanguage(); */
   
   return (
     <Layout>
