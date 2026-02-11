@@ -2,7 +2,7 @@ import { UserPlus, MessageCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+/* import { useLanguage } from "@/contexts/LanguageContext"; */
 
 // stubbed friends list for demonstration purposes -> we need to plug the public API to fetch user friends
 const friends = [

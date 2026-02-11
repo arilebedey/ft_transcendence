@@ -1,7 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { TrendingList } from "@/components/TrendingList";
 import { FriendsList } from "@/components/FriendsList";
-import { useLanguage } from "@/contexts/LanguageContext";
+/* import { useLanguage } from "@/contexts/LanguageContext"; */
 
 export const Network = () => {
   const { t } = useLanguage();

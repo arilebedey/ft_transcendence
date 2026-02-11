@@ -1,7 +1,7 @@
 import { Home, Users, Bell, MessageCircle, User, Scale } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { useLanguage } from "@/contexts/LanguageContext";
+/* import { useLanguage } from "@/contexts/LanguageContext"; */
 import { Profiler } from "react";
 
 const navItems = [

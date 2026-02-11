@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+/* import { useLanguage } from "@/contexts/LanguageContext"; */
 
 // Stubs contents for demonstration purposes -> we need to plug the public API to fetch user posts
 const posts = [

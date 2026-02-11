@@ -1,5 +1,5 @@
 import { Layout } from "@/components/Layout";
-import { useLanguage } from "@/contexts/LanguageContext";
+/* import { useLanguage } from "@/contexts/LanguageContext"; */
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Shield, Info } from "lucide-react";
 

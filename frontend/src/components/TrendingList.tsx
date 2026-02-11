@@ -1,6 +1,6 @@
 import { TrendingUp, Hash } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
+/* import { useLanguage } from "@/contexts/LanguageContext"; */
 
 const trends = [
   { tag: "AI", posts: 12500 },

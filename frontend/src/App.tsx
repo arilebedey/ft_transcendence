@@ -1,9 +1,9 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+/* import { Toaster } from "@/components/ui/toaster"; *//* 
+import { Toaster as Sonner } from "@/components/ui/sonner"; */
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+/* import { LanguageProvider } from "@/contexts/LanguageContext" */;
 import { Index } from "./pages/Index";
 import { Network } from "./pages/Network";
 import { Legal } from "./pages/Legal";
@@ -17,7 +17,7 @@ const queryClient = new QueryClient();
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LanguageProvider>
+{/*     <LanguageProvider> */}
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -36,6 +36,6 @@ export const App = () => (
           </div>
         </BrowserRouter>
       </TooltipProvider>
-    </LanguageProvider>
+{/*     </LanguageProvider> */}
   </QueryClientProvider>
 );

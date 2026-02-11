@@ -1,7 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useLanguage } from "@/contexts/LanguageContext";
-
+/* import { useLanguage } from "@/contexts/LanguageContext";*/
 export function SearchBar() {
   const { t } = useLanguage();
   
