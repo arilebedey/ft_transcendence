@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export function Auth() {
-  const [active, setActive] = useState<"login" | "signup" > ("signup");
+  const [active, setActive] = useState<"login" | "signup">("signup");
 
   return (
     <div className="min-h-screen flex items-start justify-center pt-20 p-6">
@@ -20,9 +20,6 @@ export function Auth() {
         <CardContent>
           {active === "login" ? <LoginForm /> : <SignUpForm />}
         </CardContent>
-
-      
-
       </Card>
     </div>
   );

@@ -11,31 +11,30 @@ import { NotFound } from "./pages/NotFound";
 import { BottomNav } from "./components/BottomNav";
 import { Auth } from "./pages/Auth";
 import { Profile } from "./pages/Profile";
+import { Welcome } from "./page/Welcome";
 /* import { Dashboard } from "./pages/Dashboard";*/
 
 const queryClient = new QueryClient();
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
-{/*     <LanguageProvider> */}
-      <TooltipProvider>
-        {/* <Toaster /> */}
-        {/* <Sonner /> */}
-        <BrowserRouter>
-          <div className="min-h-screen bg-background">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/network" element={<Network />} />
-{/*               <Route path="/legal" element={<Legal />} /> */}
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<Profile />} />
-              {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <BottomNav />
-          </div>
-        </BrowserRouter>
-      </TooltipProvider>
-{/*     </LanguageProvider> */}
+    <TooltipProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-background">
+          <Routes>
+          /* Modifier la route de base redirige vers le
+            * login/signup sauf si le client est deja connecte*/
+            <Route path="/" element={<Welcome />} />
+          /*Legacy page d acceuil redirection une fois login*/
+            <Route path="/" element={<Index />} />
+            <Route path="/network" element={<Network />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <BottomNav />
+        </div>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
