@@ -1,7 +1,6 @@
 import { SearchBar } from "./SearchBar";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
-import { HeaderNav } from "./HeaderNav";
 import { HeaderBrand } from "./HeaderBrand";
 
 export function Header() {
@@ -11,8 +10,6 @@ export function Header() {
         <HeaderBrand />
         
         <SearchBar />
-
-        <HeaderNav />
 
         <LanguageToggle />
 

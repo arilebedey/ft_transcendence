@@ -7,10 +7,7 @@ import { Profiler } from "react";
 const navItems = [
   { icon: Home, labelKey: "nav.home", path: "/" },
   { icon: Users, labelKey: "nav.network", path: "/network" },
-  // { icon: Profiler, labelKey: "nav.profile", path: "/profZile" },
-  // { icon: Bell, labelKey: "nav.notifications", path: "/notifications" },
   { icon: MessageCircle, labelKey: "nav.messages", path: "/messages" },
-  // { icon: Scale, labelKey: "page.legal", path: "/legal" },
 ];
 
 export function BottomNav() {
