@@ -1,3 +1,5 @@
 node_modules/
 .next/
 secrets
+.env
+*.vite*
