@@ -114,154 +114,127 @@
 
 @layer base {
   :root {
-    --background: #f9fafb;
-    --foreground: #0f2129;
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
 
-    --card: #ffffff;
-    --card-foreground: #0f2129;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
 
-    --popover: #ffffff;
-    --popover-foreground: #0f2129;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: #0e53e7;
-    --primary-foreground: #ffffff;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: #f3f5f7;
-    --secondary-foreground: #0f2129;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: #ebedf0;
-    --muted-foreground: #657b8b;
+    --muted: 210 15% 93%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: #0e53e7;
-    --accent-foreground: #ffffff;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: #ef4343;
-    --destructive-foreground: #ffffff;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: #e1eaef;
-    --input: #e1eaef;
-    --ring: #0e53e7;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 199 89% 48%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: #ffffff;
-    --sidebar-foreground: #0f2129;
-    --sidebar-primary: #0e53e7;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #f3f5f7;
-    --sidebar-accent-foreground: #0f2129;
-    --sidebar-border: #e1eaef;
-    --sidebar-ring: #0e53e7;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 199 89% 48%;
 
-    --success: #21c45d;
-    --success-foreground: #ffffff;
-    --warning: #f59f0a;
-    --warning-foreground: #ffffff;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
   }
 
   .dark {
-    --background: #081217;
-    --foreground: #f9fafb;
+    --background: 222 47% 6%;
+    --foreground: 210 20% 98%;
 
-    --card: #0c1b22;
-    --card-foreground: #f9fafb;
+    --card: 222 47% 9%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: #0c1b22;
-    --popover-foreground: #f9fafb;
+    --popover: 222 47% 9%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: #0e53e7;
-    --primary-foreground: #ffffff;
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: #1d2f3a;
-    --secondary-foreground: #f9fafb;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: #1d2f3a;
-    --muted-foreground: #94a9b8;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: #0e53e7;
-    --accent-foreground: #ffffff;
+    --accent: 199 89% 48%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: #811d1d;
-    --destructive-foreground: #f9fafb;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: #1d2f3a;
-    --input: #1d2f3a;
-    --ring: #0e53e7;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%;
 
-    --sidebar-background: #0c1b22;
-    --sidebar-foreground: #f9fafb;
-    --sidebar-primary: #0e53e7;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #1d2f3a;
-    --sidebar-accent-foreground: #f9fafb;
-    --sidebar-border: #1d2f3a;
-    --sidebar-ring: #0e53e7;
+    --sidebar-background: 222 47% 9%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 217 33% 17%;
+    --sidebar-ring: 199 89% 48%;
 
-    --success: #21c45d;
-    --success-foreground: #ffffff;
-    --warning: #f59f0a;
-    --warning-foreground: #ffffff;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
   }
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    @apply border-border;
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background text-foreground antialiased;
   }
 }
 
 @layer utilities {
   .glass {
-    background-color: rgba(255,255,255,0.8);
-    backdrop-filter: blur(8px);
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgba(225,234,239,0.5);
+    @apply bg-card/80 backdrop-blur-md border border-border/50;
   }
 
   .text-gradient {
-    background-image: linear-gradient(to right, var(--primary), var(--accent));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
   }
 }
 
 @layer components {
   .nav-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 9999px;
-    color: rgba(15,33,41,0.8);
-    transition: all 0.2s;
-  }
-
-  .nav-item:hover {
-    background-color: var(--secondary);
-    color: var(--foreground);
+    @apply flex items-center gap-3 px-4 py-3 rounded-full text-foreground/80 hover:bg-secondary transition-all duration-200 hover:text-foreground;
   }
 
   .nav-item-active {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 9999px;
-    background-color: var(--secondary);
-    color: var(--foreground);
-    font-weight: 600;
+    @apply nav-item bg-secondary text-foreground font-semibold;
   }
 
   .card-hover {
+<<<<<<< HEAD
 <<<<<<< HEAD
     @apply transition-all duration-200 hover:bg-secondary/50 cursor-pointer;
 >>>>>>> 6b6eef6 (Add front-end proposition. Working on plugging back-end)
@@ -275,3 +248,8 @@
 >>>>>>> ed13db9 (Modifs to index.css -> transition to hex requires explicit layer declaration)
   }
 }
+=======
+    @apply transition-all duration-200 hover:bg-secondary/50 cursor-pointer;
+  }
+}
+>>>>>>> 0186d8d (Works but night mode)
