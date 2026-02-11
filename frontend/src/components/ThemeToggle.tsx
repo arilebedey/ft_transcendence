@@ -1,39 +1,16 @@
-<<<<<<< HEAD
-import { Trees, Moon, Sun } from "lucide-react";
-import { type Theme, useThemeStore } from "@/stores/theme-store";
+/**
+ * @component ThemeToggle
+ * Bouton pour basculer entre mode light/dark.
+ * - Affiche icône Sun en mode dark, Moon en mode light
+ * - Stocke la préférence dans localStorage
+ * - Applique la classe 'dark' au root HTML pour Tailwind
+ * 
+ * @hooks
+ * - useTheme(): Utilitaire personnalisé pour gérer l'état du thème
+ *   - Persiste en localStorage
+ *   - Respecte prefers-color-scheme du système
+ */
 
-const themes: { value: Theme; label: string; icon: React.ReactNode }[] = [
-  { value: "forest", label: "Forest", icon: <Trees className="h-4 w-4" /> },
-  {
-    value: "dark-blue",
-    label: "Dark Blue",
-    icon: <Moon className="h-4 w-4" />,
-  },
-  { value: "light", label: "Light", icon: <Sun className="h-4 w-4" /> },
-];
-
-export default function ThemeToggle() {
-  const { theme, setTheme } = useThemeStore();
-
-  return (
-    <div className="inline-flex items-center gap-1 rounded-lg border bg-card p-1">
-      {themes.map((t) => (
-        <button
-          key={t.value}
-          onClick={() => setTheme(t.value)}
-          className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-            theme === t.value
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-          title={t.label}
-        >
-          {t.icon}
-          <span className="hidden sm:inline">{t.label}</span>
-        </button>
-      ))}
-    </div>
-=======
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
@@ -47,6 +24,7 @@ export function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       className="rounded-full hover:bg-secondary"
+      aria-label="Toggle theme"
     >
       {theme === "dark" ? (
         <Sun className="h-5 w-5" />
@@ -55,6 +33,5 @@ export function ThemeToggle() {
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>
->>>>>>> 6b6eef6 (Add front-end proposition. Working on plugging back-end)
   );
 }

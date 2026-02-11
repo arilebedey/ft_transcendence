@@ -1,8 +1,27 @@
-import { TrendingUp, Hash } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-/* import { useLanguage } from "@/contexts/LanguageContext"; */
+/**
+ * @component TrendingList
+ * Affiche une liste des hashtags/tendances populaires.
+ * 
+ * @state
+ * - trends: Array<Trend> - Données stub, à remplacer par une requête API
+ * 
+ * @todo
+ * - Connecter à une API pour fetcher les vraies tendances
+ * - Implémenter navigation vers recherche de hashtag
+ * - Ajouter tri par popularité/nouveauté
+ */
 
-const trends = [
+import { TrendingUp, Hash } from "lucide-react";
+import { ListCard } from "@/components/ui/list-card";
+import { ListItem } from "@/components/ui/list-item";
+
+// TODO: Remplacer par une requête API réelle
+interface Trend {
+  tag: string;
+  posts: number;
+}
+
+const STUB_TRENDS: Trend[] = [
   { tag: "AI", posts: 12500 },
   { tag: "Gaming", posts: 8200 },
   { tag: "Technology", posts: 6100 },
@@ -11,38 +30,36 @@ const trends = [
 ];
 
 export function TrendingList() {
-/*   const { t } = useLanguage(); */
-  
-  const formatPosts = (count: number) => {
-    const formatted = count >= 1000 ? `${(count / 1000).toFixed(1)}K` : count.toString();
-    //return `${formatted} ${t("network.posts")}`;
-    return `${formatted}`;
+  const formatPostCount = (count: number): string => {
+    return count >= 1000 ? `${(count / 1000).toFixed(1)}K` : count.toString();
+  };
+
+  const handleTrendClick = (tag: string) => {
+    // TODO: Naviguer vers recherche du hashtag
+    console.log("Trending clicked:", tag);
   };
 
   return (
-    <Card className="animate-fade-in">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <TrendingUp className="h-5 w-5 text-primary" />
-{/*           {t("network.trending")} */}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1">
-        {trends.map((trend, index) => (
-          <div
-            key={trend.tag}
-            className="flex items-center gap-3 p-3 rounded-lg card-hover"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <Hash className="h-4 w-4 text-muted-foreground" />
-            <div className="flex-1">
-              <p className="font-medium">{trend.tag}</p>
-              <p className="text-sm text-muted-foreground">{formatPosts(trend.posts)}</p>
-            </div>
-            <span className="text-xs text-muted-foreground">#{index + 1}</span>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+    <ListCard
+      title="Trending"
+      icon={<TrendingUp className="h-5 w-5 text-primary" />}
+    >
+      {STUB_TRENDS.map((trend, index) => (
+        <ListItem
+          key={trend.tag}
+          index={index}
+          primary={trend.tag}
+          secondary={`${formatPostCount(trend.posts)} posts`}
+          action={
+            <button
+              onClick={() => handleTrendClick(trend.tag)}
+              className="text-xs text-muted-foreground font-semibold hover:text-primary transition-colors"
+            >
+              #{index + 1}
+            </button>
+          }
+        />
+      ))}
+    </ListCard>
   );
 }

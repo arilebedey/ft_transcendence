@@ -1,11 +1,32 @@
+/**
+ * @component FriendsList
+ * Affiche une liste de friends avec statut online/offline et action message.
+ * 
+ * @state
+ * - friends: Array<Friend> - Données stub, à remplacer par une requête API
+ * 
+ * @todo
+ * - Connecter à une API pour fetcher les vrais friends de l'utilisateur
+ * - Ajouter capacité de recherche/filtre
+ * - Implémenter la navigation vers chat pour un ami
+ */
+
 import { UserPlus, MessageCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-/* import { useLanguage } from "@/contexts/LanguageContext"; */
+import { ListCard } from "@/components/ui/list-card";
+import { ListItem } from "@/components/ui/list-item";
 
-// stubbed friends list for demonstration purposes -> we need to plug the public API to fetch user friends
-const friends = [
+// TODO: Remplacer par une requête API réelle
+interface Friend {
+  id: number;
+  name: string;
+  username: string;
+  avatar: string;
+  status: "online" | "offline";
+}
+
+const STUB_FRIENDS: Friend[] = [
   { id: 1, name: "Alex Chen", username: "@alexc", avatar: "", status: "online" },
   { id: 2, name: "Sarah Miller", username: "@sarahm", avatar: "", status: "online" },
   { id: 3, name: "Jordan Lee", username: "@jordanl", avatar: "", status: "offline" },
@@ -14,46 +35,49 @@ const friends = [
 ];
 
 export function FriendsList() {
-/*   const { t } = useLanguage(); */
-  
+  const handleMessageClick = (friendId: number) => {
+    // TODO: Naviguer vers chat ou ouvrir modal de conversation
+    console.log("Message friend:", friendId);
+  };
+
   return (
-    <Card className="animate-fade-in">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <UserPlus className="h-5 w-5 text-primary" />
-{/*           {t("network.friends")} */}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1">
-        {friends.map((friend, index) => (
-          <div
-            key={friend.id}
-            className="flex items-center gap-3 p-3 rounded-lg card-hover"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <div className="relative">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={friend.avatar} alt={friend.name} />
-                <AvatarFallback className="bg-secondary text-secondary-foreground">
-                  {friend.name.split(" ").map((n) => n[0]).join("")}
-                </AvatarFallback>
-              </Avatar>
-              <span
-                className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-card ${
-                  friend.status === "online" ? "bg-success" : "bg-muted"
-                }`}
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium truncate">{friend.name}</p>
-              <p className="text-sm text-muted-foreground truncate">{friend.username}</p>
-            </div>
-            <Button variant="ghost" size="icon" className="rounded-full shrink-0">
+    <ListCard
+      title="Friends"
+      icon={<UserPlus className="h-5 w-5 text-primary" />}
+    >
+      {STUB_FRIENDS.map((friend, index) => (
+        <ListItem
+          key={friend.id}
+          index={index}
+          avatar={
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={friend.avatar} alt={friend.name} />
+              <AvatarFallback className="bg-secondary text-secondary-foreground">
+                {friend.name.split(" ").map((n) => n[0]).join("")}
+              </AvatarFallback>
+            </Avatar>
+          }
+          primary={friend.name}
+          secondary={friend.username}
+          badge={
+            <span
+              className={`w-3 h-3 rounded-full border-2 border-card ${
+                friend.status === "online" ? "bg-success" : "bg-muted"
+              }`}
+            />
+          }
+          action={
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={() => handleMessageClick(friend.id)}
+            >
               <MessageCircle className="h-4 w-4" />
             </Button>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+          }
+        />
+      ))}
+    </ListCard>
   );
 }
