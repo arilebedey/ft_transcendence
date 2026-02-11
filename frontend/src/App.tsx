@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 /* import { LanguageProvider } from "@/contexts/LanguageContext" */;
 import { Index } from "./pages/Index";
 import { Network } from "./pages/Network";
-import { Legal } from "./pages/Legal";
+/* import { Legal } from "./pages/Legal"; */
 import { NotFound } from "./pages/NotFound";
 import { BottomNav } from "./components/BottomNav";
 import { Auth } from "./pages/Auth";
@@ -26,7 +26,7 @@ export const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/network" element={<Network />} />
-              <Route path="/legal" element={<Legal />} />
+{/*               <Route path="/legal" element={<Legal />} /> */}
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
               {/* <Route path="/dashboard" element={<Dashboard />} /> */}
