@@ -11,16 +11,16 @@ const themes: { value: Theme; label: string; icon: React.ReactNode }[] = [
   { value: "light", label: "Light", icon: <Sun className="h-4 w-4" /> },
 ];
 
-export default function ThemeToggle() {
+export function ThemeToggle() {
   const { theme, setTheme } = useThemeStore();
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-lg border bg-card p-1">
+    <div className="inline-flex items-center h-10 gap-1 rounded-lg border bg-card p-1">
       {themes.map((t) => (
         <button
           key={t.value}
           onClick={() => setTheme(t.value)}
-          className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+          className={`inline-flex items-center justify-center rounded-md p-2 transition-colors ${
             theme === t.value
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -28,7 +28,6 @@ export default function ThemeToggle() {
           title={t.label}
         >
           {t.icon}
-          <span className="hidden sm:inline">{t.label}</span>
         </button>
       ))}
     </div>

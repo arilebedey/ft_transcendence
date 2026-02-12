@@ -106,3 +106,27 @@
       color 0.3s ease;
   }
 }
+
+@layer utilities {
+  .glass {
+    @apply bg-[var(--color-card)]/80 backdrop-blur-md border border-[var(--color-border)]/50;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent;
+  }
+}
+
+@layer components {
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-full text-[var(--color-foreground)]/80 hover:bg-[var(--color-secondary)] transition-all duration-200 hover:text-[var(--color-foreground)];
+  }
+
+  .nav-item-active {
+    @apply flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 bg-[var(--color-secondary)] text-[var(--color-foreground)] font-semibold;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:bg-[var(--color-secondary)]/50 cursor-pointer;
+  }
+}
