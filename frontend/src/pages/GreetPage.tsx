@@ -18,18 +18,23 @@ export function GreetPage() {
     return null;
   }
 
+  {/*Main reworks -> Creer des components reutilisables pour harmoniser la DA*/ }
+
   return (
     <div className="min-h-screen flex items-center">
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 px-6 md:px-12 lg:px-20">
         <div className="flex flex-col justify-center items-start space-y-6">
           <div>
+            {/*Reowrk en un component appName.tsx qu'on pourra reutiliser partout*/}
             <h1 className="text-6xl md:text-7xl font-bold tracking-tight mb-4">
               SocialApp
             </h1>
+            {/*Reowrk en un component title.tsx qu'on pourra reutiliser partout*/}
             <p className="text-xl md:text-2xl text-muted-foreground font-light">
               Connect, share, and discover with our community
             </p>
           </div>
+          {/*Reowrk en un component content.tsx qu'on pourra reutiliser partout*/}
           <div className="space-y-3 text-lg text-muted-foreground">
             <p>✨ Share your thoughts</p>
             <p>🌐 Expand your network</p>
