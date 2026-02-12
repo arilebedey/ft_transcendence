@@ -1,25 +1,29 @@
-/* import { useLanguage } from "@/contexts/LanguageContext"; */
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Globe } from "lucide-react";
 
-export function LanguageToggle() {
-  /*   const { language, setLanguage, t } = useLanguage(); */
+type Language = "EN" | "FR" | "IT" | "ES";
 
-  /*   const toggleLanguage = () => {
-    setLanguage(language === "en" ? "fr" : "en");
+const languages: Language[] = ["EN", "FR", "IT", "ES"];
+
+export function LanguageToggle() {
+  const [language, setLanguage] = useState<Language>("EN");
+
+  const cycleLanguage = () => {
+    const currentIndex = languages.indexOf(language);
+    const nextIndex = (currentIndex + 1) % languages.length;
+    setLanguage(languages[nextIndex]);
   };
- */
+
   return (
-    <Button
-      size="icon"
-      /*       onClick={toggleLanguage} */
-      className="rounded-full hover:bg-secondary"
-      /*       title={language === "en" ? t("language.french") : t("language.english")} */
+    <button
+      onClick={cycleLanguage}
+      className="inline-flex items-center h-10 gap-1.5 rounded-lg border bg-card p-1 text-sm font-medium transition-colors hover:bg-secondary"
+      title={`Language: ${language}`}
     >
-      <Globe className="h-5 w-5" />
-      <span className="sr-only">
-        {/*         {language === "en" ? t("language.switchToFrench") : t("language.switchToEnglish")} */}
+      <span className="flex items-center justify-center rounded-md p-2 bg-secondary">
+        <Globe className="h-4 w-4" />
       </span>
-    </Button>
+      <span className="pr-1">{language}</span>
+    </button>
   );
 }
