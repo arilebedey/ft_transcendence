@@ -5,11 +5,15 @@ import { authClient } from "@/lib/auth-client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import TermsCheckbox from "./TermsCheckbox";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required."),
   email: z.email("Invalid email address."),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms.",
+  }),
 });
 
 export default function SignUpForm() {
@@ -20,6 +24,7 @@ export default function SignUpForm() {
       name: "",
       email: "",
       password: "",
+      termsAccepted: false,
     },
     validators: {
       onChange: signUpSchema,
@@ -140,6 +145,26 @@ export default function SignUpForm() {
       />
 
       {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+
+      <form.Field
+        name="termsAccepted"
+        children={(field) => {
+          const errors = field.state.meta.errors;
+          return (
+            <div>
+              <TermsCheckbox
+                value={field.state.value}
+                onChange={(checked) => field.handleChange(checked)}
+              />
+              {errors.length > 0 && (
+                <p className="text-sm text-destructive">
+                  {typeof errors[0] === "string" ? errors[0] : errors[0]?.message}
+                </p>
+              )}
+            </div>
+          );
+        }}
+      />
 
       <Button
         className="w-full mt-4"
