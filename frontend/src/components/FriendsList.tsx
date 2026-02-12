@@ -1,10 +1,10 @@
 /**
  * @component FriendsList
  * Affiche une liste de friends avec statut online/offline et action message.
- * 
+ *
  * @state
  * - friends: Array<Friend> - Données stub, à remplacer par une requête API
- * 
+ *
  * @todo
  * - Connecter à une API pour fetcher les vrais friends de l'utilisateur
  * - Ajouter capacité de recherche/filtre
@@ -27,11 +27,41 @@ interface Friend {
 }
 
 const STUB_FRIENDS: Friend[] = [
-  { id: 1, name: "Alex Chen", username: "@alexc", avatar: "", status: "online" },
-  { id: 2, name: "Sarah Miller", username: "@sarahm", avatar: "", status: "online" },
-  { id: 3, name: "Jordan Lee", username: "@jordanl", avatar: "", status: "offline" },
-  { id: 4, name: "Emma Wilson", username: "@emmaw", avatar: "", status: "online" },
-  { id: 5, name: "Mike Brown", username: "@mikeb", avatar: "", status: "offline" },
+  {
+    id: 1,
+    name: "Alex Chen",
+    username: "@alexc",
+    avatar: "",
+    status: "online",
+  },
+  {
+    id: 2,
+    name: "Sarah Miller",
+    username: "@sarahm",
+    avatar: "",
+    status: "online",
+  },
+  {
+    id: 3,
+    name: "Jordan Lee",
+    username: "@jordanl",
+    avatar: "",
+    status: "offline",
+  },
+  {
+    id: 4,
+    name: "Emma Wilson",
+    username: "@emmaw",
+    avatar: "",
+    status: "online",
+  },
+  {
+    id: 5,
+    name: "Mike Brown",
+    username: "@mikeb",
+    avatar: "",
+    status: "offline",
+  },
 ];
 
 export function FriendsList() {
@@ -53,7 +83,10 @@ export function FriendsList() {
             <Avatar className="h-10 w-10">
               <AvatarImage src={friend.avatar} alt={friend.name} />
               <AvatarFallback className="bg-secondary text-secondary-foreground">
-                {friend.name.split(" ").map((n) => n[0]).join("")}
+                {friend.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </AvatarFallback>
             </Avatar>
           }
@@ -68,7 +101,6 @@ export function FriendsList() {
           }
           action={
             <Button
-              variant="ghost"
               size="icon"
               className="rounded-full"
               onClick={() => handleMessageClick(friend.id)}
