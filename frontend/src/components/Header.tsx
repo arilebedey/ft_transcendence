@@ -1,17 +1,17 @@
 import { SearchBar } from "./SearchBar";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
-import { HeaderBrand } from "./HeaderBrand";
+import { UserSessionButton } from "./UserSessionButton";
 
 export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
-      <div className="flex items-center justify-between gap-4 h-16 px-4 max-w-4xl mx-auto">
-        <HeaderBrand />
-        
-        <SearchBar />
+      <div className="grid grid-cols-3 items-center h-16 px-4 max-w-6xl mx-auto">
+        <UserSessionButton />
 
-        <LanguageToggle />
+        <div className="flex justify-center px-4">
+          <SearchBar />
+        </div>
 
         <ThemeToggle />
         
