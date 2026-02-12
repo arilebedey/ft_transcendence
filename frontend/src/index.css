@@ -1,131 +1,132 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Transcendence Design System - Social Network */
+@theme {
+  --radius: 0.5rem;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 
-@layer base {
-  :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-
-    --primary: 199 89% 48%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 222 47% 11%;
-
-    --muted: 210 15% 93%;
-    --muted-foreground: 215 16% 47%;
-
-    --accent: 199 89% 48%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 199 89% 48%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 199 89% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 199 89% 48%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-  }
-
-  .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 20% 98%;
-
-    --card: 222 47% 9%;
-    --card-foreground: 210 20% 98%;
-
-    --popover: 222 47% 9%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 199 89% 48%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 20% 98%;
-
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 199 89% 48%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 199 89% 48%;
-
-    --sidebar-background: 222 47% 9%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 199 89% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 199 89% 48%;
-
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-  }
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
 @layer base {
+  [data-theme="forest"] {
+    --background: #1a2e1a;
+    --foreground: #e8f0e4;
+    --card: #1f3520;
+    --card-foreground: #e8f0e4;
+    --popover: #1f3520;
+    --popover-foreground: #e8f0e4;
+    --primary: #4ade80;
+    --primary-foreground: #052e16;
+    --secondary: #2d4a2d;
+    --secondary-foreground: #c8e0c2;
+    --muted: #243824;
+    --muted-foreground: #8aab85;
+    --accent: #365e36;
+    --accent-foreground: #e8f0e4;
+    --destructive: #dc2626;
+    --destructive-foreground: #fef2f2;
+    --border: #3d5a3d;
+    --input: #3d5a3d;
+    --ring: #4ade80;
+  }
+
+  [data-theme="dark-blue"] {
+    --background: #0c1222;
+    --foreground: #e2e8f0;
+    --card: #111827;
+    --card-foreground: #e2e8f0;
+    --popover: #111827;
+    --popover-foreground: #e2e8f0;
+    --primary: #3b82f6;
+    --primary-foreground: #eff6ff;
+    --secondary: #1e2d4a;
+    --secondary-foreground: #cbd5e1;
+    --muted: #162032;
+    --muted-foreground: #7a8ba8;
+    --accent: #1e3a5f;
+    --accent-foreground: #e2e8f0;
+    --destructive: #ef4444;
+    --destructive-foreground: #fef2f2;
+    --border: #1e3050;
+    --input: #1e3050;
+    --ring: #3b82f6;
+  }
+
+  [data-theme="light"] {
+    --background: #f8f9fa;
+    --foreground: #1a1a2e;
+    --card: #ffffff;
+    --card-foreground: #1a1a2e;
+    --popover: #ffffff;
+    --popover-foreground: #1a1a2e;
+    --primary: #475569;
+    --primary-foreground: #f8fafc;
+    --secondary: #e2e8f0;
+    --secondary-foreground: #334155;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #e2e8f0;
+    --accent-foreground: #1a1a2e;
+    --destructive: #dc2626;
+    --destructive-foreground: #fef2f2;
+    --border: #e2e8f0;
+    --input: #e2e8f0;
+    --ring: #475569;
+  }
+
   * {
-    @apply border-border;
+    border-color: var(--border);
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    background-color: var(--background);
+    color: var(--foreground);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-card/80 backdrop-blur-md border border-border/50;
+    @apply bg-[var(--color-card)]/80 backdrop-blur-md border border-[var(--color-border)]/50;
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] bg-clip-text text-transparent;
   }
 }
 
 @layer components {
   .nav-item {
-    @apply flex items-center gap-3 px-4 py-3 rounded-full text-foreground/80 hover:bg-secondary transition-all duration-200 hover:text-foreground;
+    @apply flex items-center gap-3 px-4 py-3 rounded-full text-[var(--color-foreground)]/80 hover:bg-[var(--color-secondary)] transition-all duration-200 hover:text-[var(--color-foreground)];
   }
 
   .nav-item-active {
-    @apply nav-item bg-secondary text-foreground font-semibold;
+    @apply flex items-center gap-3 px-4 py-3 rounded-full transition-all duration-200 bg-[var(--color-secondary)] text-[var(--color-foreground)] font-semibold;
   }
 
   .card-hover {
-    @apply transition-all duration-200 hover:bg-secondary/50 cursor-pointer;
+    @apply transition-all duration-200 hover:bg-[var(--color-secondary)]/50 cursor-pointer;
   }
 }
