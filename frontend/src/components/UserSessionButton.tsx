@@ -20,11 +20,7 @@ export function UserSessionButton({
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (session) {
-      navigate("/profile");
-    } else {
-      navigate("/auth");
-    }
+    navigate("/profile");
   };
 
   return (
