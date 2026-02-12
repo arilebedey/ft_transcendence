@@ -7,7 +7,10 @@ type Props = {
 };
 
 //Include fetch from db to get user avatar and name for the header brand component
-export function UserSessionButton({ label = "T", avatarUrl }: Props) {
+export function UserSessionButton({
+  label = "Ada Lovelace",
+  avatarUrl,
+}: Props) {
   const navigate = useNavigate();
 
   const handleClick = (e: React.MouseEvent) => {
