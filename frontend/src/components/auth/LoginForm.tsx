@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { authClient } from "@/lib/auth-client";
@@ -12,11 +13,9 @@ const loginSchema = z.object({
 });
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
-
-  useEffect(() => {
-    console.log("This doesn't log when I click on `login` button of Auth.tsx");
-  }, []);
+  const isDev = process.env.NODE_ENV === "development";
 
   const form = useForm({
     defaultValues: {
@@ -41,6 +40,18 @@ export default function LoginForm() {
       }
     },
   });
+
+  const handleSkipAuth = async () => {
+    try {
+      await authClient.signIn.email({
+        email: "dev@example.com",
+        password: "devpassword123",
+      });
+      navigate("/home");
+    } catch {
+      navigate("/home");
+    }
+  };
 
   return (
     <form
@@ -122,6 +133,18 @@ export default function LoginForm() {
       >
         {form.state.isSubmitting ? "Signing In..." : "Sign In"}
       </Button>
+
+      {isDev && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full text-xs opacity-50"
+          onClick={handleSkipAuth}
+          type="button"
+        >
+          [DEV] Skip Authentication
+        </Button>
+      )}
     </form>
   );
 }
