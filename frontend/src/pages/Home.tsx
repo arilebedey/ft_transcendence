@@ -1,10 +1,10 @@
 /**
- * @page Index (Home)
+ * @page Home
  * Page d'accueil affichant un feed de posts sociaux.
- * 
+ *
  * @state
  * - posts: Array<Post> - Données stub, à remplacer par une requête API paginée
- * 
+ *
  * @todo
  * - Connecter à une API pour fetcher les posts du feed utilisateur
  * - Implémenter pagination/infinite scroll
@@ -16,7 +16,6 @@ import { Layout } from "@/components/Layout";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { PostCard } from "@/components/ui/post-card";
 
-// TODO: Remplacer par une requête API réelle
 interface Post {
   id: number;
   author: string;
@@ -60,19 +59,16 @@ const STUB_POSTS: Post[] = [
   },
 ];
 
-export const Index = () => {
+export const Home = () => {
   const handleLike = (postId: number) => {
-    // TODO: Implémenter logique de like (optimistic update + API call)
     console.log("Like post:", postId);
   };
 
   const handleComment = (postId: number) => {
-    // TODO: Naviguer vers modal de commentaire ou page détail post
     console.log("Comment post:", postId);
   };
 
   const handleShare = (postId: number) => {
-    // TODO: Implémenter partage (copy link, social share, etc.)
     console.log("Share post:", postId);
   };
 
@@ -88,7 +84,10 @@ export const Index = () => {
             avatar={
               <Avatar className="h-10 w-10">
                 <AvatarFallback className="bg-secondary">
-                  {post.author.split(" ").map((n) => n[0]).join("")}
+                  {post.author
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                 </AvatarFallback>
               </Avatar>
             }

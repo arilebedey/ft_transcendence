@@ -1,34 +1,30 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { authClient } from "@/lib/auth-client";
 
 type Props = {
   label?: string;
   avatarUrl?: string;
 };
 
-//Include fetch from db to get user avatar and name for the header brand component
 export function UserSessionButton({
   label = "Ada Lovelace",
   avatarUrl,
 }: Props) {
   const navigate = useNavigate();
+  const sessionResult = authClient.useSession();
+  const session = sessionResult?.data;
+
+  const userName = session?.user.name || label;
+  const userAvatar = session?.user.image || avatarUrl;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    (async () => {
-      try {
-        const res = await fetch("/api/users/session", {
-          credentials: "include",
-        });
-        if (res.ok) {
-          navigate("/profile");
-        } else {
-          navigate("/auth");
-        }
-      } catch (err) {
-        navigate("/auth");
-      }
-    })();
+    if (session) {
+      navigate("/profile");
+    } else {
+      navigate("/auth");
+    }
   };
 
   return (
@@ -38,20 +34,20 @@ export function UserSessionButton({
       className="flex items-center gap-2 shrink-0"
       aria-label="Home"
     >
-      {avatarUrl ? (
+      {userAvatar ? (
         <img
-          src={avatarUrl}
-          alt={label}
+          src={userAvatar}
+          alt={userName}
           className="w-8 h-8 rounded-full object-cover"
         />
       ) : (
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
           <span className="text-primary-foreground font-bold text-lg">
-            {label.charAt(0)}
+            {userName.charAt(0)}
           </span>
         </div>
       )}
-      <span className="font-bold text-lg hidden sm:block">{label}</span>
+      <span className="font-bold text-lg hidden sm:block">{userName}</span>
     </a>
   );
 }
