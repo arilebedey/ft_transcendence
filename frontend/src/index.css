@@ -130,3 +130,8 @@
     @apply transition-all duration-200 hover:bg-[var(--color-secondary)]/50 cursor-pointer;
   }
 }
+
+/* Good for debug - see all borders */
+/* * { */
+/*   outline: 1px solid red !important; */
+/* } */
