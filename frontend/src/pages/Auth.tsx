@@ -6,7 +6,12 @@ import SignUpForm from "@/components/auth/SignUpForm";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export const Auth = () => {
+interface AuthProps {
+  className?: string;
+  cardClassName?: string;
+}
+
+export const Auth = ({ className = "flex items-center justify-center w-full", cardClassName = "w-full max-w-md" }: AuthProps) => {
   const [active, setActive] = useState<"login" | "signup">("signup");
   const navigate = useNavigate();
   const sessionResult = authClient.useSession();
@@ -18,8 +23,8 @@ export const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center pt-20 p-6">
-      <Card className="w-full max-w-md">
+    <div className={className}>
+      <Card className={cardClassName}>
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="pb-4">
             {active === "login" ? "Sign in" : "Create account"}
