@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import TermsCheckbox from "./TermsCheckbox";
+import { useTranslation } from "react-i18next";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required."),
@@ -17,6 +18,7 @@ const signUpSchema = z.object({
 });
 
 export default function SignUpForm() {
+  const { t } = useTranslation();
   const [submitError, setSubmitError] = useState("");
 
   const form = useForm({
@@ -59,7 +61,7 @@ export default function SignUpForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>Name</Label>
+              <Label htmlFor={field.name}>{t("Name")}</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -67,7 +69,7 @@ export default function SignUpForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                placeholder="Full name"
+                placeholder={t("Fullname")}
                 aria-invalid={isInvalid}
               />
               {isInvalid && (
@@ -98,7 +100,7 @@ export default function SignUpForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t("emailPlaceholder")}
                 aria-invalid={isInvalid}
               />
               {isInvalid && (
@@ -121,7 +123,7 @@ export default function SignUpForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>Password</Label>
+              <Label htmlFor={field.name}>{t("Password")}</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -171,7 +173,7 @@ export default function SignUpForm() {
         type="submit"
         disabled={form.state.isSubmitting}
       >
-        {form.state.isSubmitting ? "Creating account..." : "Sign Up"}
+        {form.state.isSubmitting ? "Creating account..." : t("signUp")}
       </Button>
     </form>
   );
