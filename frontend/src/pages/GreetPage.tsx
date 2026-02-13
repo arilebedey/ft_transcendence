@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "@/lib/auth-client";
 import { Auth } from "./Auth";
+import { AppName } from "@/components/ui/appName";
 
 export function GreetPage() {
   const navigate = useNavigate();
@@ -21,14 +22,11 @@ export function GreetPage() {
   {/*Main reworks -> Creer des components reutilisables pour harmoniser la DA*/ }
 
   return (
-    <div className="min-h-screen flex items-center">
+    <div className="min-h-screen flex items-start pt-8">
       <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-12 px-6 md:px-12 lg:px-20">
-        <div className="flex flex-col justify-center items-start space-y-6">
+        <div className="flex flex-col items-start space-y-6 mt-8 md:mt-16">
           <div>
-            {/*Reowrk en un component appName.tsx qu'on pourra reutiliser partout*/}
-            <h1 className="text-6xl md:text-7xl font-bold tracking-tight mb-4">
-              SocialApp
-            </h1>
+            <AppName />
             {/*Reowrk en un component title.tsx qu'on pourra reutiliser partout*/}
             <p className="text-xl md:text-2xl text-muted-foreground font-light">
               Connect, share, and discover with our community
