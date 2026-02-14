@@ -6,11 +6,13 @@ import { UserSessionButton } from "./UserSessionButton";
 interface HeaderProps {
   showSearchBar?: boolean;
   showUserSessionButton?: boolean;
+  showUserLanguageToggle?: boolean;
 }
 
 export function Header({
   showSearchBar = true,
   showUserSessionButton = true,
+  showUserLanguageToggle = true,
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
@@ -18,7 +20,7 @@ export function Header({
         <div className="flex items-center justify-between h-full max-w-6xl mx-auto">
           {showUserSessionButton ? <UserSessionButton /> : <div />}
           <div className="flex items-center gap-2">
-            <LanguageToggle />
+            {showUserLanguageToggle && <LanguageToggle />}
             <ThemeToggle />
           </div>
         </div>

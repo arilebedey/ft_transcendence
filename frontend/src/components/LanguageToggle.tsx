@@ -1,17 +1,31 @@
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Globe } from "lucide-react";
 
 const languages = ["EN", "FR", "IT", "ES"] as const;
 type Language = (typeof languages)[number];
 
+const STORAGE_KEY = "app-language";
+
 export function LanguageToggle() {
   const { i18n } = useTranslation();
   const currentLanguage = i18n.language.toUpperCase() as Language;
 
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem(STORAGE_KEY);
+
+    if (savedLanguage && savedLanguage !== i18n.language) {
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
+
   const cycleLanguage = () => {
     const currentIndex = languages.indexOf(currentLanguage);
     const nextIndex = (currentIndex + 1) % languages.length;
+    const nextLanguage = languages[nextIndex];
+  
     i18n.changeLanguage(languages[nextIndex]);
+    localStorage.setItem(STORAGE_KEY, nextLanguage);
   };
 
   return (
