@@ -41,18 +41,17 @@ export default function TermsCheckbox({ value, onChange }: TermsCheckboxProps) {
             onClick={() => setShowPopup(false)}
           ></div>
 
-          <Card className="relative w-[480px] max-h-[600px] shadow-lg z-50 flex flex-col">
-            <CardContent className="text-sm overflow-y-auto max-h-[540px] pt-4 pr-2">
-              {(t("tosContent", { returnObjects: true }) as string[]).map((p, idx) => (
-                <p key={idx}>{p}</p>
-              ))}
+          <Card className="relative w-[480px] max-h-[600px] shadow-lg z-50 flex flex-col pt-6">
+            <CardContent className="text-sm text-center overflow-y-auto max-h-[540px] pl-6 pr-7">
+              {(t("tosContent", { returnObjects: true }) as string[]).map(
+                (p, idx) => (
+                  <p key={idx}>{p}</p>
+                ),
+              )}
             </CardContent>
 
-            <CardFooter className="justify-center pt-2">
-              <Button
-                onClick={() => setShowPopup(false)}
-                className="px-6 py-2"
-              >
+            <CardFooter className="justify-center py-3">
+              <Button onClick={() => setShowPopup(false)} className="px-6">
                 {t("Close")}
               </Button>
             </CardFooter>
