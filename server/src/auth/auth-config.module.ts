@@ -8,8 +8,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DatabaseModule } from '../database/database.module';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import { readSecret } from '../utils/read-secrets';
-import { PlanGuard } from '../subscriptions/guards/plan.guard';
 
 @Module({
   imports: [
@@ -51,10 +49,6 @@ import { PlanGuard } from '../subscriptions/guards/plan.guard';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PlanGuard,
     },
   ],
 })
