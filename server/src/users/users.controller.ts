@@ -4,7 +4,7 @@ import { Controller, Get } from '@nestjs/common';
 export class UsersController {
   @Get('session')
   getSession() {
-    return { message: '/users/session endpoint' };
+    return { message: 'Called /users/session endpoint!' };
   }
 
   @Get('premium')
