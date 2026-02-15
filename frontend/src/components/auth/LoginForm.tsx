@@ -29,14 +29,24 @@ export default function LoginForm() {
     },
     onSubmit: async ({ value }) => {
       setSubmitError("");
-      try {
-        const result = await authClient.signIn.email({
+
+      await authClient.signIn.email(
+        {
           email: value.email,
           password: value.password,
-        });
-      } catch (err) {
-        setSubmitError(err instanceof Error ? err.message : "Sign in failed");
-      }
+        },
+        {
+          onRequest: () => {
+            setSubmitError("");
+          },
+          onSuccess: () => {
+            navigate("/home");
+          },
+          onError: (ctx) => {
+            setSubmitError(ctx.error.message || "Invalid email or password");
+          },
+        },
+      );
     },
   });
 
@@ -68,7 +78,6 @@ export default function LoginForm() {
       className="space-y-4 w-full"
       onSubmit={(e) => {
         e.preventDefault();
-        console.log("Form submit event triggered");
         form.handleSubmit();
       }}
     >
@@ -87,7 +96,10 @@ export default function LoginForm() {
                 type="email"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => {
+                  if (submitError) setSubmitError("");
+                  field.handleChange(e.target.value);
+                }}
                 placeholder={t("emailPlaceholder")}
                 aria-invalid={isInvalid}
               />
@@ -95,7 +107,7 @@ export default function LoginForm() {
                 <p className="text-sm text-destructive">
                   {typeof errors[0] === "string"
                     ? errors[0]
-                    : errors[0]?.message}
+                    : (errors[0] as any)?.message}
                 </p>
               )}
             </div>
@@ -118,7 +130,10 @@ export default function LoginForm() {
                 type="password"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => {
+                  if (submitError) setSubmitError("");
+                  field.handleChange(e.target.value);
+                }}
                 placeholder="••••••••"
                 aria-invalid={isInvalid}
               />
@@ -126,7 +141,7 @@ export default function LoginForm() {
                 <p className="text-sm text-destructive">
                   {typeof errors[0] === "string"
                     ? errors[0]
-                    : errors[0]?.message}
+                    : (errors[0] as any)?.message}
                 </p>
               )}
             </div>
@@ -134,7 +149,11 @@ export default function LoginForm() {
         }}
       />
 
-      {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+      {submitError && (
+        <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md">
+          {submitError}
+        </div>
+      )}
 
       <Button
         className="w-full mt-4"
