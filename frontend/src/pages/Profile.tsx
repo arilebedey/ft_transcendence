@@ -1,16 +1,20 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
 export function Profile() {
-  const navigate = useNavigate();
   const sessionResult = authClient.useSession();
   const session = sessionResult?.data;
 
   const handleSignOut = async () => {
-    await authClient.signOut();
-    navigate("/");
+    await authClient.signOut({
+      fetchOptions: {
+        onError: (ctx) => {
+          if (ctx.error.status === 400) {
+            console.error("Cannot sign out fake session. -Ari");
+          }
+        },
+      },
+    });
   };
 
   return (
