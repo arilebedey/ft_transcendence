@@ -13,7 +13,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       // creates the store and default value
-      theme: "forest",
+      theme: "light",
       setTheme: (theme) => {
         // setter
         document.documentElement.setAttribute("data-theme", theme); // sets the data-theme attribute of the html document for tailwind to read

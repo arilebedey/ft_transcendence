@@ -13,7 +13,8 @@ git checkout test-or-feature-branch
 
 # later
 git commit
-git push origin main
+git rebase main
+git push origin test-or-feature-branch
 ```
 
 ### 3. Install NVM to manage node version

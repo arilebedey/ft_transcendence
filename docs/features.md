@@ -45,7 +45,7 @@
 - [ ] No console errors/warnings
 - [ ] Responsive design
 - [x] Email/password authentication
-- [ ] Input validation (frontend + backend)
+- [ ] Input validation (frontend + backend) -> test w/ big payload
 - [ ] .env.example file (no actual secrets)
 
 ---

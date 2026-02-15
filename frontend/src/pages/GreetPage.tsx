@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "@/lib/auth-client";
 import { Auth } from "./Auth";
-import { AppName } from "@/components/ui/appName";
 import { Header } from "@/components/Header";
 import { useTranslation } from "react-i18next";
 
