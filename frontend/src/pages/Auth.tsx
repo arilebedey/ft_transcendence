@@ -5,6 +5,7 @@ import LoginForm from "@/components/auth/LoginForm";
 import SignUpForm from "@/components/auth/SignUpForm";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface AuthProps {
   className?: string;
@@ -12,6 +13,7 @@ interface AuthProps {
 }
 
 export const Auth = ({ className = "flex items-center justify-center w-full", cardClassName = "w-full max-w-md" }: AuthProps) => {
+  const { t } = useTranslation();
   const [active, setActive] = useState<"login" | "signup">("signup");
   const navigate = useNavigate();
   const sessionResult = authClient.useSession();
@@ -27,7 +29,7 @@ export const Auth = ({ className = "flex items-center justify-center w-full", ca
       <Card className={cardClassName}>
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="pb-4">
-            {active === "login" ? "Sign in" : "Create account"}
+            {active === "login" ? t("signIn") : t("createAccount")}
           </CardTitle>
           <div className="flex gap-2">
             <Button
@@ -35,14 +37,14 @@ export const Auth = ({ className = "flex items-center justify-center w-full", ca
               size="sm"
               onClick={() => setActive("signup")}
             >
-              Sign up
+              {t("signUp")}
             </Button>
             <Button
               variant={active === "login" ? "default" : "outline"}
               size="sm"
               onClick={() => setActive("login")}
             >
-              Login
+              {t("login")}
             </Button>
           </div>
         </CardHeader>

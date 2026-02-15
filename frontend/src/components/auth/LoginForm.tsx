@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const loginSchema = z.object({
   email: z.email("Invalid email address."),
@@ -13,6 +14,7 @@ const loginSchema = z.object({
 });
 
 export default function LoginForm() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
   const isDev = process.env.NODE_ENV === "development";
@@ -78,7 +80,7 @@ export default function LoginForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t("emailPlaceholder")}
                 aria-invalid={isInvalid}
               />
               {isInvalid && (
@@ -101,7 +103,7 @@ export default function LoginForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>Password</Label>
+              <Label htmlFor={field.name}>{t("Password")}</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -131,7 +133,7 @@ export default function LoginForm() {
         type="submit"
         disabled={form.state.isSubmitting}
       >
-        {form.state.isSubmitting ? "Signing In..." : "Sign In"}
+        {form.state.isSubmitting ? "Signing In..." : t("signIn")}
       </Button>
 
       {isDev && (

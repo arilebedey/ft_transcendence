@@ -1,6 +1,5 @@
 node_modules/
 .next/
 secrets
-.env
 *.vite*
 *package.lock.json*

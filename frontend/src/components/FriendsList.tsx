@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ListCard } from "@/components/ui/list-card";
 import { ListItem } from "@/components/ui/list-item";
+import { useTranslation } from "react-i18next";
 
 // TODO: Remplacer par une requête API réelle
 interface Friend {
@@ -65,6 +66,7 @@ const STUB_FRIENDS: Friend[] = [
 ];
 
 export function FriendsList() {
+  const { t } = useTranslation();
   const handleMessageClick = (friendId: number) => {
     // TODO: Naviguer vers chat ou ouvrir modal de conversation
     console.log("Message friend:", friendId);
@@ -72,7 +74,7 @@ export function FriendsList() {
 
   return (
     <ListCard
-      title="Friends"
+      title={t("Friends")}
       icon={<UserPlus className="h-5 w-5 text-primary" />}
     >
       {STUB_FRIENDS.map((friend, index) => (
