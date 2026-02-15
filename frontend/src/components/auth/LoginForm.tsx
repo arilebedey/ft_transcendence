@@ -28,30 +28,38 @@ export default function LoginForm() {
       onChange: loginSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log("Form submitted with values:", value);
       setSubmitError("");
       try {
         const result = await authClient.signIn.email({
           email: value.email,
           password: value.password,
         });
-        console.log("Sign in result:", result);
       } catch (err) {
-        console.error("Sign in error:", err);
         setSubmitError(err instanceof Error ? err.message : "Sign in failed");
       }
     },
   });
 
   const handleSkipAuth = async () => {
+    const devCredentials = {
+      email: "dev@example.com",
+      password: "devpassword123",
+      name: "Dev",
+    };
+
     try {
-      await authClient.signIn.email({
-        email: "dev@example.com",
-        password: "devpassword123",
-      });
+      await authClient.signUp.email(devCredentials);
       navigate("/home");
     } catch {
-      navigate("/home");
+      try {
+        await authClient.signIn.email({
+          email: devCredentials.email,
+          password: devCredentials.password,
+        });
+        navigate("/home");
+      } catch (err) {
+        console.error("Dev login failed:", err);
+      }
     }
   };
 
