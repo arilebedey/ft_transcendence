@@ -1,0 +1,106 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import TOSen from "./TOSen.json";
+import TOSfr from "./TOSfr.json";
+import TOSit from "./TOSit.json";
+import TOSes from "./TOSes.json";
+
+const resources = {
+  EN: {
+    translation: {
+      welcome: "Connect, share, and discover with our community",
+      shareContent: "✨ Share the content you watch",
+      followInterest: "🌐 Follow other's interests",
+      discover: "🧭 Discover!",
+      signIn: "Sign in",
+      createAccount: "Create account",
+      signUp: "Sign up",
+      login: "Login",
+      emailPlaceholder: "you@example.com",
+      Password: "Password",
+      Name: "Name",
+      Fullname: "Full name",
+      iAccept: "I accept the",
+      TOS: "terms of service.",
+      Close: "Close",
+      Friends: "Friends",
+      ...TOSen,
+    },
+  },
+  FR: {
+    translation: {
+      welcome: "Connectez, partagez et découvrez avec notre communauté",
+      shareContent: "✨ Partagez le contenu que vous regardez",
+      followInterest: "🌐 Suivez les intérêts des autres",
+      discover: "🧭 Découvrez !",
+      signIn: "Se connecter",
+      createAccount: "Créer un compte",
+      signUp: "S'inscrire",
+      login: "Connexion",
+      emailPlaceholder: "vous@exemple.com",
+      Password: "Mot de passe",
+      Name: "Nom",
+      Fullname: "Nom complet",
+      iAccept: "J’accepte les",
+      TOS: "Conditions général d'utilisation.",
+      Close: "Fermer",
+      Friends: "Amis",
+      ...TOSfr,
+    },
+  },
+  IT: {
+    translation: {
+      welcome: "Connettiti, condividi e scopri con la nostra comunità",
+      shareContent: "✨ Condividi il contenuto che guardi",
+      followInterest: "🌐 Segui gli interessi degli altri",
+      discover: "🧭 Scopri!",
+      signIn: "Accedi",
+      createAccount: "Crea account",
+      signUp: "Iscriviti",
+      login: "Accedi",
+      emailPlaceholder: "tuo@esempio.com",
+      Password: "Parola",
+      Name: "Nome",
+      Fullname: "Nome completo",
+      iAccept: "Accetto i",
+      TOS: "termini di servizio.",
+      Close: "Chiudi",
+      Friends : "Amici",
+      ...TOSit,
+    },
+  },
+  ES: {
+    translation: {
+      welcome: "Conéctate, comparte y descubre con nuestra comunidad",
+      shareContent: "✨ Comparte el contenido que ves",
+      followInterest: "🌐 Sigue los intereses de otros",
+      discover: "🧭 ¡Descubre!",
+      signIn: "Iniciar sesión",
+      createAccount: "Crear cuenta",
+      signUp: "Registrarse",
+      login: "Iniciar sesión",
+      emailPlaceholder: "tú@ejemplo.com",
+      Password: "Contraseña",
+      Name: "Nombre",
+      Fullname: "Nombre completo",
+      iAccept: "Acepto los",
+      TOS: "términos del servicio.",
+      Close : "Cerrar",
+      Friends: "Amigos",
+      ...TOSes,
+    },
+  },
+};
+
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: "EN",
+    fallbackLng: "EN",
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+
+export default i18n;

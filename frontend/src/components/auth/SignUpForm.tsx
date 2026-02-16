@@ -5,14 +5,20 @@ import { authClient } from "@/lib/auth-client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import TermsCheckbox from "./TermsCheckbox";
+import { useTranslation } from "react-i18next";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required."),
   email: z.email("Invalid email address."),
   password: z.string().min(8, "Password must be at least 8 characters."),
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms.",
+  }),
 });
 
 export default function SignUpForm() {
+  const { t } = useTranslation();
   const [submitError, setSubmitError] = useState("");
 
   const form = useForm({
@@ -20,6 +26,7 @@ export default function SignUpForm() {
       name: "",
       email: "",
       password: "",
+      termsAccepted: false,
     },
     validators: {
       onChange: signUpSchema,
@@ -54,7 +61,7 @@ export default function SignUpForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>Name</Label>
+              <Label htmlFor={field.name}>{t("Name")}</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -62,7 +69,7 @@ export default function SignUpForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                placeholder="Full name"
+                placeholder={t("Fullname")}
                 aria-invalid={isInvalid}
               />
               {isInvalid && (
@@ -93,7 +100,7 @@ export default function SignUpForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t("emailPlaceholder")}
                 aria-invalid={isInvalid}
               />
               {isInvalid && (
@@ -116,7 +123,7 @@ export default function SignUpForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>Password</Label>
+              <Label htmlFor={field.name}>{t("Password")}</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -141,12 +148,32 @@ export default function SignUpForm() {
 
       {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
+      <form.Field
+        name="termsAccepted"
+        children={(field) => {
+          const errors = field.state.meta.errors;
+          return (
+            <div>
+              <TermsCheckbox
+                value={field.state.value}
+                onChange={(checked) => field.handleChange(checked)}
+              />
+              {errors.length > 0 && (
+                <p className="text-sm text-destructive">
+                  {typeof errors[0] === "string" ? errors[0] : errors[0]?.message}
+                </p>
+              )}
+            </div>
+          );
+        }}
+      />
+
       <Button
         className="w-full mt-4"
         type="submit"
         disabled={form.state.isSubmitting}
       >
-        {form.state.isSubmitting ? "Creating account..." : "Sign Up"}
+        {form.state.isSubmitting ? "Creating account..." : t("signUp")}
       </Button>
     </form>
   );
