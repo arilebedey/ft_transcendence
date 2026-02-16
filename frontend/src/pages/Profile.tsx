@@ -1,4 +1,5 @@
 import { authClient } from "@/lib/auth-client";
+import { UserCard } from "@/components/profile/UserCard";
 import { Button } from "@/components/ui/button";
 
 export function Profile() {
@@ -18,16 +19,14 @@ export function Profile() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-6">
-      <div className="text-center space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Welcome, {session?.user.name || "User"}!
-          </h1>
-          <p className="text-muted-foreground mt-2">{session?.user.email}</p>
+    <div className="flex justify-center min-h-screen p-6">
+      <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
+        {/* User card with buttons */}
+        <div className="w-full px-10 py-8">
+          <UserCard />
         </div>
-        <Button onClick={handleSignOut}>Sign Out</Button>
       </div>
+      {/* <Button onClick={handleSignOut}>Sign Out</Button> */}
     </div>
   );
 }
