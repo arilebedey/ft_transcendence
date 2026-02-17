@@ -10,6 +10,6 @@ export class UpdateUserDataDto {
   theme?: 'light' | 'dark-blue' | 'forest';
 
   @IsOptional()
-  @IsString()
-  language?: string;
+  @IsIn(['en', 'fr', 'es', 'it'])
+  language?: 'en';
 }
