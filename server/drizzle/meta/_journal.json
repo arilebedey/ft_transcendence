@@ -5,6 +5,7 @@
     {
       "idx": 0,
       "version": "7",
+<<<<<<< HEAD
       "when": 1768325116876,
       "tag": "0000_init_auth",
       "breakpoints": true
@@ -14,6 +15,10 @@
       "version": "7",
       "when": 1771249454302,
       "tag": "0001_create_user_data_table",
+=======
+      "when": 1771521778932,
+      "tag": "0000_init_tables",
+>>>>>>> a9940cd (feat(posts): add Drizzle schema, wire up DB module and regenerate migrations)
       "breakpoints": true
     }
   ]
