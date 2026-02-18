@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const loginSchema = z.object({
   email: z.email("Invalid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters."),
+  password: z.string().min(1, "Password is required."),
 });
 
 export default function LoginForm() {
@@ -26,6 +26,11 @@ export default function LoginForm() {
     },
     validators: {
       onChange: loginSchema,
+    },
+    listeners: {
+      onChange: () => {
+        setSubmitError("");
+      },
     },
     onSubmit: async ({ value }) => {
       setSubmitError("");
@@ -97,7 +102,6 @@ export default function LoginForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => {
-                  if (submitError) setSubmitError("");
                   field.handleChange(e.target.value);
                 }}
                 placeholder={t("emailPlaceholder")}
@@ -131,7 +135,6 @@ export default function LoginForm() {
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => {
-                  if (submitError) setSubmitError("");
                   field.handleChange(e.target.value);
                 }}
                 placeholder="••••••••"

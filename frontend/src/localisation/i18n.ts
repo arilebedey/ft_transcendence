@@ -42,7 +42,7 @@ const resources = {
       Name: "Nom",
       Fullname: "Nom complet",
       iAccept: "J’accepte les",
-      TOS: "Conditions général d'utilisation.",
+      TOS: "Conditions générales d'utilisation.",
       Close: "Fermer",
       Friends: "Amis",
       ...TOSfr,
@@ -65,7 +65,7 @@ const resources = {
       iAccept: "Accetto i",
       TOS: "termini di servizio.",
       Close: "Chiudi",
-      Friends : "Amici",
+      Friends: "Amici",
       ...TOSit,
     },
   },
@@ -85,22 +85,20 @@ const resources = {
       Fullname: "Nombre completo",
       iAccept: "Acepto los",
       TOS: "términos del servicio.",
-      Close : "Cerrar",
+      Close: "Cerrar",
       Friends: "Amigos",
       ...TOSes,
     },
   },
 };
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: "EN",
-    fallbackLng: "EN",
-    interpolation: {
-      escapeValue: false,
-    },
-  });
+i18n.use(initReactI18next).init({
+  resources,
+  lng: "EN",
+  fallbackLng: "EN",
+  interpolation: {
+    escapeValue: false,
+  },
+});
 
 export default i18n;

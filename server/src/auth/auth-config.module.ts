@@ -35,13 +35,7 @@ import { userData } from '../users/user-data.schema';
           //     prompt: 'select_account',
           //   },
           // },
-          trustedOrigins: [
-            configService.getOrThrow('CLIENT_URL'),
-            'stashed://',
-            ...(process.env.NODE_ENV === 'development'
-              ? ['exp://192.168.*.*:*/**']
-              : []),
-          ],
+          trustedOrigins: [configService.getOrThrow('CLIENT_URL')],
           hooks: {
             after: createAuthMiddleware(async (ctx) => {
               if (!ctx.path.startsWith('/sign-up')) return;

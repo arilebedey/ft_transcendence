@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { authClient } from "@/lib/auth-client";
@@ -31,17 +31,25 @@ export default function SignUpForm() {
     validators: {
       onChange: signUpSchema,
     },
+    listeners: {
+      onChange: () => {
+        setSubmitError("");
+      },
+    },
     onSubmit: async ({ value }) => {
       setSubmitError("");
-      try {
-        await authClient.signUp.email({
-          name: value.name,
-          email: value.email,
-          password: value.password,
-        });
-      } catch (err) {
-        setSubmitError(err instanceof Error ? err.message : "Sign up failed");
-      }
+
+      const { error } = await authClient.signUp.email({
+        name: value.name,
+        email: value.email,
+        password: value.password,
+      });
+
+      if (!error) return;
+
+      if (error.code == "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL")
+        setSubmitError("Email already in use.");
+      else if (error) setSubmitError("Sign up failed");
     },
   });
 
@@ -146,7 +154,11 @@ export default function SignUpForm() {
         }}
       />
 
-      {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+      {submitError && (
+        <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md">
+          {submitError}
+        </div>
+      )}
 
       <form.Field
         name="termsAccepted"
@@ -160,7 +172,9 @@ export default function SignUpForm() {
               />
               {errors.length > 0 && (
                 <p className="text-sm text-destructive">
-                  {typeof errors[0] === "string" ? errors[0] : errors[0]?.message}
+                  {typeof errors[0] === "string"
+                    ? errors[0]
+                    : errors[0]?.message}
                 </p>
               )}
             </div>
