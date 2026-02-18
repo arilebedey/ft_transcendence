@@ -1,25 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
-import type { UserSession } from '../auth/auth.types';
-import { GetSession } from '../auth/decorators/get-session.decorator';
-import { RequirePlan } from '../subscriptions/decorators/require-plan.decorator';
+import { Body, Controller, Get, Patch } from '@nestjs/common';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { UserDataService } from './user-data.service';
+import type { AuthUser } from 'src/auth/auth.types';
+import { UpdateUserDataDto } from './dto/update-user-data.dto';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly userDataService: UserDataService) {}
+
+  @Get('me')
+  async getMe(@GetUser() user: AuthUser) {
+    return this.userDataService.get(user.id);
+  }
+
+  @Patch('me')
+  async updateMe(@GetUser() user: AuthUser, @Body() dto: UpdateUserDataDto) {
+    return this.userDataService.update(user.id, dto);
+  }
+
   @Get('session')
-  getSession(@GetSession() session: UserSession) {
-    console.log('User plan:', session.user.plan);
-    return { message: '/users/session endpoint' };
-  }
-
-  @Get('premium')
-  @RequirePlan('premium', 'lifetime')
-  premiumFeature() {
-    return { data: 'Premium content' };
-  }
-
-  @Get('lifetime')
-  @RequirePlan('lifetime')
-  lifetimeFeature() {
-    return { data: 'Lifetime exclusive' };
+  getSession() {
+    return { message: 'Called /users/session endpoint!' };
   }
 }

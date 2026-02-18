@@ -3,13 +3,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { createAuthMiddleware } from 'better-auth/api';
 import { expo } from '@better-auth/expo';
 import { APP_GUARD } from '@nestjs/core';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DatabaseModule } from '../database/database.module';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import { readSecret } from '../utils/read-secrets';
-import { PlanGuard } from '../subscriptions/guards/plan.guard';
+import { userData } from '../users/user-data.schema';
 
 @Module({
   imports: [
@@ -35,13 +35,19 @@ import { PlanGuard } from '../subscriptions/guards/plan.guard';
           //     prompt: 'select_account',
           //   },
           // },
-          trustedOrigins: [
-            configService.getOrThrow('CLIENT_URL'),
-            'stashed://',
-            ...(process.env.NODE_ENV === 'development'
-              ? ['exp://192.168.*.*:*/**']
-              : []),
-          ],
+          trustedOrigins: [configService.getOrThrow('CLIENT_URL')],
+          hooks: {
+            after: createAuthMiddleware(async (ctx) => {
+              if (!ctx.path.startsWith('/sign-up')) return;
+              const newSession = ctx.context.newSession;
+              if (!newSession) return;
+              const { id, name, email } = newSession.user;
+              await database
+                .insert(userData)
+                .values({ id, name, email })
+                .onConflictDoNothing();
+            }),
+          },
         }),
       }),
       inject: [DATABASE_CONNECTION, ConfigService],
@@ -51,10 +57,6 @@ import { PlanGuard } from '../subscriptions/guards/plan.guard';
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PlanGuard,
     },
   ],
 })

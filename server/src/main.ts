@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { toNodeHandler } from 'better-auth/node';
 import { AuthService } from '@thallesp/nestjs-better-auth';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   // Disable NestJS's built-in body parser so we can control ordering
@@ -17,6 +18,15 @@ async function bootstrap() {
   expressApp.all(
     /^\/api\/auth\/.*/,
     toNodeHandler(authService.instance.handler),
+  );
+
+  // Validates against your DTO schema
+  // Protects against accidental extra fields & prevents malicious injection of unknown properties
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
   );
 
   // Re-enable Nest's JSON body parser AFTER mounting BetterAuth

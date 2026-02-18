@@ -12,8 +12,8 @@
     {
       "idx": 1,
       "version": "7",
-      "when": 1768325120863,
-      "tag": "0001_add_user_plan",
+      "when": 1771249454302,
+      "tag": "0001_create_user_data_table",
       "breakpoints": true
     }
   ]

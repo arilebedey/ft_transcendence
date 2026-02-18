@@ -13,7 +13,8 @@ git checkout test-or-feature-branch
 
 # later
 git commit
-git push origin main
+git rebase main
+git push origin test-or-feature-branch
 ```
 
 ### 3. Install NVM to manage node version
@@ -34,6 +35,8 @@ Run the docker container that houses the db and the pgadmin interface:
 ```sh
 # at root of repo (where compose file is located)
 make
+# or, if there is a schema conflict (what is a schema conflict?)
+make clean
 ```
 
 If you're at 42, the docker version doesn't match the daemon, so use this hack before running the command:

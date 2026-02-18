@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "@/lib/auth-client";
 import { Auth } from "./Auth";
-import { AppName } from "@/components/ui/appName";
 import { Header } from "@/components/Header";
 import { useTranslation } from "react-i18next";
 
@@ -24,7 +23,7 @@ export function GreetPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-         <Header showSearchBar={false} showUserSessionButton={false} />
+      <Header showSearchBar={false} showUserSessionButton={false} />
       <div className="min-h-screen flex items-start pt-10 xl:pt-30">
         <div className="w-full max-w-8xl mx-auto px-6 md:px-12 lg:px-24 xl:px-60">
           <div className="flex flex-col xl:flex-row gap-12 xl:gap-10">
@@ -48,7 +47,7 @@ export function GreetPage() {
               </div>
             </div>
 
-            <div className="flex justify-center xl:justify-end w-full lg:flex-1 md:mt-10 xl:mt-0">
+            <div className="flex justify-center xl:justify-end w-full lg:flex-1 md:mt-10 xl:mt-0 mb-8 lg:mb-24">
               <div className="w-full max-w-md">
                 <Auth />
               </div>

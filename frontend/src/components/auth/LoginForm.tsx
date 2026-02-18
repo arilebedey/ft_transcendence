@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const loginSchema = z.object({
   email: z.email("Invalid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters."),
+  password: z.string().min(1, "Password is required."),
 });
 
 export default function LoginForm() {
@@ -27,31 +27,54 @@ export default function LoginForm() {
     validators: {
       onChange: loginSchema,
     },
+    listeners: {
+      onChange: () => {
+        setSubmitError("");
+      },
+    },
     onSubmit: async ({ value }) => {
-      console.log("Form submitted with values:", value);
       setSubmitError("");
-      try {
-        const result = await authClient.signIn.email({
+
+      await authClient.signIn.email(
+        {
           email: value.email,
           password: value.password,
-        });
-        console.log("Sign in result:", result);
-      } catch (err) {
-        console.error("Sign in error:", err);
-        setSubmitError(err instanceof Error ? err.message : "Sign in failed");
-      }
+        },
+        {
+          onRequest: () => {
+            setSubmitError("");
+          },
+          onSuccess: () => {
+            navigate("/home");
+          },
+          onError: (ctx) => {
+            setSubmitError(ctx.error.message || "Invalid email or password");
+          },
+        },
+      );
     },
   });
 
   const handleSkipAuth = async () => {
+    const devCredentials = {
+      email: "dev@example.com",
+      password: "devpassword123",
+      name: "Dev",
+    };
+
     try {
-      await authClient.signIn.email({
-        email: "dev@example.com",
-        password: "devpassword123",
-      });
+      await authClient.signUp.email(devCredentials);
       navigate("/home");
     } catch {
-      navigate("/home");
+      try {
+        await authClient.signIn.email({
+          email: devCredentials.email,
+          password: devCredentials.password,
+        });
+        navigate("/home");
+      } catch (err) {
+        console.error("Dev login failed:", err);
+      }
     }
   };
 
@@ -60,7 +83,6 @@ export default function LoginForm() {
       className="space-y-4 w-full"
       onSubmit={(e) => {
         e.preventDefault();
-        console.log("Form submit event triggered");
         form.handleSubmit();
       }}
     >
@@ -79,7 +101,9 @@ export default function LoginForm() {
                 type="email"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                }}
                 placeholder={t("emailPlaceholder")}
                 aria-invalid={isInvalid}
               />
@@ -87,7 +111,7 @@ export default function LoginForm() {
                 <p className="text-sm text-destructive">
                   {typeof errors[0] === "string"
                     ? errors[0]
-                    : errors[0]?.message}
+                    : (errors[0] as any)?.message}
                 </p>
               )}
             </div>
@@ -110,7 +134,9 @@ export default function LoginForm() {
                 type="password"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                }}
                 placeholder="••••••••"
                 aria-invalid={isInvalid}
               />
@@ -118,7 +144,7 @@ export default function LoginForm() {
                 <p className="text-sm text-destructive">
                   {typeof errors[0] === "string"
                     ? errors[0]
-                    : errors[0]?.message}
+                    : (errors[0] as any)?.message}
                 </p>
               )}
             </div>
@@ -126,7 +152,11 @@ export default function LoginForm() {
         }}
       />
 
-      {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+      {submitError && (
+        <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md">
+          {submitError}
+        </div>
+      )}
 
       <Button
         className="w-full mt-4"
