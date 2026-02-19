@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import * as schema from './schema';
+import * as schema from './posts.schema';
 
 @Injectable()
 export class PostsService {
@@ -18,7 +19,7 @@ export class PostsService {
   findOne(id: string) {
     // TODO: implement fetching a single post by id
     return this.db.query.post.findFirst({
-      where: (post, { eq }) => eq(post.id, Number(id)),
+      where: eq(schema.post.id, Number(id)),
     });
   }
 
@@ -32,12 +33,12 @@ export class PostsService {
     return this.db
       .update(schema.post)
       .set(updatePostDto)
-      .where((post: typeof schema.post) => ({ id: Number(id) }))
+      .where(eq(schema.post.id, Number(id)))
       .returning();
   }
 
   delete(id: string) {
     // TODO: implement post deletion
-    return this.db.delete(schema.post).where((post: typeof schema.post) => ({ id: Number(id) })).returning();
+    return this.db.delete(schema.post).where(eq(schema.post.id, Number(id))).returning();
   }
 }

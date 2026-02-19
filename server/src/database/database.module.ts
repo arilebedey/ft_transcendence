@@ -5,7 +5,7 @@ import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as authSchema from '../auth/better-auth.schema';
 import * as userDataSchema from '../users/user-data.schema';
-import * as postsSchema from '../posts/schema';
+import * as postsSchema from '../posts/posts.schema';
 
 @Module({
   imports: [ConfigModule],
