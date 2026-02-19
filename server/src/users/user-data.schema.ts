@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { user } from '../auth/better-auth.schema';
+import { conversationParticipant } from 'src/chat/chat.schema';
 
 export const userData = pgTable('user_data', {
   id: text('id')
@@ -24,9 +25,10 @@ export const userData = pgTable('user_data', {
     .notNull(),
 });
 
-export const userDataRelations = relations(userData, ({ one }) => ({
+export const userDataRelations = relations(userData, ({ one, many }) => ({
   user: one(user, {
     fields: [userData.id],
     references: [user.id],
   }),
+  conversationParticipants: many(conversationParticipant),
 }));

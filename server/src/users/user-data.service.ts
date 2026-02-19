@@ -24,7 +24,7 @@ export class UserDataService {
     if (existing.length === 0) {
       const msg = `User data not found for userId: ${userId}`;
       this.logger.warn(msg);
-      throw new Error(msg);
+      throw new NotFoundException(msg);
     }
 
     return existing[0];
