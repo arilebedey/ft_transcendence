@@ -1,7 +1,5 @@
 node_modules/
-.next/
 secrets
 *.vite*
-*package.lock.json*
 venv/
 venv
