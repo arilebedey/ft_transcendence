@@ -4,7 +4,6 @@ import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware } from 'better-auth/api';
-import { expo } from '@better-auth/expo';
 import { APP_GUARD } from '@nestjs/core';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DatabaseModule } from '../database/database.module';
@@ -20,7 +19,6 @@ import { userData } from '../users/user-data.schema';
       useFactory: (database: NodePgDatabase, configService: ConfigService) => ({
         auth: betterAuth({
           baseURL: configService.getOrThrow('BETTER_AUTH_URL'),
-          plugins: [expo()],
           database: drizzleAdapter(database, {
             provider: 'pg',
           }),
