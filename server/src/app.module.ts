@@ -5,6 +5,7 @@ import { AuthConfigModule } from './auth/auth-config.module';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { LikesModule } from './likes/likes.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LikesModule } from './likes/likes.module';
     UsersModule,
     PostsModule,
     LikesModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [],
