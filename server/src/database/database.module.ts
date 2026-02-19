@@ -7,6 +7,7 @@ import * as authSchema from '../auth/better-auth.schema';
 import * as userDataSchema from '../users/user-data.schema';
 import * as postsSchema from '../posts/posts.schema';
 import * as likesSchema from '../likes/likes.schema';
+import * as chatSchema from '../chat/chat.schema';
 
 @Module({
   imports: [ConfigModule],
@@ -27,6 +28,7 @@ import * as likesSchema from '../likes/likes.schema';
             ...userDataSchema,
             ...postsSchema,
             ...likesSchema,
+            ...chatSchema,
           },
         });
       },
