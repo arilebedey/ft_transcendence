@@ -8,6 +8,5 @@ import { StorageModule } from 'src/storage/storage.module';
   imports: [DatabaseModule, StorageModule],
   controllers: [UsersController],
   providers: [UserDataService],
-  exports: [UserDataService],
 })
 export class UsersModule {}

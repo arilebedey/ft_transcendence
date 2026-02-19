@@ -21,7 +21,6 @@ import { userData } from '../users/user-data.schema';
       useFactory: (database: NodePgDatabase, configService: ConfigService) => ({
         auth: betterAuth({
           baseURL: configService.getOrThrow('BETTER_AUTH_URL'),
-          plugins: [expo()],
           database: drizzleAdapter(database, {
             provider: 'pg',
           }),
