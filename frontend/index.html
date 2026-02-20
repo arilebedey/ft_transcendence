@@ -6,6 +6,23 @@
     <title>ft_transcendence</title>
     <meta property="og:title" content="ft_transcendence" />
     <meta property="og:type" content="website" />
+    <script>
+      try {
+        var colors = {
+          forest: "#1a2e1a",
+          "dark-blue": "#0c1222",
+          light: "#f8f9fa",
+        };
+        var stored = JSON.parse(localStorage.getItem("app-theme") || "{}");
+        var theme = stored?.state?.theme || "light";
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.style.backgroundColor =
+          colors[theme] || colors.light;
+      } catch {
+        document.documentElement.setAttribute("data-theme", "light");
+        document.documentElement.style.backgroundColor = "#f8f9fa";
+      }
+    </script>
   </head>
 
   <body>
