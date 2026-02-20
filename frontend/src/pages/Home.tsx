@@ -12,9 +12,13 @@
  * - Filtrer les posts en fonction du suivi de l'utilisateur
  */
 
+import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { PostCard } from "@/components/ui/post-card";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface Post {
   id: number;
@@ -60,6 +64,19 @@ const STUB_POSTS: Post[] = [
 ];
 
 export const Home = () => {
+  const [postFormOpen, setPostFormOpen] = useState(false);
+  const [newPostContent, setNewPostContent] = useState("");
+  const { t } = useTranslation();
+
+  const handleToggleForm = () => setPostFormOpen((prev) => !prev);
+
+  const handleConfirmPost = () => {
+    if (!newPostContent) return alert("Le contenu est vide");
+    console.log("Post créé :", newPostContent);
+    setNewPostContent("");
+    setPostFormOpen(false);
+  };
+
   const handleLike = (postId: number) => {
     console.log("Like post:", postId);
   };
@@ -73,8 +90,41 @@ export const Home = () => {
   };
 
   return (
-    <Layout>
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+    <Layout
+      showPostCreationButton={true}
+      showThemeToggle={false}
+      showLanguageToggle={false}
+      onPostCreationClick={() => setPostFormOpen(prev => !prev)}
+    >
+      {postFormOpen && (
+        <div className="transition-all duration-300 ease-in-out max-w-2xl mx-auto mt-4">
+          <Card>
+            <CardHeader></CardHeader>
+
+            <CardContent className="pt-0">
+              <textarea
+                rows={3}
+                className="w-full p-3 border rounded-md resize-none focus:outline-none focus:ring-2 bg-transparent"
+                value={newPostContent}
+                onChange={(e) => setNewPostContent(e.target.value)}
+              />
+            </CardContent>
+
+            <CardFooter className="pt-0 justify-end gap-2">
+              <Button variant="outline" onClick={() => setPostFormOpen(false)}>
+                {t("Cancel")}
+              </Button>
+              <Button onClick={handleConfirmPost}>{t("Confirm")}</Button>
+            </CardFooter>
+          </Card>
+        </div>
+      )}
+
+      <div
+        className={`max-w-2xl mx-auto px-4 py-6 space-y-4 transition-all duration-300 ease-in-out ${
+          postFormOpen ? "mt-4" : "mt-0"
+        }`}
+      >
         {STUB_POSTS.map((post, index) => (
           <PostCard
             key={post.id}
