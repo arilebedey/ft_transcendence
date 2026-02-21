@@ -51,37 +51,24 @@ export DOCKER_API_VERSION=1.44
 
 ```sh
 cd server
-nvm use
 npm install
 npm run dev
 ```
 
-### 6. Test the NestJS server
+### 6. Apply the drizzle schema
 
-Test auth module:
+The DB should be up and healthy (`make ps`) before running this.
 
-```sh
-curl http://localhost:3000/api/auth/ok
-# should return:
-# `{"ok":true}%`
-```
-
-### 7. Apply the drizzle schema
-
-The DB should be up and healthy (`docker ps`) before running this.
-
-This creates the DB tables needed by Better Auth:
+Apply drizzle migrations:
 
 ```sh
-cd server
-npx drizzle-kit migrate
+make migrate
 ```
 
-### 8. Launch the front-end
+### 7. Launch the front-end
 
 ```sh
 cd frontend
-nvm use
 npm install
 npm run dev
 ```
@@ -94,10 +81,6 @@ Open the webpage in a browser.
 http://localhost:5173/
 ```
 
-### 8. Test authentication
+### 8. Troubleshooting
 
-Sign up with a name, email and password.
-
-Watch the server for errors (you already launched it 😜)
-
-Changes to source files will appear instantly in the webpage.
+Is `nvm` installed correctly? It should respect the `.nvmrc` files which inform `nvm` of the node version. Try `node -v`, `nvm use`.
