@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
 import { userData } from './user-data.schema';
 import { eq } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
+import type { AppDatabase } from 'src/database/database.types';
 
 @Injectable()
 export class UserDataService {
@@ -11,7 +11,7 @@ export class UserDataService {
 
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly db: NodePgDatabase<Record<string, unknown>>,
+    private readonly db: AppDatabase,
   ) {}
 
   async get(userId: string) {

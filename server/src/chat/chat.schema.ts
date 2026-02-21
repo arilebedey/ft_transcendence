@@ -53,6 +53,9 @@ export const chatMessage = pgTable(
   ],
 );
 
+// see docs/drizzle/sql-orm-chat-details.md for details on Drizzle relations
+//
+//
 export const conversationRelations = relations(conversation, ({ many }) => ({
   participants: many(conversationParticipant),
   messages: many(chatMessage),
