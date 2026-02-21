@@ -5,12 +5,13 @@ import { DATABASE_CONNECTION } from '../database/database-connection';
 import * as schema from './posts.schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { AppDatabase } from 'src/database/database.types';
 
 @Injectable()
 export class PostsService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly db: NodePgDatabase<typeof schema>,
+    private readonly db: AppDatabase,
   ) {}
 
   findAll() {

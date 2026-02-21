@@ -1,15 +1,9 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
 import { userData } from './user-data.schema';
-import { and, eq, ne } from 'drizzle-orm';
+import { and, asc, eq, ilike, ne } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
+import type { AppDatabase } from 'src/database/database.types';
 
 @Injectable()
 export class UserDataService {
@@ -17,7 +11,7 @@ export class UserDataService {
 
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly db: NodePgDatabase<Record<string, unknown>>,
+    private readonly db: AppDatabase,
   ) {}
 
   async get(userId: string) {
@@ -50,6 +44,28 @@ export class UserDataService {
       )
       .limit(1);
     return result.length === 0;
+  }
+
+  async search(userId: string, query?: string) {
+    const sanitized = query?.trim().slice(0, 50) ?? '';
+
+    const baseQuery = this.db
+      .select({
+        id: userData.id,
+        name: userData.name,
+      })
+      .from(userData)
+      .where(
+        sanitized.length > 0
+          ? and(ne(userData.id, userId), ilike(userData.name, `%${sanitized}%`))
+          : ne(userData.id, userId),
+      );
+
+    const results = await baseQuery
+      .orderBy(asc(userData.name))
+      .limit(sanitized.length > 0 ? 40 : 20);
+
+    return results;
   }
 
   async update(userId: string, dto: UpdateUserDataDto) {

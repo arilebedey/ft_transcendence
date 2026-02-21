@@ -8,13 +8,14 @@ import * as userDataSchema from '../users/user-data.schema';
 import * as postsSchema from '../posts/posts.schema';
 import * as likesSchema from '../likes/likes.schema';
 import * as chatSchema from '../chat/chat.schema';
+import { AppDatabase } from './database.types';
 
 @Module({
   imports: [ConfigModule],
   providers: [
     {
       provide: DATABASE_CONNECTION,
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService): AppDatabase => {
         const pool = new Pool({
           user: configService.getOrThrow('POSTGRES_USER'),
           password: configService.getOrThrow('POSTGRES_PASSWORD'),

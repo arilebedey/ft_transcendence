@@ -1,10 +1,12 @@
 import { relations } from 'drizzle-orm';
 import {
   index,
+  integer,
   pgTable,
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { user } from '../auth/better-auth.schema';
 
@@ -12,6 +14,7 @@ export const conversation = pgTable('conversation', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => `conv_${crypto.randomUUID()}`),
+  lastSeq: integer('last_seq').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
@@ -38,6 +41,7 @@ export const chatMessage = pgTable(
     id: text('id')
       .primaryKey()
       .$defaultFn(() => `msg_${crypto.randomUUID()}`),
+    seq: integer('seq').notNull(),
     content: text('content').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     senderId: text('sender_id')
@@ -48,11 +52,17 @@ export const chatMessage = pgTable(
       .references(() => conversation.id, { onDelete: 'cascade' }),
   },
   (table) => [
-    index('chat_message_conversation_id_idx').on(table.conversationId),
+    uniqueIndex('chat_message_conversation_seq_idx').on(
+      table.conversationId,
+      table.seq,
+    ),
     index('chat_message_sender_id_idx').on(table.senderId),
   ],
 );
 
+// see docs/drizzle/sql-orm-chat-details.md for details on Drizzle relations
+//
+//
 export const conversationRelations = relations(conversation, ({ many }) => ({
   participants: many(conversationParticipant),
   messages: many(chatMessage),
