@@ -1,10 +1,12 @@
 //
 //
-// DO NOT MODIFY !!!
+// DO NOT MODIFY UNLESS ITS FOR ADDING RELATIONS!!!
+// USE THE user_data TABLE INSTEAD
 //
 //
 import { relations } from 'drizzle-orm';
 import { pgTable, text, timestamp, boolean, index } from 'drizzle-orm/pg-core';
+import { chatMessage, conversationParticipant } from 'src/chat/chat.schema';
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -81,6 +83,8 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  conversationParticipants: many(conversationParticipant),
+  messages: many(chatMessage),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
