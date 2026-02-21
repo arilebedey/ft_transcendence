@@ -37,7 +37,7 @@
 ## Mandatory Requirements
 
 - [x] Web application (frontend + backend + database)
-- [ ] Git with meaningful commits from all members
+- [x] Git with meaningful commits from all members
 - [x] Multi-user support (concurrent sessions handled)
 - [ ] Dockerized deployment
 - [ ] One command launches the project
@@ -45,12 +45,12 @@
 - [ ] No console errors/warnings
 - [ ] Responsive design
 - [x] Email/password authentication
-- [ ] Input validation (frontend + backend) -> test w/ big payload
+- [x] Input validation (frontend + backend) -> test w/ big payload
 - [ ] .env.example file (no actual secrets)
 
 ---
 
-## Feature Tasks - Chosen Modules
+## Feature Tasks - Chosen Modules (outdated - more added)
 
 ### Backend Framework (NestJS) - Minor - 1pt
 
@@ -177,7 +177,7 @@
 
 ---
 
-## Additional Features to reach 19 pts
+## Additional Features to reach 19 pts (outdated)
 
 **WAF/ModSecurity + HashiCorp Vault (Cybersecurity - Major - 2pts)**
 
