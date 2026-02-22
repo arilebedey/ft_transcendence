@@ -6,6 +6,7 @@ import { UserAvatar } from "@/components/profile/UserAvatar";
 import { UserInfo } from "@/components/profile/UserInfo";
 import { UserStats } from "@/components/profile/UserStats";
 import { UserActionButton } from "@/components/profile/UserActionButton";
+import { EditPreferencesPopup } from "@/components/profile/EditPreferencesPopup";
 
 interface UserCardProps {
   isOwnProfile?: boolean;
@@ -30,6 +31,7 @@ export function UserCard() {
   const isOwnProfile = true;
   const isFollowing = false;
   const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showEditPreferencesPopup, setShowEditPreferencesPopup] = useState(false);
 
   const onToggleFollow = () => {
     // Implement follow/unfollow logic here
@@ -53,6 +55,7 @@ export function UserCard() {
           isOwnProfile={isOwnProfile}
           isFollowing={isFollowing}
           onEdit={() => setShowEditPopup(true)}
+          onEditPreferences={() => setShowEditPreferencesPopup(true)}
           onToggleFollow={onToggleFollow}
         />
       </div>
@@ -70,6 +73,9 @@ export function UserCard() {
           }
           onClose={() => setShowEditPopup(false)}
         />
+      )}
+      {showEditPreferencesPopup && (
+        <EditPreferencesPopup onClose={() => setShowEditPreferencesPopup(false)} />
       )}
     </div>
   );
