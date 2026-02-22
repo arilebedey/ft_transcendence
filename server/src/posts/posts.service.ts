@@ -27,11 +27,12 @@ export class PostsService {
     return post;
   }
 
-  create(createPostDto: CreatePostDto, userId: string) {
-    return this.db
+  async create(createPostDto: CreatePostDto, userId: string) {
+    const [created] = await this.db
       .insert(schema.post)
       .values({ ...createPostDto, userId })
       .returning();
+    return created;
   }
 
   async update(id: number, updatePostDto: UpdatePostDto, userId: string) {
