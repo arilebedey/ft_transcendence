@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 
 interface EditProfilePopupProps {
-  currentUser: { name: string; email: string; bio: string };
+  currentUser: { name: string; bio: string };
   onSave: (updatedUser: { name: string; bio: string }) => void;
   onClose: () => void;
 }

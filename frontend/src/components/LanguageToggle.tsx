@@ -23,8 +23,8 @@ export function LanguageToggle() {
     const currentIndex = languages.indexOf(currentLanguage);
     const nextIndex = (currentIndex + 1) % languages.length;
     const nextLanguage = languages[nextIndex];
-  
-    i18n.changeLanguage(languages[nextIndex]);
+
+    i18n.changeLanguage(nextLanguage);
     localStorage.setItem(STORAGE_KEY, nextLanguage);
   };
 
