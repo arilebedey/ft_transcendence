@@ -8,6 +8,13 @@
       "when": 1772961642917,
       "tag": "0000_init_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771800390316,
+      "tag": "0002_outstanding_celestials",
+      "breakpoints": true
     }
   ]
 }

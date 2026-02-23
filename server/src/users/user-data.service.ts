@@ -45,4 +45,20 @@ export class UserDataService {
 
     return result[0];
   }
+
+  async updateAvatarUrl(userId: string, avatarUrl: string | null) {
+    const result = await this.db
+      .update(userData)
+      .set({ avatarUrl, updatedAt: new Date() })
+      .where(eq(userData.id, userId))
+      .returning();
+
+    if (result.length === 0) {
+      const msg = `User data not found for userId: ${userId}`;
+      this.logger.warn(msg);
+      throw new NotFoundException(msg);
+    }
+
+    return result[0];
+  }
 }

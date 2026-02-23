@@ -26,12 +26,14 @@ export function UserCard() {
     bio: "Tasty crousty, 67, pied de 92i el mordjene, doro party a chatelet, labubu, vody, esprit kaizen, en goumin, j'en parlerais dans mon livre, squeezie",
     followers: 123,
     following: 456,
+    avatarUrl: null as string | null,
   });
 
   const isOwnProfile = true;
   const isFollowing = false;
   const [showEditPopup, setShowEditPopup] = useState(false);
-  const [showEditPreferencesPopup, setShowEditPreferencesPopup] = useState(false);
+  const [showEditPreferencesPopup, setShowEditPreferencesPopup] =
+    useState(false);
 
   const onToggleFollow = () => {
     // Implement follow/unfollow logic here
@@ -47,7 +49,10 @@ export function UserCard() {
       <div className="flex items-center justify-between w-full gap-8">
         {/* Avatar + name + bio */}
         <div className="flex items-center space-x-4 flex-1">
-          <UserAvatar name={currentUser.name} />
+          <UserAvatar
+            name={currentUser.name}
+            avatarUrl={currentUser.avatarUrl}
+          />
           <UserInfo name={currentUser.name} bio={currentUser.bio} />
         </div>
         {/* Edit profile button / follow/unfollow */}
@@ -75,7 +80,9 @@ export function UserCard() {
         />
       )}
       {showEditPreferencesPopup && (
-        <EditPreferencesPopup onClose={() => setShowEditPreferencesPopup(false)} />
+        <EditPreferencesPopup
+          onClose={() => setShowEditPreferencesPopup(false)}
+        />
       )}
     </div>
   );
