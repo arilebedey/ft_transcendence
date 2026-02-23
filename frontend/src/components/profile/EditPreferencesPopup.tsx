@@ -2,8 +2,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
-import { Trees, Moon, Sun, Globe } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
+import { authClient } from "@/lib/auth-client";
 
 const themes: { value: Theme; label: string; icon: React.ReactNode }[] = [
   { value: "forest", label: "Forest", icon: <Trees className="h-4 w-4" /> },
@@ -26,6 +28,7 @@ interface EditPreferencesPopupProps {
 
 export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const { theme, setTheme } = useThemeStore();
 
   const currentLanguage = i18n.language.toUpperCase() as Language;
@@ -33,6 +36,11 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
   const handleLanguageSelect = (lang: Language) => {
     i18n.changeLanguage(lang);
     localStorage.setItem(STORAGE_KEY, lang);
+  };
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    navigate("/");
   };
 
   return (
@@ -88,7 +96,15 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
           </div>
         </CardContent>
 
-        <CardFooter className="justify-center py-4">
+        <CardFooter className="justify-between gap-4 py-4">
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <LogOut className="h-4 w-4" />
+            {t("Logout")}
+          </Button>
           <Button onClick={onClose} className="px-8">
             {t("Close")}
           </Button>
