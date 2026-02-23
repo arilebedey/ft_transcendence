@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
 interface EditProfilePopupProps {
-  currentUser: { name: string; bio: string };
-  onSave: (updatedUser: { name: string; bio: string }) => void;
+  currentUser: { name: string; bio: string; avatarUrl?: string | null };
+  onSave: (updatedUser: {
+    name: string;
+    bio: string;
+    avatarUrl?: string | null;
+  }) => void;
   onClose: () => void;
 }
 
@@ -19,9 +24,12 @@ export function EditProfilePopup({
   const { t } = useTranslation();
   const [name, setName] = useState(currentUser.name);
   const [bio, setBio] = useState(currentUser.bio);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    currentUser.avatarUrl ?? null,
+  );
 
   const handleSave = () => {
-    onSave({ name, bio });
+    onSave({ name, bio, avatarUrl });
     onClose();
   };
 
@@ -34,6 +42,15 @@ export function EditProfilePopup({
 
       <Card className="relative w-120 max-h-150  shadow-lg z-50 flex flex-col pt-6">
         <CardContent className="space-y-4 px-6">
+          {/* Avatar upload */}
+          <div className="flex justify-center">
+            <AvatarUpload
+              name={name}
+              currentAvatarUrl={avatarUrl}
+              onUploaded={(newUrl) => setAvatarUrl(newUrl)}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="edit-name">{t("Name")}</Label>
             <Input

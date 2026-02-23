@@ -17,6 +17,7 @@ export const userData = pgTable('user_data', {
   language: text('language', { enum: ['en', 'fr', 'it', 'es'] })
     .default('en')
     .notNull(),
+  avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()

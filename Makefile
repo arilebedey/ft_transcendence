@@ -10,7 +10,7 @@ build:
 
 up:
 	docker compose up -d
-	@echo "🎯 Services running (postgres & pgadmin)"
+	@echo "🎯 Services running (postgres, pgadmin & minio)"
 
 install:
 	cd server && npm install && cd ../frontend && npm install && cd ..
