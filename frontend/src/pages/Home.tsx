@@ -23,100 +23,69 @@ import { useTranslation } from "react-i18next";
 
 interface Post {
   id: number;
-  author: string;
-  username: string;
+  link: string;
   content: string;
+  createdAt: string;
+  userId: string;
   likes: number;
-  comments: number;
-  time: string;
 }
-
-/*useEffect(() => {
-  const fetchPosts = async () => {
-    const res = await fetch("http://localhost:5173/posts");
-    const data = await res.json();
-    setPosts(data);
-  };
-
-  fetchPosts();
-}, []);*/
-
-const STUB_POSTS: Post[] = [
-  {
-    id: 1,
-    author: "Alex Chen",
-    username: "@alexc",
-    content:
-      "Just shipped a new feature! The team worked incredibly hard on this. Can't wait to see what you all think!",
-    likes: 42,
-    comments: 8,
-    time: "2h",
-  },
-  {
-    id: 2,
-    author: "Sarah Miller",
-    username: "@sarahm",
-    content:
-      "Beautiful sunset from the office today. Sometimes you need to stop and appreciate the little things.",
-    likes: 128,
-    comments: 23,
-    time: "4h",
-  },
-  {
-    id: 3,
-    author: "Jordan Lee",
-    username: "@jordanl",
-    content:
-      "Reading through some great discussions on AI ethics. The future is going to be interesting. What are your thoughts?",
-    likes: 67,
-    comments: 31,
-    time: "6h",
-  },
-];
 
 export const Home = () => {
   const MAX_POST_LENGTH = 300;
   const [postFormOpen, setPostFormOpen] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
   const { t } = useTranslation();
-  const [posts, setPosts] = useState<Post[]>(STUB_POSTS);
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const res = await fetch("/posts");
+      if (!res.ok) {
+        console.error("Erreur fetch posts");
+        return;
+      }
+  
+      const data = await res.json();
+      setPosts(data);
+    };
+  
+    fetchPosts();
+  }, []);
 
   const handleToggleForm = () => setPostFormOpen((prev) => !prev);
 
-  const handleConfirmPost = () => {
-    if (!newPostContent) return alert("Le contenu est vide");
-
-    const newPost: Post = {
-      id: posts.length + 1,
-      author: "Current User",
-      username: "@me",
-      content: newPostContent,
-      likes: 0,
-      comments: 0,
-      time: "Just now",
-    };
-    setPosts([newPost, ...posts]);
-    /*const token = localStorage.getItem("access_token");
-
-    const response = await fetch("http://localhost:3000/posts", {
+  const handleConfirmPost = async () => {
+    if (!newPostContent) {
+      alert("Le contenu est vide");
+      return;
+    }
+  
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      alert("Non authentifié");
+      return;
+    }
+  
+    const response = await fetch("/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify({
-        link: "", // si tu ne l'utilises pas encore
+        link: "https://example.com",
         content: newPostContent,
       }),
     });
   
     if (!response.ok) {
-      return alert("Erreur création post");
+      alert("Erreur création post");
+      return;
     }
   
     const createdPost = await response.json();
   
-    setPosts((prev) => [createdPost, ...prev]);*/
+    setPosts((prev) => [createdPost, ...prev]);
     setNewPostContent("");
     setPostFormOpen(false);
   };
@@ -178,23 +147,8 @@ export const Home = () => {
         {posts.map((post, index) => (
           <PostCard
             key={post.id}
+            post={post}
             index={index}
-            author={post.author}
-            username={post.username}
-            avatar={
-              <Avatar className="h-10 w-10">
-                <AvatarFallback className="bg-secondary">
-                  {post.author
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-            }
-            content={post.content}
-            likes={post.likes}
-            comments={post.comments}
-            time={post.time}
             onLike={() => handleLike(post.id)}
             onComment={() => handleComment(post.id)}
             onShare={() => handleShare(post.id)}

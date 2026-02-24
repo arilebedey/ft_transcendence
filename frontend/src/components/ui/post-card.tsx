@@ -20,17 +20,21 @@
 import { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface PostCardProps {
-  author: string;
-  username: string;
-  avatar?: ReactNode;
+interface Post {
+  id: number;
+  link: string;
   content: string;
+  createdAt: string;
+  userId: string;
   likes: number;
-  comments: number;
-  time: string;
+}
+
+interface PostCardProps {
+  post: Post;
   onLike?: () => void;
   onComment?: () => void;
   onShare?: () => void;
@@ -39,19 +43,15 @@ interface PostCardProps {
 }
 
 export function PostCard({
-  author,
-  username,
-  avatar,
-  content,
-  likes,
-  comments,
-  time,
+  post,
   onLike,
   onComment,
   onShare,
   index = 0,
   className,
 }: PostCardProps) {
+  const formattedTime = new Date(post.createdAt).toLocaleString();
+
   return (
     <Card
       className={cn("animate-fade-in card-hover", className)}
@@ -59,21 +59,48 @@ export function PostCard({
     >
       <CardContent className="pt-4">
         <div className="flex gap-3">
-          {avatar && <div className="shrink-0">{avatar}</div>}
+
+          <div className="shrink-0">
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className="bg-secondary">
+                {post.userId.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </div>
 
           <div className="flex-1 min-w-0">
-            {/* Header: author, username, time, menu */}
+            {/* Header */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold">{author}</span>
-              <span className="text-muted-foreground text-sm">{username}</span>
-              <span className="text-muted-foreground text-sm">• {time}</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto rounded-full">
+              <span className="font-semibold">{post.userId}</span>
+              <span className="text-muted-foreground text-sm">
+                • {formattedTime}
+              </span>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 ml-auto rounded-full"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Content */}
-            <p className="mt-2 text-foreground leading-relaxed">{content}</p>
+            <p className="mt-2 text-foreground leading-relaxed">
+              {post.content}
+            </p>
+
+            {/* Optional link */}
+            {post.link && (
+              <a
+                href={post.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary text-sm mt-2 block"
+              >
+                {post.link}
+              </a>
+            )}
 
             {/* Actions */}
             <div className="flex items-center gap-6 mt-4">
@@ -84,8 +111,9 @@ export function PostCard({
                 onClick={onLike}
               >
                 <Heart className="h-4 w-4" />
-                <span>{likes}</span>
+                <span>{post.likes}</span>
               </Button>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -93,8 +121,8 @@ export function PostCard({
                 onClick={onComment}
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>{comments}</span>
               </Button>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -104,6 +132,7 @@ export function PostCard({
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
+
           </div>
         </div>
       </CardContent>
