@@ -13,6 +13,7 @@
  */
 
 import { useState } from "react";
+import { useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -29,6 +30,16 @@ interface Post {
   comments: number;
   time: string;
 }
+
+/*useEffect(() => {
+  const fetchPosts = async () => {
+    const res = await fetch("http://localhost:5173/posts");
+    const data = await res.json();
+    setPosts(data);
+  };
+
+  fetchPosts();
+}, []);*/
 
 const STUB_POSTS: Post[] = [
   {
@@ -64,15 +75,48 @@ const STUB_POSTS: Post[] = [
 ];
 
 export const Home = () => {
+  const MAX_POST_LENGTH = 300;
   const [postFormOpen, setPostFormOpen] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
   const { t } = useTranslation();
+  const [posts, setPosts] = useState<Post[]>(STUB_POSTS);
 
   const handleToggleForm = () => setPostFormOpen((prev) => !prev);
 
   const handleConfirmPost = () => {
     if (!newPostContent) return alert("Le contenu est vide");
-    console.log("Post créé :", newPostContent);
+
+    const newPost: Post = {
+      id: posts.length + 1,
+      author: "Current User",
+      username: "@me",
+      content: newPostContent,
+      likes: 0,
+      comments: 0,
+      time: "Just now",
+    };
+    setPosts([newPost, ...posts]);
+    /*const token = localStorage.getItem("access_token");
+
+    const response = await fetch("http://localhost:3000/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        link: "", // si tu ne l'utilises pas encore
+        content: newPostContent,
+      }),
+    });
+  
+    if (!response.ok) {
+      return alert("Erreur création post");
+    }
+  
+    const createdPost = await response.json();
+  
+    setPosts((prev) => [createdPost, ...prev]);*/
     setNewPostContent("");
     setPostFormOpen(false);
   };
@@ -104,17 +148,23 @@ export const Home = () => {
             <CardContent className="pt-0">
               <textarea
                 rows={3}
+                maxLength={MAX_POST_LENGTH}
                 className="w-full p-3 border rounded-md resize-none focus:outline-none focus:ring-2 bg-transparent"
                 value={newPostContent}
                 onChange={(e) => setNewPostContent(e.target.value)}
               />
+              <div className="text-right text-sm text-muted-foreground mt-1">
+                {newPostContent.length} / {MAX_POST_LENGTH}
+              </div>
             </CardContent>
 
             <CardFooter className="pt-0 justify-end gap-2">
               <Button variant="outline" onClick={() => setPostFormOpen(false)}>
                 {t("Cancel")}
               </Button>
-              <Button onClick={handleConfirmPost}>{t("Confirm")}</Button>
+              <Button onClick={handleConfirmPost}>
+                {t("Confirm")}
+              </Button>
             </CardFooter>
           </Card>
         </div>
@@ -125,7 +175,7 @@ export const Home = () => {
           postFormOpen ? "mt-4" : "mt-0"
         }`}
       >
-        {STUB_POSTS.map((post, index) => (
+        {posts.map((post, index) => (
           <PostCard
             key={post.id}
             index={index}
