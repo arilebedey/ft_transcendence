@@ -11,11 +11,20 @@ import { useTranslation } from "react-i18next";
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required."),
   email: z.email("Invalid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters."),
+  password: z.string()
+	.min(12, "Password must be at least 12 characters.")
+	.regex(/[A-Z]/, "Must contain one uppercase")
+	.regex(/[0-9]/, "Must contain one number")
+	.regex(/[^a-zA-Z0-9]/, "Must contain one special character"),
+  password_verification: z.string(),
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms.",
   }),
+}).refine((data) => data.password === data.password_verification, {
+	message: "Password doesn't match",
+	path: ["password_verification"],
 });
+
 
 export default function SignUpForm() {
   const { t } = useTranslation();
@@ -26,6 +35,7 @@ export default function SignUpForm() {
       name: "",
       email: "",
       password: "",
+	  password_verification="",
       termsAccepted: false,
     },
     validators: {
@@ -153,6 +163,42 @@ export default function SignUpForm() {
           );
         }}
       />
+
+	  <form.Field
+	  	name="password verification"
+		children={(field) => {
+			const errors = field.state.meta.errors;
+			const isInvalid = errors.length > 0;
+
+			return (
+				<div className="space-y-2">
+					<Label htmlFor{field.name}>{t("Confirm password")}</Label>
+					<Input
+						id={field.name}
+						name={field.name}
+						type="password"
+						value={field.state.value}
+						onBlur={field.handleBlur}
+						onChange={(e) => field.handleChange(e.target.value)}
+						onPaste={(e) => {
+							e.preventDefault();
+							// Alert is optional, tends to worsen the UX
+							alert.("Frefo t abuses retape le mdp fdp")
+						  }}
+						placeholder="••••••••"
+						aria-invalid={isInvalid}
+					/>
+					{isInvalid && (
+						<p className="text-sm text-destructive">
+							{typeof errors[0] === "string"
+							? errors[0]
+							: errors[0]?.message}
+						</p>
+					)}
+				</div>
+			);
+		}}
+	  />
 
       {submitError && (
         <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md">
