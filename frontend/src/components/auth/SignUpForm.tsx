@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const signUpSchema = z.object({
   name: z.string().min(1, "Name is required."),
-  email: z.email("Invalid email address."),
+  email: z.string().email("Invalid email address."),
   password: z.string()
 	.min(12, "Password must be at least 12 characters.")
 	.regex(/[A-Z]/, "Must contain one uppercase")
@@ -35,7 +35,7 @@ export default function SignUpForm() {
       name: "",
       email: "",
       password: "",
-	  password_verification="",
+      password_verification: "",
       termsAccepted: false,
     },
     validators: {
@@ -164,15 +164,15 @@ export default function SignUpForm() {
         }}
       />
 
-	  <form.Field
-	  	name="password verification"
-		children={(field) => {
+    <form.Field
+     	name="password_verification"
+   	children={(field) => {
 			const errors = field.state.meta.errors;
 			const isInvalid = errors.length > 0;
 
 			return (
 				<div className="space-y-2">
-					<Label htmlFor{field.name}>{t("Confirm password")}</Label>
+     			<Label htmlFor={field.name}>{t("Confirm password")}</Label>
 					<Input
 						id={field.name}
 						name={field.name}
@@ -180,11 +180,10 @@ export default function SignUpForm() {
 						value={field.state.value}
 						onBlur={field.handleBlur}
 						onChange={(e) => field.handleChange(e.target.value)}
-						onPaste={(e) => {
-							e.preventDefault();
-							// Alert is optional, tends to worsen the UX
-							alert.("Frefo t abuses retape le mdp fdp")
-						  }}
+       			onPaste={(e) => {
+       				e.preventDefault();
+       				// prevent pasting into confirmation field to encourage manual retype
+       			  }}
 						placeholder="••••••••"
 						aria-invalid={isInvalid}
 					/>
