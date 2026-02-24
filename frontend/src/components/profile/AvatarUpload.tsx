@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { Camera } from "lucide-react";
+import { profileMeQueryKey } from "@/lib/profile-api";
 
 interface AvatarUploadProps {
   name: string;
@@ -32,6 +33,7 @@ export function AvatarUpload({
   currentAvatarUrl,
   onUploaded,
 }: AvatarUploadProps) {
+  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
 
@@ -40,6 +42,7 @@ export function AvatarUpload({
     onSuccess: (data) => {
       // Only update avatar AFTER server confirms
       onUploaded(data.avatarUrl);
+      queryClient.invalidateQueries({ queryKey: profileMeQueryKey });
       setLocalPreviewUrl(null);
     },
     onError: (error) => {

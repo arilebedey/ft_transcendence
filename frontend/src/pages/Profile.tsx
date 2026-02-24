@@ -1,32 +1,50 @@
-import { authClient } from "@/lib/auth-client";
 import { UserCard } from "@/components/profile/UserCard";
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getProfileMe, profileMeQueryKey } from "@/lib/profile-api";
 
 export function Profile() {
-  const sessionResult = authClient.useSession();
-  const session = sessionResult?.data;
+  const {
+    data: profile,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: profileMeQueryKey,
+    queryFn: getProfileMe,
+  });
 
-  const handleSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onError: (ctx) => {
-          if (ctx.error.status === 400) {
-            console.error("Cannot sign out fake session. -Ari");
-          }
-        },
-      },
-    });
-  };
+  if (isPending) {
+    return (
+      <div className="flex justify-center min-h-screen p-6">
+        <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
+          <div className="w-full px-10 py-8 text-muted-foreground">
+            Loading profile...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !profile) {
+    return (
+      <div className="flex justify-center min-h-screen p-6">
+        <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
+          <div className="w-full px-10 py-8 text-destructive">
+            {error instanceof Error ? error.message : "Unable to load profile"}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center min-h-screen p-6">
       <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
         {/* User card with buttons */}
         <div className="w-full px-10 py-8">
-          <UserCard />
+          <UserCard profile={profile} />
         </div>
       </div>
-      {/* <Button onClick={handleSignOut}>Sign Out</Button> */}
     </div>
   );
 }

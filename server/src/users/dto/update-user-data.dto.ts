@@ -6,6 +6,10 @@ export class UpdateUserDataDto {
   name?: string;
 
   @IsOptional()
+  @IsString()
+  bio?: string;
+
+  @IsOptional()
   @IsIn(['light', 'dark-blue', 'forest'])
   theme?: 'light' | 'dark-blue' | 'forest';
 
