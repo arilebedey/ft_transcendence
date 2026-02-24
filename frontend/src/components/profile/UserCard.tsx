@@ -1,33 +1,28 @@
-import { authClient } from "@/lib/auth-client";
-import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EditProfilePopup } from "@/components/profile/EditProfilePopup";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { UserInfo } from "@/components/profile/UserInfo";
 import { UserStats } from "@/components/profile/UserStats";
 import { UserActionButton } from "@/components/profile/UserActionButton";
 import { EditPreferencesPopup } from "@/components/profile/EditPreferencesPopup";
+import {
+  profileMeQueryKey,
+  type ProfileUserData,
+  updateProfileMe,
+} from "@/lib/profile-api";
 
 interface UserCardProps {
-  isOwnProfile?: boolean;
-  isFollowing?: boolean;
-  onToggleFollow?: () => void;
+  profile: ProfileUserData;
 }
 
-export function UserCard() {
-  const navigate = useNavigate();
-  const sessionResult = authClient.useSession();
-  const session = sessionResult?.data;
+export function UserCard({ profile }: UserCardProps) {
+  const queryClient = useQueryClient();
+  const [bio, setBio] = useState(profile.bio ?? "");
 
-  // Fake user data (will be updated via edit profile popup)
-  const [currentUser, setCurrentUser] = useState({
-    name: "theaux",
-    email: "theauxperso@gmail.com",
-    bio: "Tasty crousty, 67, pied de 92i el mordjene, doro party a chatelet, labubu, vody, esprit kaizen, en goumin, j'en parlerais dans mon livre, squeezie",
-    followers: 123,
-    following: 456,
-    avatarUrl: null as string | null,
-  });
+  useEffect(() => {
+    setBio(profile.bio ?? "");
+  }, [profile.bio]);
 
   const isOwnProfile = true;
   const isFollowing = false;
@@ -39,21 +34,24 @@ export function UserCard() {
     // Implement follow/unfollow logic here
   };
 
-  const handleSignOut = async () => {
-    await authClient.signOut();
-    navigate("/");
-  };
+  const { mutate: saveProfile, isPending: isSaving } = useMutation({
+    mutationFn: updateProfileMe,
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(profileMeQueryKey, updatedProfile);
+      setShowEditPopup(false);
+    },
+    onError: (error) => {
+      console.error("Profile update failed:", error);
+    },
+  });
 
   return (
     <div className="flex flex-col w-full gap-6">
       <div className="flex items-center justify-between w-full gap-8">
         {/* Avatar + name + bio */}
         <div className="flex items-center space-x-4 flex-1">
-          <UserAvatar
-            name={currentUser.name}
-            avatarUrl={currentUser.avatarUrl}
-          />
-          <UserInfo name={currentUser.name} bio={currentUser.bio} />
+          <UserAvatar name={profile.name} avatarUrl={profile.avatarUrl} />
+          <UserInfo name={profile.name} bio={bio} />
         </div>
         {/* Edit profile button / follow/unfollow */}
         <UserActionButton
@@ -65,17 +63,23 @@ export function UserCard() {
         />
       </div>
       {/* Stats */}
-      <UserStats
-        followers={currentUser.followers}
-        following={currentUser.following}
-      />
+      <UserStats followers={0} following={0} />
 
       {showEditPopup && (
         <EditProfilePopup
-          currentUser={currentUser}
-          onSave={(updatedUser) =>
-            setCurrentUser({ ...currentUser, ...updatedUser })
-          }
+          currentUser={{
+            name: profile.name,
+            bio,
+            avatarUrl: profile.avatarUrl,
+          }}
+          isSaving={isSaving}
+          onSave={(updatedUser) => {
+            setBio(updatedUser.bio);
+            saveProfile({
+              name: updatedUser.name,
+              bio: updatedUser.bio,
+            });
+          }}
           onClose={() => setShowEditPopup(false)}
         />
       )}

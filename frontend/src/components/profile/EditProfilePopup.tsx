@@ -13,12 +13,14 @@ interface EditProfilePopupProps {
     bio: string;
     avatarUrl?: string | null;
   }) => void;
+  isSaving?: boolean;
   onClose: () => void;
 }
 
 export function EditProfilePopup({
   currentUser,
   onSave,
+  isSaving = false,
   onClose,
 }: EditProfilePopupProps) {
   const { t } = useTranslation();
@@ -30,7 +32,6 @@ export function EditProfilePopup({
 
   const handleSave = () => {
     onSave({ name, bio, avatarUrl });
-    onClose();
   };
 
   return (
@@ -74,10 +75,15 @@ export function EditProfilePopup({
         </CardContent>
 
         <CardFooter className="justify-center gap-3 py-3">
-          <Button variant="outline" onClick={onClose} className="px-6">
+          <Button
+            variant="outline"
+            onClick={onClose}
+            className="px-6"
+            disabled={isSaving}
+          >
             {t("Close")}
           </Button>
-          <Button onClick={handleSave} className="px-6">
+          <Button onClick={handleSave} className="px-6" disabled={isSaving}>
             {t("save")}
           </Button>
         </CardFooter>
