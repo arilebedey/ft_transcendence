@@ -20,6 +20,7 @@
 import { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LikeToggle } from "@/components/LikeToggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -107,16 +108,10 @@ export function PostCard({
 
             {/* Actions */}
             <div className="flex items-center gap-6 mt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-muted-foreground hover:text-primary"
-                onClick={onLike}
-              >
-                <Heart className="h-4 w-4" />
-                <span>{post.likes}</span>
-              </Button>
-
+              <LikeToggle
+                likes={post.likes}
+                onToggle={() => onLike && onLike()}
+              />
               <Button
                 variant="ghost"
                 size="sm"

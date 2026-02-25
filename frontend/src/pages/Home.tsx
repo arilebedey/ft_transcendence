@@ -28,6 +28,7 @@
     content: string;
     createdAt: string;
     likes: number;
+    likedByUser?: boolean;
     author: {
       id: string;
       name: string;
