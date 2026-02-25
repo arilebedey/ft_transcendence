@@ -66,13 +66,13 @@
 
     const handleConfirmPost = async () => {
       if (!newPostContent) {
-        alert("Le contenu est vide");
+        alert(t("EmptyContent"));
         return;
       }
   
       const extractedLink = extractLink(newPostContent);
       if (!extractedLink) {
-        alert("Vous devez inclure un lien dans le post.");
+        alert(t("LinkInclusion"));
         return;
       }
       const contentWithoutLink = newPostContent.replace(extractedLink, "").trim();
