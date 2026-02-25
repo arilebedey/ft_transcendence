@@ -29,8 +29,11 @@ interface Post {
   link: string;
   content: string;
   createdAt: string;
-  userId: string;
   likes: number;
+  author: {
+    id: string;
+    name: string;
+  };
 }
 
 interface PostCardProps {
@@ -63,7 +66,7 @@ export function PostCard({
           <div className="shrink-0">
             <Avatar className="h-10 w-10">
               <AvatarFallback className="bg-secondary">
-                {post.userId.slice(0, 2).toUpperCase()}
+                {post.author.name.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -71,7 +74,7 @@ export function PostCard({
           <div className="flex-1 min-w-0">
             {/* Header */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold">{post.userId}</span>
+              <span className="font-semibold">{post.author.name}</span>
               <span className="text-muted-foreground text-sm">
                 • {formattedTime}
               </span>
