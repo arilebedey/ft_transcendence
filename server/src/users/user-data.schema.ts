@@ -18,6 +18,7 @@ export const userData = pgTable('user_data', {
     .default('en')
     .notNull(),
   avatarUrl: text('avatar_url'),
+  bio: text('bio'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at')
     .defaultNow()

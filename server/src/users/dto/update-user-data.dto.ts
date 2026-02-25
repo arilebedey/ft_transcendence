@@ -15,5 +15,5 @@ export class UpdateUserDataDto {
 
   @IsOptional()
   @IsIn(['en', 'fr', 'es', 'it'])
-  language?: 'en';
+  language?: 'en' | 'fr' | 'es' | 'it';
 }
