@@ -32,6 +32,33 @@ export async function getProfileMe(): Promise<ProfileUserData> {
   return response.json();
 }
 
+export interface PublicProfileData {
+  id: string;
+  name: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  createdAt: string;
+}
+
+export const profileByNameQueryKey = (name: string) =>
+  ["profile", "user", name] as const;
+
+export async function getProfileByName(
+  name: string,
+): Promise<PublicProfileData> {
+  const response = await fetch(`/api/users/${encodeURIComponent(name)}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.message || "User not found");
+  }
+
+  return response.json();
+}
+
 export async function updateProfileMe(
   payload: UpdateProfilePayload,
 ): Promise<ProfileUserData> {

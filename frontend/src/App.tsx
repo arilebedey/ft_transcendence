@@ -12,7 +12,6 @@ import { Dashboard } from "@/pages/Dashboard";
 
 const queryClient = new QueryClient();
 
-
 export const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -46,7 +45,7 @@ function AppContentWithNav() {
           }
         />
         <Route
-          path="/profile"
+          path="/profile/:username?"
           element={
             <ProtectedRoute>
               <Profile />

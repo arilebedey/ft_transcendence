@@ -61,4 +61,24 @@ export class UserDataService {
 
     return result[0];
   }
+
+  async getPublicByName(name: string) {
+    const result = await this.db
+      .select({
+        id: userData.id,
+        name: userData.name,
+        bio: userData.bio,
+        avatarUrl: userData.avatarUrl,
+        createdAt: userData.createdAt,
+      })
+      .from(userData)
+      .where(eq(userData.name, name))
+      .limit(1);
+
+    if (result.length === 0) {
+      throw new NotFoundException(`User not found: ${name}`);
+    }
+
+    return result[0];
+  }
 }
