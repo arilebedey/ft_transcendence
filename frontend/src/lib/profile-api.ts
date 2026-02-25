@@ -1,4 +1,21 @@
+import { z } from "zod";
+
 export const profileMeQueryKey = ["profile", "me"] as const;
+
+// Username validation: 3-12 chars, lowercase letters/numbers/underscore, can't start with underscore
+export const usernameSchema = z
+  .string()
+  .min(3, "Username minimum 3 caractères")
+  .max(12, "Username maximum 12 caractères")
+  .regex(
+    /^[a-z0-9][a-z0-9_]*$/,
+    "Lettres minuscules, chiffres et underscore uniquement (pas de majuscules ni caractères spéciaux)",
+  )
+  .refine(
+    (name) => !name.startsWith("_"),
+    "Username ne peut pas commencer par un underscore",
+  )
+  .transform((name) => name.toLowerCase());
 
 export interface ProfileUserData {
   id: string;
