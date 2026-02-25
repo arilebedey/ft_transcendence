@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
+import { usernameSchema } from "@/lib/profile-api";
 
 interface EditProfilePopupProps {
   currentUser: { name: string; bio: string; avatarUrl?: string | null };
@@ -29,9 +30,21 @@ export function EditProfilePopup({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     currentUser.avatarUrl ?? null,
   );
+  const [usernameError, setUsernameError] = useState<string | null>(null);
 
   const handleSave = () => {
-    onSave({ name, bio, avatarUrl });
+    // Validate username with Zod
+    const result = usernameSchema.safeParse(name.toLowerCase());
+
+    if (!result.success) {
+      const errors = result.error.flatten().formErrors;
+      setUsernameError(errors[0] || "Invalid username");
+      return;
+    }
+
+    // Clear error on success
+    setUsernameError(null);
+    onSave({ name: result.data, bio, avatarUrl });
   };
 
   return (
@@ -57,9 +70,16 @@ export function EditProfilePopup({
             <Input
               id="edit-name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setUsernameError(null);
+              }}
               placeholder={"John Doe"}
+              className={usernameError ? "border-red-500" : ""}
             />
+            {usernameError && (
+              <p className="text-sm text-red-500">{usernameError}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="edit-bio">{"Bio"}</Label>
