@@ -15,6 +15,13 @@
       "when": 1771800390316,
       "tag": "0002_outstanding_celestials",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1771950139521,
+      "tag": "0003_workable_invaders",
+      "breakpoints": true
     }
   ]
 }

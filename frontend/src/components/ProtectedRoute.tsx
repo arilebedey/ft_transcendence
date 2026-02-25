@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "@/lib/auth-client";
+import { UserPreferencesSync } from "@/components/UserPreferencesSync";
 
 type Props = {
   children: React.ReactNode;
@@ -26,5 +27,5 @@ export function ProtectedRoute({ children }: Props) {
     return null;
   }
 
-  return <>{children}</>;
+  return <>{children}<UserPreferencesSync /></>;
 }

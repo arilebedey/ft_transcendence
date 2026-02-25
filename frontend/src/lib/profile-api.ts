@@ -4,6 +4,7 @@ export interface ProfileUserData {
   id: string;
   name: string;
   email: string;
+  bio: string | null;
   theme: "light" | "dark-blue" | "forest";
   language: "en" | "fr" | "es" | "it";
   avatarUrl: string | null;
@@ -13,6 +14,8 @@ export interface ProfileUserData {
 
 export interface UpdateProfilePayload {
   name?: string;
+  bio?: string;
+  language?: "en" | "fr" | "es" | "it";
 }
 
 export async function getProfileMe(): Promise<ProfileUserData> {
