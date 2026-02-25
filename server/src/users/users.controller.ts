@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UploadedFile,
@@ -73,5 +74,10 @@ export class UsersController {
   @Get('session')
   getSession() {
     return { message: 'Called /users/session endpoint!' };
+  }
+
+  @Get(':name')
+  async getPublicProfile(@Param('name') name: string) {
+    return this.userDataService.getPublicByName(name);
   }
 }
