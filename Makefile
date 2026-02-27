@@ -1,6 +1,6 @@
 SECRETS_DIR = ./secrets
 
-all: setup build up migrate
+all: setup build up
 
 setup:
 	@bash scripts/setup-secrets.sh
@@ -11,6 +11,9 @@ build:
 up:
 	docker compose up -d
 	@echo "🎯 Services running (postgres & pgadmin)"
+
+install:
+	cd server && npm install && cd ../frontend && npm install && cd ..
 
 regenerate:
 	rm -rf server/drizzle && cd server && npx drizzle-kit generate --name=init_tables  && cd ..
@@ -25,7 +28,7 @@ clean: down
 	docker compose down -v
 	@echo "💥 Volumes cleaned (data gone)"
 
-re: clean all regenerate migrate
+re: clean regenerate all install migrate
 
 logs:
 	docker compose logs -f
