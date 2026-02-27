@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
-import { usernameSchema } from "@/lib/profile-api";
+import { usernameSchema, bioSchema } from "@/lib/profile-api";
 
 interface EditProfilePopupProps {
   currentUser: { name: string; bio: string; avatarUrl?: string | null };
@@ -31,20 +31,31 @@ export function EditProfilePopup({
     currentUser.avatarUrl ?? null,
   );
   const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [bioError, setBioError] = useState<string | null>(null);
 
   const handleSave = () => {
     // Validate username with Zod
-    const result = usernameSchema.safeParse(name.toLowerCase());
+    const usernameResult = usernameSchema.safeParse(name.toLowerCase());
 
-    if (!result.success) {
-      const errors = result.error.flatten().formErrors;
+    if (!usernameResult.success) {
+      const errors = usernameResult.error.flatten().formErrors;
       setUsernameError(errors[0] || "Invalid username");
       return;
     }
 
-    // Clear error on success
+    // Validate bio with Zod
+    const bioResult = bioSchema.safeParse(bio);
+
+    if (!bioResult.success) {
+      const errors = bioResult.error.flatten().formErrors;
+      setBioError(errors[0] || "Invalid bio");
+      return;
+    }
+
+    // Clear errors on success
     setUsernameError(null);
-    onSave({ name: result.data, bio, avatarUrl });
+    setBioError(null);
+    onSave({ name: usernameResult.data, bio: bioResult.data, avatarUrl });
   };
 
   return (
@@ -82,15 +93,28 @@ export function EditProfilePopup({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="edit-bio">{"Bio"}</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="edit-bio">{"Bio"}</Label>
+              <span className="text-sm text-muted-foreground">
+                {bio.length}/160
+              </span>
+            </div>
             <textarea
               id="edit-bio"
               value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              onChange={(e) => {
+                setBio(e.target.value);
+                setBioError(null);
+              }}
               placeholder={"Tell us about yourself..."}
-              className="flex min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className={`flex min-h-20 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                bioError ? "border-red-500" : "border-input"
+              }`}
               rows={4}
             />
+            {bioError && (
+              <p className="text-sm text-red-500">{bioError}</p>
+            )}
           </div>
         </CardContent>
 

@@ -17,6 +17,8 @@ export const usernameSchema = z
   )
   .transform((name) => name.toLowerCase());
 
+export const bioSchema = z.string().max(160, "Bio maximum 160 caractères");
+
 export interface ProfileUserData {
   id: string;
   name: string;
