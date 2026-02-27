@@ -17,13 +17,14 @@
  * - index?: number - Index pour animation staggered
  */
 
-import { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LikeToggle } from "@/components/LikeToggle";
+import { DropDownList } from "@/components/dropdown-list";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
+import { MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface Post {
   id: number;
@@ -39,22 +40,27 @@ interface Post {
 
 interface PostCardProps {
   post: Post;
+  currentUserId?: string;
   onLike?: () => void;
   onComment?: () => void;
   onShare?: () => void;
+  onDelete?: (postId: number) => void;
   index?: number;
   className?: string;
 }
 
 export function PostCard({
   post,
+  currentUserId,
   onLike,
   onComment,
   onShare,
+  onDelete,
   index = 0,
   className,
 }: PostCardProps) {
   const formattedTime = new Date(post.createdAt).toLocaleString();
+  const { t } = useTranslation();
 
   return (
     <Card
@@ -73,28 +79,32 @@ export function PostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            {/* Header */}
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold">{post.author.name}</span>
               <span className="text-muted-foreground text-sm">
                 • {formattedTime}
               </span>
 
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 ml-auto rounded-full"
+              <DropDownList
+                currentUserId={currentUserId}
+                authorId={post.author.id}
+                onDelete={() => onDelete?.(post.id)}
               >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
+                <button
+                  onClick={() => {
+                  navigator.clipboard.writeText(post.link);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
+                >
+                {t("CopyLink")}
+                </button>
+              </DropDownList>
             </div>
 
-            {/* Content */}
             <p className="mt-2 text-foreground leading-relaxed">
               {post.content}
             </p>
 
-            {/* Optional link */}
             {post.link && (
               <a
                 href={post.link}
@@ -106,7 +116,6 @@ export function PostCard({
               </a>
             )}
 
-            {/* Actions */}
             <div className="flex items-center gap-6 mt-4">
               <LikeToggle
                 likes={post.likes}

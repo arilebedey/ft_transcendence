@@ -15,12 +15,11 @@
   import { useState } from "react";
   import { useEffect } from "react";
   import { Layout } from "@/components/Layout";
-  import { Avatar, AvatarFallback } from "@/components/ui/avatar";
   import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-  import { authClient } from "@/lib/auth-client";
   import { PostCard } from "@/components/ui/post-card";
   import { Button } from "@/components/ui/button";
   import { useTranslation } from "react-i18next";
+  import { authClient } from "@/lib/auth-client";
 
   interface Post {
     id: number;
@@ -37,8 +36,12 @@
 
   export const Home = () => {
     const MAX_POST_LENGTH = 300;
+    const [submitError, setSubmitError] = useState("");
     const [postFormOpen, setPostFormOpen] = useState(false);
     const [newPostContent, setNewPostContent] = useState("");
+    const sessionResult = authClient.useSession();
+    const session = sessionResult?.data;
+    const currentUserId = session?.user?.id;
     const { t } = useTranslation();
     const [posts, setPosts] = useState<Post[]>([]);
 
@@ -57,26 +60,42 @@
       fetchPosts();
     }, []);
 
-    const handleToggleForm = () => setPostFormOpen((prev) => !prev);
+    function extractLink(text: string): { url?: string; contentWithoutLink: string } {
+      const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/i;
+    
+      const match = urlRegex.exec(text);
+    
+      if (!match) {
+        return { contentWithoutLink: text.trim() };
+      }
+    
+      const rawUrl = match[0];
 
-    function extractLink(text: string): string | undefined {
-      const urlRegex = /(https?:\/\/[^\s]+)/i;
-      const match = text.match(urlRegex);
-      return match ? match[0] : undefined;
+      const contentWithoutLink = text.replace(rawUrl, "").trim();
+
+      let normalizedUrl = rawUrl;
+      if (!/^https?:\/\//i.test(normalizedUrl)) {
+        normalizedUrl = "https://" + normalizedUrl;
+      }
+    
+      return {
+        url: normalizedUrl,
+        contentWithoutLink,
+      };
     }
 
     const handleConfirmPost = async () => {
       if (!newPostContent) {
-        alert(t("EmptyContent"));
+        setSubmitError(t("EmptyContent"));
         return;
       }
   
-      const extractedLink = extractLink(newPostContent);
-      if (!extractedLink) {
-        alert(t("LinkInclusion"));
+      const { url, contentWithoutLink } = extractLink(newPostContent);
+      if (!url) {
+        setSubmitError(t("LinkInclusion"));
         return;
       }
-      const contentWithoutLink = newPostContent.replace(extractedLink, "").trim();
+
       const response = await fetch("/api/posts", {
         method: "POST",
         headers: {
@@ -84,12 +103,12 @@
         },
         body: JSON.stringify({
           content: contentWithoutLink,
-          link: extractedLink,
+          link: url,
         }),
       });
 
       if (!response.ok) {
-        alert("Erreur création post");
+        setSubmitError(t("PostCreationError"));
         return;
       }
     
@@ -112,6 +131,29 @@
       console.log("Share post:", postId);
     };
 
+    async function handleDelete(postId: number) {
+      try {
+        const res = await fetch(`/api/posts/${postId}`, {
+          method: "DELETE",
+        });
+    
+        if (res.status === 403) {
+          console.error("Vous ne pouvez pas supprimer ce post (Forbidden)");
+          return;
+        }
+    
+        if (!res.ok) {
+          console.error("Erreur lors de la suppression du post", res.statusText);
+          return;
+        }
+
+        setPosts(prev => prev.filter(post => post.id !== postId));
+    
+      } catch (err) {
+        console.error("Erreur lors de la suppression du post", err);
+      }
+    }
+
     return (
       <Layout
         showPostCreationButton={true}
@@ -130,11 +172,19 @@
                   maxLength={MAX_POST_LENGTH}
                   className="w-full p-3 border rounded-md resize-none focus:outline-none focus:ring-2 bg-transparent"
                   value={newPostContent}
-                  onChange={(e) => setNewPostContent(e.target.value)}
+                  onChange={(e) =>{
+                    setNewPostContent(e.target.value);
+                    setSubmitError("");
+                  }}
                 />
                 <div className="text-right text-sm text-muted-foreground mt-1">
                   {newPostContent.length} / {MAX_POST_LENGTH}
                 </div>
+                {submitError && (
+                  <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md mt-2">
+                    {submitError}
+                </div>
+                )}
               </CardContent>
 
               <CardFooter className="pt-0 justify-end gap-2">
@@ -159,7 +209,9 @@
               key={post.id}
               post={post}
               index={index}
+              currentUserId={currentUserId}
               onLike={() => handleLike(post.id)}
+              onDelete={handleDelete}
               onComment={() => handleComment(post.id)}
               onShare={() => handleShare(post.id)}
             />
