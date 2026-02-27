@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
   BadRequestException,
@@ -47,16 +48,13 @@ export class UsersController {
       throw new BadRequestException('No file provided');
     }
 
-    // Delete old avatar if it exists
     const currentUser = await this.userDataService.get(user.id);
     if (currentUser.avatarUrl) {
       await this.storageService.deleteAvatar(currentUser.avatarUrl);
     }
 
-    // Upload new avatar
     const objectName = await this.storageService.uploadAvatar(user.id, file);
 
-    // Save the object key in DB
     await this.userDataService.updateAvatarUrl(user.id, objectName);
 
     return { avatarUrl: objectName };
@@ -82,6 +80,11 @@ export class UsersController {
   @Get('session')
   getSession() {
     return { message: 'Called /users/session endpoint!' };
+  }
+
+  @Get('search')
+  async search(@GetUser() user: AuthUser, @Query('q') query?: string) {
+    return this.userDataService.search(user.id, query);
   }
 
   @Get(':name')
