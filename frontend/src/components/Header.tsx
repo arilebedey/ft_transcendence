@@ -2,17 +2,24 @@ import { SearchBar } from "./SearchBar";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
 import { UserSessionButton } from "./UserSessionButton";
+import { PostCreationButton } from "./PostCreation";
 
 interface HeaderProps {
   showSearchBar?: boolean;
   showUserSessionButton?: boolean;
-  showUserLanguageToggle?: boolean;
+  showLanguageToggle?: boolean;
+  showThemeToggle?: boolean;
+  showPostCreationButton?: boolean;
+  onPostCreationClick?: () => void;
 }
 
 export function Header({
   showSearchBar = true,
   showUserSessionButton = true,
-  showUserLanguageToggle = true,
+  showLanguageToggle = true,
+  showThemeToggle = true,
+  showPostCreationButton = false,
+  onPostCreationClick,
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
@@ -20,8 +27,11 @@ export function Header({
         <div className="flex items-center justify-between h-full max-w-6xl mx-auto">
           {showUserSessionButton ? <UserSessionButton /> : <div />}
           <div className="flex items-center gap-2">
-            {showUserLanguageToggle && <LanguageToggle />}
-            <ThemeToggle />
+            {showLanguageToggle && <LanguageToggle />}
+            {showThemeToggle && <ThemeToggle />}
+            {showPostCreationButton && onPostCreationClick && (
+              <PostCreationButton onClick={onPostCreationClick} />
+            )}
           </div>
         </div>
 

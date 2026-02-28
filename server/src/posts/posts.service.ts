@@ -14,7 +14,17 @@ export class PostsService {
   ) {}
 
   findAll() {
-    return this.db.query.post.findMany({ orderBy: (post, { desc }) => [desc(post.createdAt)] });
+    return this.db.query.post.findMany({
+      with: {
+        author: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: (post, { desc }) => [desc(post.createdAt)],
+    });
   }
 
   async findOne(id: number) {
@@ -32,7 +42,17 @@ export class PostsService {
       .insert(schema.post)
       .values({ ...createPostDto, userId })
       .returning();
-    return created;
+      return this.db.query.post.findFirst({
+        where: eq(schema.post.id, created.id),
+        with: {
+          author: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
   }
 
   async update(id: number, updatePostDto: UpdatePostDto, userId: string) {

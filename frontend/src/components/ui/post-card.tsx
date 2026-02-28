@@ -17,41 +17,51 @@
  * - index?: number - Index pour animation staggered
  */
 
-import { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
+import { LikeToggle } from "@/components/LikeToggle";
+import { DropDownList } from "@/components/dropdown-list";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { MessageCircle, Share2, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+
+interface Post {
+  id: number;
+  link: string;
+  content: string;
+  createdAt: string;
+  likes: number;
+  author: {
+    id: string;
+    name: string;
+  };
+}
 
 interface PostCardProps {
-  author: string;
-  username: string;
-  avatar?: ReactNode;
-  content: string;
-  likes: number;
-  comments: number;
-  time: string;
+  post: Post;
+  currentUserId?: string;
   onLike?: () => void;
   onComment?: () => void;
   onShare?: () => void;
+  onDelete?: (postId: number) => void;
   index?: number;
   className?: string;
 }
 
 export function PostCard({
-  author,
-  username,
-  avatar,
-  content,
-  likes,
-  comments,
-  time,
+  post,
+  currentUserId,
   onLike,
   onComment,
   onShare,
+  onDelete,
   index = 0,
   className,
 }: PostCardProps) {
+  const formattedTime = new Date(post.createdAt).toLocaleString();
+  const { t } = useTranslation();
+
   return (
     <Card
       className={cn("animate-fade-in card-hover", className)}
@@ -59,33 +69,58 @@ export function PostCard({
     >
       <CardContent className="pt-4">
         <div className="flex gap-3">
-          {avatar && <div className="shrink-0">{avatar}</div>}
+
+          <div className="shrink-0">
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className="bg-secondary">
+                {post.author.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </div>
 
           <div className="flex-1 min-w-0">
-            {/* Header: author, username, time, menu */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold">{author}</span>
-              <span className="text-muted-foreground text-sm">{username}</span>
-              <span className="text-muted-foreground text-sm">• {time}</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8 ml-auto rounded-full">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
+              <span className="font-semibold">{post.author.name}</span>
+              <span className="text-muted-foreground text-sm">
+                • {formattedTime}
+              </span>
+
+              <DropDownList
+                currentUserId={currentUserId}
+                authorId={post.author.id}
+                onDelete={() => onDelete?.(post.id)}
+              >
+                <button
+                  onClick={() => {
+                  navigator.clipboard.writeText(post.link);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
+                >
+                {t("CopyLink")}
+                </button>
+              </DropDownList>
             </div>
 
-            {/* Content */}
-            <p className="mt-2 text-foreground leading-relaxed">{content}</p>
+            <p className="mt-2 text-foreground leading-relaxed">
+              {post.content}
+            </p>
 
-            {/* Actions */}
-            <div className="flex items-center gap-6 mt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-muted-foreground hover:text-primary"
-                onClick={onLike}
+            {post.link && (
+              <a
+                href={post.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary text-sm mt-2 block"
               >
-                <Heart className="h-4 w-4" />
-                <span>{likes}</span>
-              </Button>
+                {post.link}
+              </a>
+            )}
+
+            <div className="flex items-center gap-6 mt-4">
+              <LikeToggle
+                likes={post.likes}
+                onToggle={() => onLike && onLike()}
+              />
               <Button
                 variant="ghost"
                 size="sm"
@@ -93,8 +128,8 @@ export function PostCard({
                 onClick={onComment}
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>{comments}</span>
               </Button>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -104,6 +139,7 @@ export function PostCard({
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
+
           </div>
         </div>
       </CardContent>

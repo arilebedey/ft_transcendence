@@ -8,7 +8,6 @@ export class CreatePostDto {
   link: string;
 
   @IsString()
-  @IsNotEmpty()
   @MaxLength(10000)
   content: string;
 }
