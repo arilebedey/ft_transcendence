@@ -1,1 +1,0 @@
-ALTER TABLE "user_data" ADD COLUMN "avatar_url" text;
