@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
 import { LikesModule } from './likes/likes.module';
 import { ChatModule } from './chat/chat.module';
+import { FollowModule } from './follow/follow.module';
+
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { ChatModule } from './chat/chat.module';
     PostsModule,
     LikesModule,
     ChatModule,
+    FollowModule,
   ],
   controllers: [],
   providers: [],
