@@ -6,6 +6,7 @@ mkdir -p "$SECRETS_DIR"
 
 touch "$SECRETS_DIR/db_password.txt"
 touch "$SECRETS_DIR/pgadmin_password.txt"
+touch "$SECRETS_DIR/minio_password.txt"
 
 errors=()
 
@@ -16,6 +17,11 @@ fi
 
 if [ ! -s "$SECRETS_DIR/pgadmin_password.txt" ]; then
   errors+=("Please write pgadmin password at $SECRETS_DIR/pgadmin_password.txt")
+fi
+
+if [ ! -s "$SECRETS_DIR/minio_password.txt" ]; then
+  errors+=("Please write minio password at $SECRETS_DIR/minio_password.txt")
+  errors+=("The minio password should be \`minioadmin\`")
 fi
 
 if [ ${#errors[@]} -gt 0 ]; then
