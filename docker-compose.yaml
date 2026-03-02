@@ -43,12 +43,14 @@ services:
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
       - minio-data:/data
+    secrets:
+      - minio_password
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -66,9 +68,12 @@ services:
     depends_on:
       minio:
         condition: service_healthy
+    secrets:
+      - minio_password
     entrypoint: >
       /bin/sh -c "
-      mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      MINIO_PASSWORD=$$(cat /run/secrets/minio_password);
+      mc alias set myminio http://minio:9000 minioadmin $$MINIO_PASSWORD;
       mc mb --ignore-existing myminio/profile-pictures;
       mc anonymous set download myminio/profile-pictures;
       echo 'Bucket profile-pictures created and set to public-read';
@@ -83,3 +88,5 @@ secrets:
     file: ./secrets/db_password.txt
   pgadmin_password:
     file: ./secrets/pgadmin_password.txt
+  minio_password:
+    file: ./secrets/minio_password.txt
