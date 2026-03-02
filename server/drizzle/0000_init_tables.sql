@@ -68,6 +68,8 @@ CREATE TABLE "user_data" (
 	"email" text NOT NULL,
 	"theme" text DEFAULT 'light' NOT NULL,
 	"language" text DEFAULT 'en' NOT NULL,
+	"avatar_url" text,
+	"bio" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
