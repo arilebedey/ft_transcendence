@@ -9,6 +9,7 @@ import { GreetPage } from "@/pages/GreetPage";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Home } from "@/pages/Home";
 import { Dashboard } from "@/pages/Dashboard";
+import { Messages } from "@/pages/Messages";
 
 const queryClient = new QueryClient();
 
@@ -60,10 +61,17 @@ function AppContentWithNav() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {location.pathname !== "/" && <BottomNav />}
     </div>
   );
 }
-// );

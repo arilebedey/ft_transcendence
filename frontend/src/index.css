@@ -29,25 +29,25 @@
 
 @layer base {
   [data-theme="forest"] {
-    --background: #1a2e1a;
-    --foreground: #e8f0e4;
-    --card: #1f3520;
-    --card-foreground: #e8f0e4;
-    --popover: #1f3520;
-    --popover-foreground: #e8f0e4;
-    --primary: #4ade80;
-    --primary-foreground: #052e16;
-    --secondary: #2d4a2d;
-    --secondary-foreground: #c8e0c2;
-    --muted: #243824;
-    --muted-foreground: #8aab85;
-    --accent: #365e36;
-    --accent-foreground: #e8f0e4;
-    --destructive: #dc2626;
+    --background: #0a1a0a;
+    --foreground: #d8e8d4;
+    --card: #0f200f;
+    --card-foreground: #d8e8d4;
+    --popover: #0f200f;
+    --popover-foreground: #d8e8d4;
+    --primary: #22c55e;
+    --primary-foreground: #021408;
+    --secondary: #1a2e1a;
+    --secondary-foreground: #a8c8a2;
+    --muted: #122012;
+    --muted-foreground: #6a8a65;
+    --accent: #1f3a1f;
+    --accent-foreground: #d8e8d4;
+    --destructive: #b91c1c;
     --destructive-foreground: #fef2f2;
-    --border: #3d5a3d;
-    --input: #3d5a3d;
-    --ring: #4ade80;
+    --border: #2a402a;
+    --input: #2a402a;
+    --ring: #22c55e;
   }
 
   [data-theme="dark-blue"] {
