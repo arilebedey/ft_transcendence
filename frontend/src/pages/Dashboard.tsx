@@ -15,6 +15,7 @@
  */
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Layout } from "@/components/Layout";
 import {
   Card,
@@ -135,17 +136,19 @@ export function Dashboard() {
     STUB_POSTS[0].id,
   );
 
+  const { t } = useTranslation();
+
   const selectedPost = STUB_POSTS.find((p) => p.id === selectedPostId)!;
 
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <Title title="Dashboard" />
+        <Title title={t("dashboard.title")} />
 
         {/* ── Likes du compte ── */}
         <ChartCard
-          title="Likes du compte"
-          description="Évolution du nombre total de likes reçus"
+          title={t("dashboard.accountLikesTitle")}
+          description={t("dashboard.accountLikesDesc")}
         >
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={ACCOUNT_LIKES_DATA}>
@@ -181,8 +184,8 @@ export function Dashboard() {
 
         {/* ── Followers ── */}
         <ChartCard
-          title="Followers"
-          description="Évolution du nombre de followers"
+          title={t("dashboard.followersTitle")}
+          description={t("dashboard.followersDesc")}
         >
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={FOLLOWERS_DATA}>
@@ -219,10 +222,8 @@ export function Dashboard() {
         {/* ── Likes par post ── */}
         <Card>
           <CardHeader>
-            <CardTitle>Likes par post</CardTitle>
-            <CardDescription>
-              Sélectionnez un post pour voir l'évolution de ses likes
-            </CardDescription>
+            <CardTitle>{t("dashboard.likesByPostTitle")}</CardTitle>
+            <CardDescription>{t("dashboard.likesByPostDesc")}</CardDescription>
             <select
               value={selectedPostId}
               onChange={(e) => setSelectedPostId(Number(e.target.value))}
