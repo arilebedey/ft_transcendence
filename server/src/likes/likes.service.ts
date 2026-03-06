@@ -1,15 +1,15 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import * as likesSchema from './likes.schema';
 import * as postsSchema from '../posts/posts.schema';
+import type { AppDatabase } from '../database/database.types';
 
 @Injectable()
 export class LikesService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly db: NodePgDatabase<any>,
+    private readonly db: AppDatabase,
   ) {}
 
   async countForPost(postId: number) {
