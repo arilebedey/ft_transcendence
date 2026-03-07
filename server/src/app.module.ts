@@ -4,6 +4,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthConfigModule } from './auth/auth-config.module';
 import { UsersModule } from './users/users.module';
 import { PostsModule } from './posts/posts.module';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { PostsModule } from './posts/posts.module';
     AuthConfigModule,
     UsersModule,
     PostsModule,
+    LikesModule,
   ],
   controllers: [],
   providers: [],

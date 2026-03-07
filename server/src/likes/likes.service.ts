@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import * as likesSchema from './likes.schema';
 import * as postsSchema from '../posts/posts.schema';
@@ -13,14 +13,14 @@ export class LikesService {
   ) {}
 
   async countForPost(postId: number) {
-    const rows = await this.db.query.postLike.findMany({
+    const rows = await this.db.query.post_like.findMany({
       where: eq(likesSchema.post_like.postId, postId),
     });
     return rows.length;
   }
 
   async isLikedBy(postId: number, userId: string) {
-    const found = await this.db.query.postLike.findFirst({
+    const found = await this.db.query.post_like.findFirst({
       where: (postLike, { and }) => and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)),
     });
     return !!found;
@@ -45,7 +45,7 @@ export class LikesService {
         // Already exists -> treat as unlike: delete the existing like
         const [deleted] = await this.db
           .delete(likesSchema.post_like)
-          .where((pl, { and }) => and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)))
+          .where(and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)))
           .returning();
         if (deleted) {
           await this.db.update(postsSchema.post).set({ likes: Math.max(0, (post.likes || 0) - 1) }).where(eq(postsSchema.post.id, postId));
@@ -60,7 +60,7 @@ export class LikesService {
   }
 
   async listForPost(postId: number, limit = 20) {
-    return this.db.query.postLike.findMany({
+    return this.db.query.post_like.findMany({
       where: eq(likesSchema.post_like.postId, postId),
       limit,
       orderBy: (pl, { desc }) => [desc(pl.createdAt)],
