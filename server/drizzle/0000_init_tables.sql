@@ -46,6 +46,13 @@ CREATE TABLE "verification" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "post_like" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"post_id" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "post" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"link" text NOT NULL,
@@ -67,21 +74,14 @@ CREATE TABLE "user_data" (
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "post_like" ADD CONSTRAINT "post_like_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "post_like" ADD CONSTRAINT "post_like_post_id_post_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."post"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "post" ADD CONSTRAINT "post_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_data" ADD CONSTRAINT "user_data_id_user_id_fk" FOREIGN KEY ("id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "verification" USING btree ("identifier");--> statement-breakpoint
+CREATE UNIQUE INDEX "post_like_user_post_uq" ON "post_like" USING btree ("user_id","post_id");--> statement-breakpoint
+CREATE INDEX "post_like_postId_idx" ON "post_like" USING btree ("post_id");--> statement-breakpoint
+CREATE INDEX "post_like_userId_idx" ON "post_like" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "post_userId_idx" ON "post" USING btree ("user_id");
---> statement-breakpoint
--- Migration: create post_like table
-CREATE TABLE IF NOT EXISTS post_like (
-	id SERIAL PRIMARY KEY,
-	user_id TEXT NOT NULL REFERENCES "user"(id) ON DELETE CASCADE,
-	post_id INTEGER NOT NULL REFERENCES post(id) ON DELETE CASCADE,
-	created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
-	CONSTRAINT post_like_user_post_uq UNIQUE (user_id, post_id)
-);
-
-CREATE INDEX IF NOT EXISTS post_like_postId_idx ON post_like(post_id);
-CREATE INDEX IF NOT EXISTS post_like_userId_idx ON post_like(user_id);
