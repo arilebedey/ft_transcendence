@@ -5,11 +5,7 @@
     {
       "idx": 0,
       "version": "7",
-<<<<<<< HEAD
-      "when": 1772860436697,
-=======
       "when": 1772888425752,
->>>>>>> eb5fc0d (Fixed like scheme && plug to db, add a modified version of the test script)
       "tag": "0000_init_tables",
       "breakpoints": true
     }
