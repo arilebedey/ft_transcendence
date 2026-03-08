@@ -8,6 +8,7 @@ import { Profile } from "@/pages/Profile";
 import { GreetPage } from "@/pages/GreetPage";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Home } from "@/pages/Home";
+import { Dashboard } from "@/pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,14 @@ function AppContentWithNav() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
             </ProtectedRoute>
           }
         />
