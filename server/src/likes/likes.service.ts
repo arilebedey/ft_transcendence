@@ -1,77 +1,78 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { eq, and } from 'drizzle-orm';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { sql } from 'drizzle-orm';
 import { DATABASE_CONNECTION } from '../database/database-connection';
-import * as likesSchema from './likes.schema';
 import * as postsSchema from '../posts/posts.schema';
-import type { AppDatabase } from '../database/database.types';
+import * as likesSchema from './likes.schema';
 
 @Injectable()
 export class LikesService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly db: AppDatabase,
+    private readonly db: NodePgDatabase<any>,
   ) {}
 
-  async countForPost(postId: number) {
-    const rows = await this.db.query.post_like.findMany({
-      where: eq(likesSchema.post_like.postId, postId),
-    });
-    return rows.length;
-  }
+  async toggleLike(userId: string, postId: number) {
+    return this.db.transaction(async (tx) => {
+      // Try to insert a like; if it already exists the onConflictDoNothing will
+      // return no rows. If inserted, increment the post counter atomically.
+      const [inserted] = await (tx.insert(likesSchema.post_like)
+        .values({ userId, postId }) as any)
+        .onConflictDoNothing()
+        .returning();
 
-  async isLikedBy(postId: number, userId: string) {
-    const found = await this.db.query.post_like.findFirst({
-      where: (postLike, { and }) => and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)),
-    });
-    return !!found;
-  }
-
-  async toggle(postId: number, userId: string) {
-    // ensure post exists
-    const post = await this.db.query.post.findFirst({ where: eq(postsSchema.post.id, postId) });
-    if (!post) {
-      throw new NotFoundException(`Post #${postId} not found`);
-    }
-    // Optimistic lock-free approach: attempt INSERT, on unique-violation delete existing (toggle)
-    try {
-      const [inserted] = await this.db.insert(likesSchema.post_like).values({ postId, userId }).returning();
       if (inserted) {
-        await this.db.update(postsSchema.post).set({ likes: (post.likes || 0) + 1 }).where(eq(postsSchema.post.id, postId));
-        return { liked: true };
-      }
-    } catch (err: any) {
-      // Postgres unique violation code
-      if (err?.code === '23505') {
-        // Already exists -> treat as unlike: delete the existing like
-        const [deleted] = await this.db
-          .delete(likesSchema.post_like)
-          .where(and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)))
+        const [updated] = await tx
+          .update(postsSchema.post)
+          .set({ likes: sql`${postsSchema.post.likes} + 1` })
+          .where(eq(postsSchema.post.id, postId))
           .returning();
-        if (deleted) {
-          await this.db.update(postsSchema.post).set({ likes: Math.max(0, (post.likes || 0) - 1) }).where(eq(postsSchema.post.id, postId));
-        }
-        return { liked: false };
+        return { liked: true, likes: updated?.likes ?? null };
       }
-      throw err;
-    }
 
-    // Fallback: if insert did not throw and returned nothing, consider it not liked
-    return { liked: false };
+      // If insert didn't happen, try to delete the existing like (unlike)
+      const [deleted] = await tx
+        .delete(likesSchema.post_like)
+        .where(and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)))
+        .returning();
+
+      if (deleted) {
+        const [updated] = await tx
+          .update(postsSchema.post)
+          .set({ likes: sql`${postsSchema.post.likes} - 1` })
+          .where(eq(postsSchema.post.id, postId))
+          .returning();
+        return { liked: false, likes: updated?.likes ?? null };
+      }
+
+      // No-op (concurrent state changed between operations)
+      return null;
+    });
   }
 
-  async listForPost(postId: number, limit = 20) {
-    return this.db.query.post_like.findMany({
-      where: eq(likesSchema.post_like.postId, postId),
-      limit,
-      orderBy: (pl, { desc }) => [desc(pl.createdAt)],
-      with: {
-        user: {
-          columns: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    });
+  async countForPost(postId: number): Promise<number> {
+    const [{ count }] = await this.db
+      .select({ count: sql`count(*)` })
+      .from(likesSchema.post_like)
+      .where(eq(likesSchema.post_like.postId, postId));
+
+    return Number((count as unknown) ?? 0);
+  }
+
+  async isLikedByUser(postId: number, userId: string): Promise<boolean> {
+    const [row] = await this.db
+      .select({ cnt: sql`count(*)` })
+      .from(likesSchema.post_like)
+      .where(and(eq(likesSchema.post_like.postId, postId), eq(likesSchema.post_like.userId, userId)));
+    return Number((row?.cnt as unknown) ?? 0) > 0;
+  }
+
+  async listForPost(postId: number) {
+    return this.db
+      .select()
+      .from(likesSchema.post_like)
+      .where(eq(likesSchema.post_like.postId, postId))
+      .orderBy(likesSchema.post_like.createdAt);
   }
 }

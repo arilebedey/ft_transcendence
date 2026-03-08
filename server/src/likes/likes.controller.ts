@@ -1,31 +1,42 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { IsInt } from 'class-validator';
 import { LikesService } from './likes.service';
 import { GetUser } from 'src/auth/get-user.decorator';
-import type { AuthUser } from 'src/auth/auth.types';
-import { ToggleLikeDto } from './dto/toggle-like.dto';
+
+class ToggleLikeDto {
+  @IsInt()
+  postId: number;
+}
 
 @Controller('likes')
 export class LikesController {
   constructor(private readonly likesService: LikesService) {}
 
-  @Post('toggle')
-  toggle(@Body() dto: ToggleLikeDto, @GetUser() user: AuthUser) {
-    return this.likesService.toggle(dto.postId, user.id);
-  }
-
   @Get('post/:id/count')
-  count(@Param('id', ParseIntPipe) id: number) {
-    return this.likesService.countForPost(id);
+  async count(@Param('id') id: string) {
+    const postId = Number(id);
+    const count = await this.likesService.countForPost(postId);
+    return { count };
   }
 
   @Get('post/:id/is-liked')
-  isLiked(@Param('id', ParseIntPipe) id: number, @GetUser() user: AuthUser) {
-    return this.likesService.isLikedBy(id, user.id);
+  async isLiked(@Param('id') id: string, @GetUser() user: any) {
+    const postId = Number(id);
+    const liked = await this.likesService.isLikedByUser(postId, user?.id);
+    return { liked };
   }
 
   @Get('post/:id')
-  list(@Param('id', ParseIntPipe) id: number, @Query('limit') limit?: string) {
-    const l = limit ? parseInt(limit, 10) : undefined;
-    return this.likesService.listForPost(id, l);
+  async list(@Param('id') id: string) {
+    const postId = Number(id);
+    const rows = await this.likesService.listForPost(postId);
+    return rows;
+  }
+
+  @Post('toggle')
+  async toggle(@GetUser() user: any, @Body() dto: ToggleLikeDto) {
+    const postId = Number(dto.postId);
+    const result = await this.likesService.toggleLike(user.id, postId);
+    return result;
   }
 }

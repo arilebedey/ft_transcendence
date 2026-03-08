@@ -6,6 +6,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import * as authSchema from '../auth/better-auth.schema';
 import * as userDataSchema from '../users/user-data.schema';
 import * as postsSchema from '../posts/posts.schema';
+import * as likesSchema from '../likes/likes.schema';
 
 @Module({
   imports: [ConfigModule],
@@ -25,6 +26,7 @@ import * as postsSchema from '../posts/posts.schema';
             ...authSchema,
             ...userDataSchema,
             ...postsSchema,
+            ...likesSchema,
           },
         });
       },
