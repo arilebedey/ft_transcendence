@@ -9,16 +9,13 @@ import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 import { authClient } from "@/lib/auth-client";
 import { profileMeQueryKey, updateProfileMe } from "@/lib/profile-api";
-import { t } from "i18next";
-
-const themes: { value: Theme; label: string; icon: ReactNode }[] = [
-  { value: "forest", label: t("forest"), icon: <Trees className="h-4 w-4" /> },
+const themes: { value: Theme; icon: ReactNode }[] = [
+  { value: "forest", icon: <Trees className="h-4 w-4" /> },
   {
     value: "dark-blue",
-    label: t("darkBlue"),
     icon: <Moon className="h-4 w-4" />,
   },
-  { value: "light", label: t("light"), icon: <Sun className="h-4 w-4" /> },
+  { value: "light", icon: <Sun className="h-4 w-4" /> },
 ];
 
 const languages = ["EN", "FR", "IT", "ES"] as const;
@@ -101,7 +98,6 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
                   }`}
                 >
                   {th.icon}
-                  <span>{th.label}</span>
                 </button>
               ))}
             </div>
@@ -112,7 +108,7 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
             <Label>
               <span className="flex items-center gap-1.5">
                 <Globe className="h-4 w-4" />
-                {t("Language")}
+                {t("language")}
               </span>
             </Label>
             <div className="flex gap-2">

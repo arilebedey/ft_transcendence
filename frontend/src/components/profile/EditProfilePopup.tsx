@@ -38,8 +38,9 @@ export function EditProfilePopup({
     const usernameResult = usernameSchema.safeParse(name.toLowerCase());
 
     if (!usernameResult.success) {
-      const errors = usernameResult.error.flatten().formErrors;
-      setUsernameError(errors[0] || "Invalid username");
+      const key =
+        usernameResult.error.flatten().formErrors[0] ?? "InvalidUsername";
+      setUsernameError(t(key));
       return;
     }
 
@@ -47,8 +48,8 @@ export function EditProfilePopup({
     const bioResult = bioSchema.safeParse(bio);
 
     if (!bioResult.success) {
-      const errors = bioResult.error.flatten().formErrors;
-      setBioError(errors[0] || "Invalid bio");
+      const key = bioResult.error.flatten().formErrors[0] ?? "InvalidBio";
+      setBioError(t(key));
       return;
     }
 
@@ -94,7 +95,7 @@ export function EditProfilePopup({
           </div>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="edit-bio">{"Bio"}</Label>
+              <Label htmlFor="edit-bio">{t("Bio")}</Label>
               <span className="text-sm text-muted-foreground">
                 {bio.length}/160
               </span>
@@ -106,15 +107,13 @@ export function EditProfilePopup({
                 setBio(e.target.value);
                 setBioError(null);
               }}
-              placeholder={"Tell us about yourself..."}
+              placeholder={t("profileBioPlaceholder")}
               className={`flex min-h-20 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
                 bioError ? "border-red-500" : "border-input"
               }`}
               rows={4}
             />
-            {bioError && (
-              <p className="text-sm text-red-500">{bioError}</p>
-            )}
+            {bioError && <p className="text-sm text-red-500">{bioError}</p>}
           </div>
         </CardContent>
 
