@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowLeft, SendHorizontal } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useMessages } from "@/hooks/useMessages";
 import { Button } from "@/components/ui/button";
 import { MessageBubble } from "./MessageBubble";
@@ -27,6 +28,7 @@ export function ConversationPanel({
   onMessageSent,
   onBack,
 }: ConversationPanelProps) {
+  const { t } = useTranslation();
   const {
     messages,
     loading,
@@ -151,10 +153,12 @@ export function ConversationPanel({
 
         <div className="min-w-0">
           <h2 className="truncate text-base font-semibold text-foreground">
-            {activeParticipant?.name ?? "Conversation"}
+            {activeParticipant?.name ?? t("chat.conversation.titleFallback")}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {conversationId ? "Live conversation" : "New conversation"}
+            {conversationId
+              ? t("chat.conversation.live")
+              : t("chat.conversation.new")}
           </p>
         </div>
       </div>
@@ -173,20 +177,22 @@ export function ConversationPanel({
                 onClick={() => void handleLoadMore()}
                 disabled={loadingMore}
               >
-                {loadingMore ? "Loading..." : "Load older messages"}
+                {loadingMore
+                  ? t("chat.conversation.loadingMore")
+                  : t("chat.conversation.loadOlder")}
               </Button>
             </div>
           ) : null}
 
           {loading ? (
             <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
-              Loading messages...
+              {t("chat.conversation.loadingMessages")}
             </div>
           ) : null}
 
           {!loading && messages.length === 0 ? (
             <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
-              No messages here yet.
+              {t("chat.conversation.empty")}
             </div>
           ) : null}
 
@@ -228,7 +234,7 @@ export function ConversationPanel({
                 void handleSubmit();
               }
             }}
-            placeholder="Type a message..."
+            placeholder={t("chat.conversation.inputPlaceholder")}
             className="max-h-40 min-h-12 min-w-0 flex-1 resize-none rounded-xl border border-input bg-background px-3 py-3 text-sm outline-none transition focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 lg:resize-y"
           />
           <Button
