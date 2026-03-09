@@ -41,6 +41,14 @@ const resources = {
       EmptyContent: "Content empty.",
       LinkInclusion: "You must include a link in the post.",
       CopyLink: "Copy link",
+      nav: {
+        home: "Home",
+        liked: "Liked",
+        messages: "Messages",
+      },
+      liked: {
+        empty: "You haven't liked any posts yet.",
+      },
       dashboard: {
         title: "Dashboard",
         accountLikesTitle: "Account likes",
@@ -143,6 +151,14 @@ const resources = {
       EmptyContent: "Contenu vide.",
       LinkInclusion: "Vous devez inclure un lien dans le post.",
       CopyLink: "Copier le lien",
+      nav: {
+        home: "Accueil",
+        liked: "Aimés",
+        messages: "Messages",
+      },
+      liked: {
+        empty: "Vous n'avez encore aimé aucun post.",
+      },
       dashboard: {
         title: "Dashboard",
         accountLikesTitle: "Likes du compte",
@@ -261,6 +277,14 @@ const resources = {
       EmptyContent: "Contenuto vuoto.",
       LinkInclusion: "Devi includere un link nel post.",
       CopyLink: "Copia il link",
+      nav: {
+        home: "Home",
+        liked: "Piaciuti",
+        messages: "Messaggi",
+      },
+      liked: {
+        empty: "Non hai ancora messo like a nessun post.",
+      },
       dashboard: {
         title: "Dashboard",
         accountLikesTitle: "Mi piace dell'account",
@@ -377,6 +401,14 @@ const resources = {
       EmptyContent: "Contenido vacío.",
       LinkInclusion: "Debes incluir un enlace en la publicación.",
       CopyLink: "Copiar enlace",
+      nav: {
+        home: "Inicio",
+        liked: "Me gusta",
+        messages: "Mensajes",
+      },
+      liked: {
+        empty: "Todavía no te gusta ninguna publicación.",
+      },
       dashboard: {
         title: "Panel",
         accountLikesTitle: "Me gusta de la cuenta",

@@ -1,19 +1,18 @@
-import { Home, Users, MessageCircle } from "lucide-react";
+import { Heart, Home, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-/* import { useLanguage } from "@/contexts/LanguageContext"; */
-import { Profiler } from "react";
+import { useTranslation } from "react-i18next";
 
 const navItems = [
   { icon: Home, labelKey: "nav.home", path: "/home" },
-  { icon: Users, labelKey: "nav.network", path: "/network" },
+  { icon: Heart, labelKey: "nav.liked", path: "/liked" },
   { icon: MessageCircle, labelKey: "nav.messages", path: "/messages" },
 ];
 
 export function BottomNav() {
   const location = useLocation();
-  /*   const { t } = useLanguage();
-   */
+  const { t } = useTranslation();
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
@@ -33,7 +32,7 @@ export function BottomNav() {
               <item.icon
                 className={cn("h-6 w-6", isActive && "animate-pulse-glow")}
               />
-              {/*               <span className="text-xs font-medium">{t(item.labelKey)}</span> */}
+              <span className="text-xs font-medium">{t(item.labelKey)}</span>
             </Link>
           );
         })}
