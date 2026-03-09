@@ -13,11 +13,30 @@ const loginSchema = z.object({
   password: z.string().min(1, "Password is required."),
 });
 
+const DEV_USERS = [
+  {
+    name: "Professor Wobblebottom",
+    email: "professor.wobblebottom@example.com",
+    password: "WobbleBottom!42",
+  },
+  {
+    name: "Captain Turnip Deluxe",
+    email: "captain.turnip.deluxe@example.com",
+    password: "TurnipDeluxe!42",
+  },
+  {
+    name: "DJ Sardine Eclipse",
+    email: "dj.sardine.eclipse@example.com",
+    password: "SardineEclipse!42",
+  },
+] as const;
+
 export default function LoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
-  const isDev = process.env.NODE_ENV === "development";
+  const [activeDevEmail, setActiveDevEmail] = useState<string | null>(null);
+  const isDev = import.meta.env.DEV;
 
   const form = useForm({
     defaultValues: {
@@ -55,26 +74,37 @@ export default function LoginForm() {
     },
   });
 
-  const handleSkipAuth = async () => {
-    const devCredentials = {
-      email: "dev@example.com",
-      password: "devpassword123",
-      name: "Dev",
-    };
-
+  const handleDevAuth = async (devUser: (typeof DEV_USERS)[number]) => {
+    setSubmitError("");
+    setActiveDevEmail(devUser.email);
     try {
-      await authClient.signUp.email(devCredentials);
-      navigate("/home");
-    } catch {
-      try {
-        await authClient.signIn.email({
-          email: devCredentials.email,
-          password: devCredentials.password,
-        });
+      const signUpResult = await authClient.signUp.email({
+        name: devUser.name,
+        email: devUser.email,
+        password: devUser.password,
+      });
+
+      if (!signUpResult.error) {
         navigate("/home");
-      } catch (err) {
-        console.error("Dev login failed:", err);
+        return;
       }
+
+      const signInResult = await authClient.signIn.email({
+        email: devUser.email,
+        password: devUser.password,
+      });
+
+      if (!signInResult.error) {
+        navigate("/home");
+        return;
+      }
+
+      setSubmitError(signInResult.error.message || "Dev login failed");
+    } catch (err) {
+      console.error("Dev auth failed:", err);
+      setSubmitError("Dev login failed");
+    } finally {
+      setActiveDevEmail(null);
     }
   };
 
@@ -161,21 +191,36 @@ export default function LoginForm() {
       <Button
         className="w-full mt-4"
         type="submit"
-        disabled={form.state.isSubmitting}
+        disabled={form.state.isSubmitting || activeDevEmail !== null}
       >
         {form.state.isSubmitting ? "Signing In..." : t("signIn")}
       </Button>
 
       {isDev && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full text-xs opacity-50"
-          onClick={handleSkipAuth}
-          type="button"
-        >
-          [DEV] Skip Authentication
-        </Button>
+        <div className="space-y-2 pt-2">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            Dev users
+          </p>
+          <div className="grid gap-2">
+            {DEV_USERS.map((devUser) => {
+              const isLoading = activeDevEmail === devUser.email;
+
+              return (
+                <Button
+                  key={devUser.email}
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs"
+                  onClick={() => handleDevAuth(devUser)}
+                  type="button"
+                  disabled={form.state.isSubmitting || activeDevEmail !== null}
+                >
+                  {isLoading ? "Authenticating..." : `[DEV] ${devUser.name}`}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       )}
     </form>
   );
