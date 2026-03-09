@@ -101,7 +101,6 @@ export function Messages() {
               loading={loading}
               error={error}
               selectedConversationId={activeConversationId}
-              draftParticipantId={draftParticipant?.id ?? null}
               onStartNewChat={() => setShowNewChat(true)}
               onSelectConversation={handleSelectConversation}
             />

@@ -11,19 +11,17 @@ export function ProtectedRoute({ children }: Props) {
   const navigate = useNavigate();
   const { data: session, isPending } = authClient.useSession();
 
-  const isDev = import.meta.env.VITE_IS_DEV;
-
   useEffect(() => {
-    if (!isPending && !session && !isDev) {
+    if (!isPending && !session) {
       navigate("/", { replace: true });
     }
-  }, [session, isPending, isDev, navigate]);
+  }, [session, isPending, navigate]);
 
-  if (isPending && !isDev) {
+  if (isPending) {
     return <div>Loading...</div>;
   }
 
-  if (!isDev && !session) {
+  if (!session) {
     return null;
   }
 

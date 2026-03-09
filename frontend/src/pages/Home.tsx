@@ -162,15 +162,15 @@
         onPostCreationClick={() => setPostFormOpen(prev => !prev)}
       >
         {postFormOpen && (
-          <div className="transition-all duration-300 ease-in-out max-w-2xl mx-auto mt-4">
-            <Card>
+          <div className="transition-all duration-300 ease-in-out w-full max-w-4xl mx-auto mt-4 px-4">
+            <Card className="shadow-md">
               <CardHeader></CardHeader>
 
-              <CardContent className="pt-0">
+              <CardContent className="px-6 pb-6 pt-0 sm:px-8">
                 <textarea
-                  rows={3}
+                  rows={5}
                   maxLength={MAX_POST_LENGTH}
-                  className="w-full p-3 border rounded-md resize-none focus:outline-none focus:ring-2 bg-transparent"
+                  className="w-full min-h-36 rounded-md border bg-transparent p-4 resize-y focus:outline-none focus:ring-2"
                   value={newPostContent}
                   onChange={(e) =>{
                     setNewPostContent(e.target.value);
@@ -187,7 +187,7 @@
                 )}
               </CardContent>
 
-              <CardFooter className="pt-0 justify-end gap-2">
+              <CardFooter className="justify-end gap-2 px-6 pb-6 pt-0 sm:px-8">
                 <Button variant="outline" onClick={() => setPostFormOpen(false)}>
                   {t("Cancel")}
                 </Button>

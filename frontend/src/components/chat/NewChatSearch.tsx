@@ -13,17 +13,14 @@ interface NewChatSearchProps {
 
 function getInitials(name: string) {
   return name
-    .split(/\s+/)
-    .filter(Boolean)
+    .split(/\s+/) // split by whitespace
+    .filter(Boolean) // Boolean converts values to true or false
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
 }
 
-export function NewChatSearch({
-  onSelectUser,
-  onClose,
-}: NewChatSearchProps) {
+export function NewChatSearch({ onSelectUser, onClose }: NewChatSearchProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const { results, loading, error } = useUserSearch(query);

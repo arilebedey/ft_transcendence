@@ -53,6 +53,7 @@ export function ConversationPanel({
   // Stores previous `loading` state,
   // useful to know when loading first changed from true to false
   const previousLoadingRef = useRef(loading);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [content, setContent] = useState("");
 
@@ -100,6 +101,10 @@ export function ConversationPanel({
     previousLastMessageKeyRef.current = null;
     previousLoadingRef.current = true;
   }, [conversationId]);
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, [conversationId, draftParticipant?.id]);
 
   const handleLoadMore = async () => {
     const container = messagesContainerRef.current;
@@ -191,7 +196,7 @@ export function ConversationPanel({
           ) : null}
 
           {!loading && messages.length === 0 ? (
-            <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+            <div className="flex-1 rounded-xl px-4 py-8 text-center text-sm text-muted-foreground">
               {t("chat.conversation.empty")}
             </div>
           ) : null}
@@ -225,6 +230,7 @@ export function ConversationPanel({
 
         <div className="mx-auto flex min-w-0 w-full max-w-3xl items-end gap-2 overflow-x-hidden">
           <textarea
+            ref={textareaRef}
             rows={1}
             value={content}
             onChange={(event) => setContent(event.target.value)}
@@ -234,6 +240,7 @@ export function ConversationPanel({
                 void handleSubmit();
               }
             }}
+            autoFocus={true}
             placeholder={t("chat.conversation.inputPlaceholder")}
             className="max-h-40 min-h-12 min-w-0 flex-1 resize-none rounded-xl border border-input bg-background px-3 py-3 text-sm outline-none transition focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 lg:resize-y"
           />
