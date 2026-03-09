@@ -11,6 +11,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { UserDataService } from './user-data.service';
 import { StorageService } from 'src/storage/storage.service';
@@ -69,6 +70,13 @@ export class UsersController {
       await this.userDataService.updateAvatarUrl(user.id, null);
     }
     return { avatarUrl: null };
+  }
+
+  @AllowAnonymous()
+  @Get('check-username/:name')
+  async checkUsername(@Param('name') name: string) {
+    const available = await this.userDataService.isUsernameAvailable(name);
+    return { available };
   }
 
   @Get('session')

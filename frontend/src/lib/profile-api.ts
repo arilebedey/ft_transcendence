@@ -72,6 +72,17 @@ export async function getProfileByName(
   return response.json();
 }
 
+export async function checkUsernameAvailable(
+  name: string,
+): Promise<{ available: boolean }> {
+  const response = await fetch(
+    `/api/users/check-username/${encodeURIComponent(name)}`,
+    { method: "GET" },
+  );
+  if (!response.ok) return { available: false };
+  return response.json();
+}
+
 export async function updateProfileMe(
   payload: UpdateProfilePayload,
 ): Promise<ProfileUserData> {

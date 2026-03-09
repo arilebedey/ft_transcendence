@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
-import { usernameSchema, bioSchema } from "@/lib/profile-api";
+import { checkUsernameAvailable, usernameSchema, bioSchema } from "@/lib/profile-api";
 
 interface EditProfilePopupProps {
   currentUser: { name: string; bio: string; avatarUrl?: string | null };
@@ -31,9 +31,32 @@ export function EditProfilePopup({
     currentUser.avatarUrl ?? null,
   );
   const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [usernameTaken, setUsernameTaken] = useState(false);
+  const [usernameChecking, setUsernameChecking] = useState(false);
   const [bioError, setBioError] = useState<string | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleSave = () => {
+  useEffect(() => {
+    const trimmed = name.trim().toLowerCase();
+    if (trimmed === currentUser.name.toLowerCase() || trimmed.length < 3) {
+      setUsernameTaken(false);
+      setUsernameChecking(false);
+      return;
+    }
+    setUsernameChecking(true);
+    setUsernameTaken(false);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(async () => {
+      const { available } = await checkUsernameAvailable(trimmed);
+      setUsernameTaken(!available);
+      setUsernameChecking(false);
+    }, 400);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [name, currentUser.name]);
+
+  const handleSave = async () => {
     // Validate username with Zod
     const usernameResult = usernameSchema.safeParse(name.toLowerCase());
 
@@ -42,6 +65,16 @@ export function EditProfilePopup({
         usernameResult.error.flatten().formErrors[0] ?? "InvalidUsername";
       setUsernameError(t(key));
       return;
+    }
+
+    // Final server-side check (covers race conditions / fast submitters)
+    if (usernameResult.data !== currentUser.name.toLowerCase()) {
+      const { available } = await checkUsernameAvailable(usernameResult.data);
+      if (!available) {
+        setUsernameTaken(true);
+        setUsernameError(t("usernameTaken"));
+        return;
+      }
     }
 
     // Validate bio with Zod
@@ -85,10 +118,17 @@ export function EditProfilePopup({
               onChange={(e) => {
                 setName(e.target.value);
                 setUsernameError(null);
+                setUsernameTaken(false);
               }}
               placeholder={"John Doe"}
-              className={usernameError ? "border-red-500" : ""}
+              className={usernameError || usernameTaken ? "border-red-500" : ""}
             />
+            {usernameChecking && (
+              <p className="text-sm text-muted-foreground">{t("checkingUsername")}</p>
+            )}
+            {!usernameChecking && usernameTaken && (
+              <p className="text-sm text-red-500">{t("usernameTaken")}</p>
+            )}
             {usernameError && (
               <p className="text-sm text-red-500">{usernameError}</p>
             )}
@@ -126,7 +166,7 @@ export function EditProfilePopup({
           >
             {t("Close")}
           </Button>
-          <Button onClick={handleSave} className="px-6" disabled={isSaving}>
+          <Button onClick={handleSave} className="px-6" disabled={isSaving || usernameChecking || usernameTaken}>
             {t("save")}
           </Button>
         </CardFooter>
