@@ -9,7 +9,7 @@ export const userData = pgTable('user_data', {
     // It ensures this `id` actually exists in the `user` table
     // before allowing the insert. If you tried to insert with a fake id, it would fail.
     .references(() => user.id, { onDelete: 'cascade' }),
-  name: text('name').notNull(),
+  name: text('name').notNull().unique(),
   email: text('email').notNull(),
   theme: text('theme', { enum: ['light', 'dark-blue', 'forest'] })
     .default('light')

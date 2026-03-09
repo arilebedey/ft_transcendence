@@ -9,6 +9,8 @@ import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 import { authClient } from "@/lib/auth-client";
 import { profileMeQueryKey, updateProfileMe } from "@/lib/profile-api";
+import { sl } from "zod/v4/locales";
+
 const themes: { value: Theme; icon: ReactNode }[] = [
   { value: "forest", icon: <Trees className="h-4 w-4" /> },
   {

@@ -1,0 +1,1 @@
+ALTER TABLE "user_data" ADD CONSTRAINT "user_data_name_unique" UNIQUE("name");

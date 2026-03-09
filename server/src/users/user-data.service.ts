@@ -1,8 +1,8 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
 import { userData } from './user-data.schema';
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
 
 @Injectable()
@@ -30,7 +30,27 @@ export class UserDataService {
     return existing[0];
   }
 
+  async isUsernameAvailable(name: string, excludeUserId?: string): Promise<boolean> {
+    const result = await this.db
+      .select({ id: userData.id })
+      .from(userData)
+      .where(
+        excludeUserId
+          ? and(eq(userData.name, name), ne(userData.id, excludeUserId))
+          : eq(userData.name, name),
+      )
+      .limit(1);
+    return result.length === 0;
+  }
+
   async update(userId: string, dto: UpdateUserDataDto) {
+    if (dto.name) {
+      const available = await this.isUsernameAvailable(dto.name, userId);
+      if (!available) {
+        throw new ConflictException('Username already taken');
+      }
+    }
+
     const result = await this.db
       .update(userData)
       .set({ ...dto, updatedAt: new Date() })
