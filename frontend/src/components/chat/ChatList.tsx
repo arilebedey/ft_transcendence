@@ -9,7 +9,6 @@ interface ChatListProps {
   loading: boolean;
   error: string | null;
   selectedConversationId: string | null;
-  draftParticipantId?: string | null;
   onStartNewChat: () => void;
   onSelectConversation: (conversationId: string) => void;
 }
@@ -19,7 +18,6 @@ export function ChatList({
   loading,
   error,
   selectedConversationId,
-  draftParticipantId,
   onStartNewChat,
   onSelectConversation,
 }: ChatListProps) {
@@ -59,12 +57,6 @@ export function ChatList({
         {!loading && !error && chats.length === 0 ? (
           <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
             {t("chat.list.empty")}
-          </div>
-        ) : null}
-
-        {draftParticipantId ? (
-          <div className="rounded-xl border border-dashed px-4 py-3 text-sm text-muted-foreground">
-            {t("chat.list.draftSelected")}
           </div>
         ) : null}
 

@@ -18,6 +18,7 @@ function formatTimestamp(value: string | null) {
   const now = new Date();
   const isSameDay = date.toDateString() === now.toDateString();
 
+  // `[]`: use browser's default locale
   return isSameDay
     ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : date.toLocaleDateString([], { month: "short", day: "numeric" });

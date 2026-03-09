@@ -24,14 +24,14 @@ export function GreetPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header showSearchBar={false} showUserSessionButton={false} />
-      <div className="min-h-screen flex items-start pt-10 xl:pt-30">
+      <div className="min-h-screen flex items-start pt-24 md:pt-28 xl:pt-50">
         <div className="w-full max-w-8xl mx-auto px-6 md:px-12 lg:px-24 xl:px-60">
           <div className="flex flex-col xl:flex-row gap-12 xl:gap-10">
             <div className="flex flex-col space-y-6 w-full lg:flex-1 xl:items-start items-center">
               <div>
                 <div className="pb-2">
                   <h1 className="text-4xl md:text-5xl xl:text-7xl text-center xl:text-start font-bold tracking-tight mb-4 md:mb-8">
-                    SocialApp
+                    Seenit
                   </h1>
                 </div>
                 {/*Reowrk en un component title.tsx qu'on pourra reutiliser partout*/}
