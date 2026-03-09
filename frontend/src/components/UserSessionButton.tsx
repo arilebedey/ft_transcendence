@@ -1,22 +1,21 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { authClient } from "@/lib/auth-client";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getProfileMe, profileMeQueryKey } from "@/lib/profile-api";
 
 type Props = {
   label?: string;
-  avatarUrl?: string;
 };
 
-export function UserSessionButton({
-  label = "Ada Lovelace",
-  avatarUrl,
-}: Props) {
+export function UserSessionButton({ label = "Ada Lovelace" }: Props) {
   const navigate = useNavigate();
-  const sessionResult = authClient.useSession();
-  const session = sessionResult?.data;
+  const { data: profile } = useQuery({
+    queryKey: profileMeQueryKey,
+    queryFn: getProfileMe,
+  });
 
-  const userName = session?.user.name || label;
-  const userAvatar = session?.user.image || avatarUrl;
+  const userName = profile?.name || label;
+  const userAvatar = profile?.avatarUrl || undefined;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,7 +31,7 @@ export function UserSessionButton({
     >
       {userAvatar ? (
         <img
-          src={userAvatar}
+          src={"/storage/" + userAvatar}
           alt={userName}
           className="w-8 h-8 rounded-full object-cover"
         />
