@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import type { Chat } from "@/lib/chat.types";
 
@@ -38,6 +39,7 @@ export function ChatListItem({
   selected = false,
   onClick,
 }: ChatListItemProps) {
+  const { t } = useTranslation();
   const timestamp = formatTimestamp(
     chat.lastMessage?.createdAt ?? chat.updatedAt ?? null,
   );
@@ -62,7 +64,7 @@ export function ChatListItem({
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <p className="truncate text-sm font-semibold text-foreground">
-            {chat.participant?.name ?? "Unknown user"}
+            {chat.participant?.name ?? t("chat.list.unknownUser")}
           </p>
           {timestamp ? (
             <span className="shrink-0 text-xs text-muted-foreground">
@@ -72,7 +74,7 @@ export function ChatListItem({
         </div>
 
         <p className="truncate text-sm text-muted-foreground">
-          {chat.lastMessage?.content ?? "No messages yet"}
+          {chat.lastMessage?.content ?? t("chat.list.noMessagesYet")}
         </p>
       </div>
     </button>

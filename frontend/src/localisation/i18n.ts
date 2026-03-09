@@ -4,7 +4,6 @@ import TOSen from "./TOSen.json";
 import TOSfr from "./TOSfr.json";
 import TOSit from "./TOSit.json";
 import TOSes from "./TOSes.json";
-import { no } from "zod/v4/locales";
 
 const resources = {
   EN: {
@@ -71,6 +70,51 @@ const resources = {
       checkingUsername: "Checking username availability...",
       usernameTaken: "This username is already taken",
       "Confirm password": "Confirm password",
+      chat: {
+        list: {
+          title: "Messages",
+          conversationCount_one: "{{count}} conversation",
+          conversationCount_other: "{{count}} conversations",
+          newChat: "New chat",
+          loading: "Loading conversations...",
+          empty: "No conversations yet. Start one to test the chat flow.",
+          draftSelected: "Draft conversation selected.",
+          unknownUser: "Unknown user",
+          noMessagesYet: "No messages yet",
+        },
+        search: {
+          title: "New chat",
+          subtitle: "Search by a user's display name.",
+          placeholder: "Search users...",
+          startTyping: "Start typing to find a user.",
+          loading: "Searching...",
+          empty: "No users found.",
+        },
+        conversation: {
+          titleFallback: "Conversation",
+          live: "Live conversation",
+          new: "New conversation",
+          loadingMore: "Loading...",
+          loadOlder: "Load older messages",
+          loadingMessages: "Loading messages...",
+          empty: "No messages here yet.",
+          inputPlaceholder: "Type a message...",
+        },
+        empty: {
+          loadingTitle: "Loading conversations...",
+          idleTitle: "Select a chat or start a new one",
+          loadingDescription:
+            "Fetching your conversation list and preparing the current thread.",
+          idleDescription:
+            "Use the conversation list to load existing messages or create a new thread and send the first message.",
+        },
+        message: {
+          sending: "Sending...",
+          failed: "Failed",
+          retry: "Retry",
+          dismiss: "Dismiss",
+        },
+      },
       ...TOSen,
     },
   },
@@ -143,6 +187,52 @@ const resources = {
         "Vérification de la disponibilité du nom d'utilisateur...",
       usernameTaken: "Ce nom d'utilisateur est déjà pris",
       "Confirm password": "Confirmer le mot de passe",
+      chat: {
+        list: {
+          title: "Messages",
+          conversationCount_one: "{{count}} conversation",
+          conversationCount_other: "{{count}} conversations",
+          newChat: "Nouvelle conversation",
+          loading: "Chargement des conversations...",
+          empty:
+            "Aucune conversation pour le moment. Commencez-en une pour tester la messagerie.",
+          draftSelected: "Brouillon de conversation sélectionné.",
+          unknownUser: "Utilisateur inconnu",
+          noMessagesYet: "Pas encore de messages",
+        },
+        search: {
+          title: "Nouvelle conversation",
+          subtitle: "Recherchez par nom d'affichage d'utilisateur.",
+          placeholder: "Rechercher des utilisateurs...",
+          startTyping: "Commencez à taper pour trouver un utilisateur.",
+          loading: "Recherche en cours...",
+          empty: "Aucun utilisateur trouvé.",
+        },
+        conversation: {
+          titleFallback: "Conversation",
+          live: "Conversation en direct",
+          new: "Nouvelle conversation",
+          loadingMore: "Chargement...",
+          loadOlder: "Charger les anciens messages",
+          loadingMessages: "Chargement des messages...",
+          empty: "Aucun message ici pour le moment.",
+          inputPlaceholder: "Écrire un message...",
+        },
+        empty: {
+          loadingTitle: "Chargement des conversations...",
+          idleTitle: "Sélectionnez une discussion ou démarrez-en une nouvelle",
+          loadingDescription:
+            "Récupération de votre liste de conversations et préparation du fil en cours.",
+          idleDescription:
+            "Utilisez la liste des conversations pour ouvrir des messages existants ou créez un nouveau fil et envoyez le premier message.",
+        },
+        message: {
+          sending: "Envoi...",
+          failed: "Échec",
+          retry: "Réessayer",
+          dismiss: "Ignorer",
+        },
+      },
       ...TOSfr,
     },
   },
@@ -213,6 +303,52 @@ const resources = {
       checkingUsername: "Verifica disponibilità nome utente...",
       usernameTaken: "Questo nome utente è già in uso",
       "Confirm password": "Conferma password",
+      chat: {
+        list: {
+          title: "Messaggi",
+          conversationCount_one: "{{count}} conversazione",
+          conversationCount_other: "{{count}} conversazioni",
+          newChat: "Nuova chat",
+          loading: "Caricamento conversazioni...",
+          empty:
+            "Nessuna conversazione per ora. Avviane una per testare il flusso della chat.",
+          draftSelected: "Bozza di conversazione selezionata.",
+          unknownUser: "Utente sconosciuto",
+          noMessagesYet: "Ancora nessun messaggio",
+        },
+        search: {
+          title: "Nuova chat",
+          subtitle: "Cerca tramite il nome visualizzato di un utente.",
+          placeholder: "Cerca utenti...",
+          startTyping: "Inizia a digitare per trovare un utente.",
+          loading: "Ricerca in corso...",
+          empty: "Nessun utente trovato.",
+        },
+        conversation: {
+          titleFallback: "Conversazione",
+          live: "Conversazione attiva",
+          new: "Nuova conversazione",
+          loadingMore: "Caricamento...",
+          loadOlder: "Carica messaggi precedenti",
+          loadingMessages: "Caricamento messaggi...",
+          empty: "Qui non ci sono ancora messaggi.",
+          inputPlaceholder: "Scrivi un messaggio...",
+        },
+        empty: {
+          loadingTitle: "Caricamento conversazioni...",
+          idleTitle: "Seleziona una chat o avviane una nuova",
+          loadingDescription:
+            "Recupero dell'elenco conversazioni e preparazione del thread corrente.",
+          idleDescription:
+            "Usa l'elenco conversazioni per aprire messaggi esistenti o crea un nuovo thread e invia il primo messaggio.",
+        },
+        message: {
+          sending: "Invio...",
+          failed: "Non riuscito",
+          retry: "Riprova",
+          dismiss: "Chiudi",
+        },
+      },
       ...TOSit,
     },
   },
@@ -284,6 +420,52 @@ const resources = {
       checkingUsername: "Verificando disponibilidad del nombre de usuario...",
       usernameTaken: "Este nombre de usuario ya está en uso",
       "Confirm password": "Confirmar contraseña",
+      chat: {
+        list: {
+          title: "Mensajes",
+          conversationCount_one: "{{count}} conversación",
+          conversationCount_other: "{{count}} conversaciones",
+          newChat: "Nuevo chat",
+          loading: "Cargando conversaciones...",
+          empty:
+            "Todavía no hay conversaciones. Inicia una para probar el flujo del chat.",
+          draftSelected: "Borrador de conversación seleccionado.",
+          unknownUser: "Usuario desconocido",
+          noMessagesYet: "Todavía no hay mensajes",
+        },
+        search: {
+          title: "Nuevo chat",
+          subtitle: "Busca por el nombre visible de un usuario.",
+          placeholder: "Buscar usuarios...",
+          startTyping: "Empieza a escribir para encontrar un usuario.",
+          loading: "Buscando...",
+          empty: "No se encontraron usuarios.",
+        },
+        conversation: {
+          titleFallback: "Conversación",
+          live: "Conversación activa",
+          new: "Nueva conversación",
+          loadingMore: "Cargando...",
+          loadOlder: "Cargar mensajes anteriores",
+          loadingMessages: "Cargando mensajes...",
+          empty: "Todavía no hay mensajes aquí.",
+          inputPlaceholder: "Escribe un mensaje...",
+        },
+        empty: {
+          loadingTitle: "Cargando conversaciones...",
+          idleTitle: "Selecciona un chat o inicia uno nuevo",
+          loadingDescription:
+            "Obteniendo tu lista de conversaciones y preparando el hilo actual.",
+          idleDescription:
+            "Usa la lista de conversaciones para abrir mensajes existentes o crea un hilo nuevo y envía el primer mensaje.",
+        },
+        message: {
+          sending: "Enviando...",
+          failed: "Error",
+          retry: "Reintentar",
+          dismiss: "Descartar",
+        },
+      },
       ...TOSes,
     },
   },

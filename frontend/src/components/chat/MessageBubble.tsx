@@ -1,4 +1,5 @@
 import { AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { LocalMessage } from "@/lib/chat.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ export function MessageBubble({
   onRetry,
   onDiscard,
 }: MessageBubbleProps) {
+  const { t } = useTranslation();
   const isFailed = message._status === "failed";
   const isSending = message._status === "sending";
 
@@ -58,11 +60,13 @@ export function MessageBubble({
           )}
         >
           <span>{formatTime(message.createdAt)}</span>
-          {isSending ? <span>Sending...</span> : null}
+          {isSending ? <span>{t("chat.message.sending")}</span> : null}
           {isFailed ? (
             <>
               <AlertCircle className="h-3.5 w-3.5 text-destructive" />
-              <span className="text-destructive">Failed</span>
+              <span className="text-destructive">
+                {t("chat.message.failed")}
+              </span>
             </>
           ) : null}
         </div>
@@ -76,7 +80,7 @@ export function MessageBubble({
           >
             {onRetry ? (
               <Button type="button" size="sm" variant="outline" onClick={onRetry}>
-                Retry
+                {t("chat.message.retry")}
               </Button>
             ) : null}
             {onDiscard ? (
@@ -86,7 +90,7 @@ export function MessageBubble({
                 variant="outline"
                 onClick={onDiscard}
               >
-                Dismiss
+                {t("chat.message.dismiss")}
               </Button>
             ) : null}
           </div>

@@ -1,4 +1,5 @@
 import { MessageCirclePlus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { Chat } from "@/lib/chat.types";
 import { Button } from "@/components/ui/button";
 import { ChatListItem } from "./ChatListItem";
@@ -22,26 +23,30 @@ export function ChatList({
   onStartNewChat,
   onSelectConversation,
 }: ChatListProps) {
+  const { t } = useTranslation();
+
   return (
     <aside className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden border bg-card md:rounded-2xl">
       <div className="flex items-center justify-between gap-3 border-b px-4 py-4">
         <div>
-          <h1 className="text-lg font-semibold text-foreground">Messages</h1>
+          <h1 className="text-lg font-semibold text-foreground">
+            {t("chat.list.title")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            {chats.length} conversation{chats.length === 1 ? "" : "s"}
+            {t("chat.list.conversationCount", { count: chats.length })}
           </p>
         </div>
 
         <Button type="button" size="sm" onClick={onStartNewChat}>
           <MessageCirclePlus className="mr-2 h-4 w-4" />
-          New chat
+          {t("chat.list.newChat")}
         </Button>
       </div>
 
       <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
         {loading ? (
           <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
-            Loading conversations...
+            {t("chat.list.loading")}
           </div>
         ) : null}
 
@@ -53,13 +58,13 @@ export function ChatList({
 
         {!loading && !error && chats.length === 0 ? (
           <div className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
-            No conversations yet. Start one to test the chat flow.
+            {t("chat.list.empty")}
           </div>
         ) : null}
 
         {draftParticipantId ? (
           <div className="rounded-xl border border-dashed px-4 py-3 text-sm text-muted-foreground">
-            Draft conversation selected.
+            {t("chat.list.draftSelected")}
           </div>
         ) : null}
 
