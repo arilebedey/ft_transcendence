@@ -1,6 +1,7 @@
 import { UserCard } from "@/components/profile/UserCard";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   getProfileMe,
   getProfileByName,
@@ -10,6 +11,7 @@ import {
 
 export function Profile() {
   const { username } = useParams<{ username?: string }>();
+  const { t } = useTranslation();
 
   // Always fetch own profile to determine ownership
   const {
@@ -46,7 +48,7 @@ export function Profile() {
       <div className="flex justify-center min-h-screen p-6">
         <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
           <div className="w-full px-10 py-8 text-muted-foreground">
-            Loading profile...
+            {t("loadingProfile")}
           </div>
         </div>
       </div>
@@ -58,7 +60,7 @@ export function Profile() {
       <div className="flex justify-center min-h-screen p-6">
         <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
           <div className="w-full px-10 py-8 text-destructive">
-            {error instanceof Error ? error.message : "Unable to load profile"}
+            {error instanceof Error ? error.message : t("unableToLoadProfile")}
           </div>
         </div>
       </div>
