@@ -9,7 +9,6 @@ import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 import { authClient } from "@/lib/auth-client";
 import { profileMeQueryKey, updateProfileMe } from "@/lib/profile-api";
-import { sl } from "zod/v4/locales";
 
 const themes: { value: Theme; icon: ReactNode }[] = [
   { value: "forest", icon: <Trees className="h-4 w-4" /> },
@@ -34,6 +33,8 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { theme, setTheme } = useThemeStore();
+  const [initialTheme] = useState<Theme>(theme);
+  const currentTheme = themes.find((th) => th.value === theme) ?? themes[0];
 
   const normalizeLanguage = (language?: string): Language => {
     const languageBase = language?.split("-")[0]?.toUpperCase();
@@ -74,6 +75,13 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
     savePreferences({ language });
   };
 
+  const handleCloseWithoutSaving = () => {
+    if (theme !== initialTheme) {
+      setTheme(initialTheme);
+    }
+    onClose();
+  };
+
   const handleLogout = async () => {
     await authClient.signOut();
     navigate("/");
@@ -81,8 +89,10 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black opacity-20" onClick={onClose} />
-
+      <div
+        className="absolute inset-0 bg-black opacity-40"
+        onClick={handleCloseWithoutSaving}
+      />
       <Card className="relative w-120 shadow-lg z-50 flex flex-col pt-6">
         <CardContent className="space-y-6 px-6">
           {/* Theme */}
@@ -141,7 +151,11 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
             {t("Logout")}
           </Button>
           <div className="flex items-center gap-2">
-            <Button onClick={onClose} variant="outline" className="px-8">
+            <Button
+              onClick={handleCloseWithoutSaving}
+              variant="outline"
+              className="px-8"
+            >
               {t("Close")}
             </Button>
             <Button

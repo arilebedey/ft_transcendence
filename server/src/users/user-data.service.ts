@@ -1,4 +1,10 @@
-import { ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
 import { userData } from './user-data.schema';
@@ -30,7 +36,10 @@ export class UserDataService {
     return existing[0];
   }
 
-  async isUsernameAvailable(name: string, excludeUserId?: string): Promise<boolean> {
+  async isUsernameAvailable(
+    name: string,
+    excludeUserId?: string,
+  ): Promise<boolean> {
     const result = await this.db
       .select({ id: userData.id })
       .from(userData)

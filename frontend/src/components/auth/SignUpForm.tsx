@@ -9,28 +9,37 @@ import TermsCheckbox from "./TermsCheckbox";
 import { useTranslation } from "react-i18next";
 import { checkUsernameAvailable } from "@/lib/profile-api";
 
-const signUpSchema = z.object({
-  name: z.string()
-  .min(3, "Name must be at least 3 characters.")
-  .max(12, "Name must be at most 12 characters.")
-  .regex(/^[a-z0-9][a-z0-9_]*$/, "Lowercase letters, numbers, and underscores only (no uppercase or special characters)")
-  .refine((name) => !name.startsWith("_"), "Name cannot start with an underscore")
-  .transform((name) => name.toLowerCase()),
-  email: z.string().email("Invalid email address."),
-  password: z.string()
-	.min(12, "Password must be at least 12 characters.")
-	.regex(/[A-Z]/, "Must contain one uppercase")
-	.regex(/[0-9]/, "Must contain one number")
-	.regex(/[^a-zA-Z0-9]/, "Must contain one special character"),
-  password_verification: z.string(),
-  termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms.",
-  }),
-}).refine((data) => data.password === data.password_verification, {
-	message: "Password doesn't match",
-	path: ["password_verification"],
-});
-
+const signUpSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, "Name must be at least 3 characters.")
+      .max(12, "Name must be at most 12 characters.")
+      .regex(
+        /^[a-z0-9][a-z0-9_]*$/,
+        "Lowercase letters, numbers, and underscores only (no uppercase or special characters)",
+      )
+      .refine(
+        (name) => !name.startsWith("_"),
+        "Name cannot start with an underscore",
+      )
+      .transform((name) => name.toLowerCase()),
+    email: z.string().email("Invalid email address."),
+    password: z
+      .string()
+      .min(12, "Password must be at least 12 characters.")
+      .regex(/[A-Z]/, "Must contain one uppercase")
+      .regex(/[0-9]/, "Must contain one number")
+      .regex(/[^a-zA-Z0-9]/, "Must contain one special character"),
+    password_verification: z.string(),
+    termsAccepted: z.boolean().refine((val) => val === true, {
+      message: "You must accept the terms.",
+    }),
+  })
+  .refine((data) => data.password === data.password_verification, {
+    message: "Password doesn't match",
+    path: ["password_verification"],
+  });
 
 export default function SignUpForm() {
   const { t } = useTranslation();
@@ -59,7 +68,9 @@ export default function SignUpForm() {
       setSubmitError("");
 
       // Always do a final server-side check, even if debounce already validated
-      const { available } = await checkUsernameAvailable(value.name.trim().toLowerCase());
+      const { available } = await checkUsernameAvailable(
+        value.name.trim().toLowerCase(),
+      );
       if (!available) {
         setUsernameTaken(true);
         return;
@@ -125,7 +136,9 @@ export default function SignUpForm() {
                 aria-invalid={isInvalid}
               />
               {usernameChecking && (
-                <p className="text-sm text-muted-foreground">{t("checkingUsername")}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t("checkingUsername")}
+                </p>
               )}
               {!usernameChecking && usernameTaken && (
                 <p className="text-sm text-destructive">{t("usernameTaken")}</p>
@@ -204,40 +217,40 @@ export default function SignUpForm() {
         }}
       />
 
-    <form.Field
-     	name="password_verification"
-   	children={(field) => {
-			const errors = field.state.meta.errors;
-			const isInvalid = errors.length > 0;
+      <form.Field
+        name="password_verification"
+        children={(field) => {
+          const errors = field.state.meta.errors;
+          const isInvalid = errors.length > 0;
 
-			return (
-				<div className="space-y-2">
-     			<Label htmlFor={field.name}>{t("Confirm password")}</Label>
-					<Input
-						id={field.name}
-						name={field.name}
-						type="password"
-						value={field.state.value}
-						onBlur={field.handleBlur}
-						onChange={(e) => field.handleChange(e.target.value)}
-       			onPaste={(e) => {
-       				e.preventDefault();
-       				// prevent pasting into confirmation field to encourage manual retype
-       			  }}
-						placeholder="••••••••"
-						aria-invalid={isInvalid}
-					/>
-					{isInvalid && (
-						<p className="text-sm text-destructive">
-							{typeof errors[0] === "string"
-							? errors[0]
-							: errors[0]?.message}
-						</p>
-					)}
-				</div>
-			);
-		}}
-	  />
+          return (
+            <div className="space-y-2">
+              <Label htmlFor={field.name}>{t("Confirm password")}</Label>
+              <Input
+                id={field.name}
+                name={field.name}
+                type="password"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  // prevent pasting into confirmation field to encourage manual retype
+                }}
+                placeholder="••••••••"
+                aria-invalid={isInvalid}
+              />
+              {isInvalid && (
+                <p className="text-sm text-destructive">
+                  {typeof errors[0] === "string"
+                    ? errors[0]
+                    : errors[0]?.message}
+                </p>
+              )}
+            </div>
+          );
+        }}
+      />
 
       {submitError && (
         <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md">

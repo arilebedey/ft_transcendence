@@ -5,7 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
-import { checkUsernameAvailable, usernameSchema, bioSchema } from "@/lib/profile-api";
+import {
+  checkUsernameAvailable,
+  usernameSchema,
+  bioSchema,
+} from "@/lib/profile-api";
 
 interface EditProfilePopupProps {
   currentUser: { name: string; bio: string; avatarUrl?: string | null };
@@ -124,7 +128,9 @@ export function EditProfilePopup({
               className={usernameError || usernameTaken ? "border-red-500" : ""}
             />
             {usernameChecking && (
-              <p className="text-sm text-muted-foreground">{t("checkingUsername")}</p>
+              <p className="text-sm text-muted-foreground">
+                {t("checkingUsername")}
+              </p>
             )}
             {!usernameChecking && usernameTaken && (
               <p className="text-sm text-red-500">{t("usernameTaken")}</p>
@@ -166,7 +172,11 @@ export function EditProfilePopup({
           >
             {t("Close")}
           </Button>
-          <Button onClick={handleSave} className="px-6" disabled={isSaving || usernameChecking || usernameTaken}>
+          <Button
+            onClick={handleSave}
+            className="px-6"
+            disabled={isSaving || usernameChecking || usernameTaken}
+          >
             {t("save")}
           </Button>
         </CardFooter>
