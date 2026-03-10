@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
-  "id": "4d494d25-9915-41c8-b073-72fcbeca1d4a",
-=======
-  "id": "6596465a-36ae-4767-a008-6768360b8045",
->>>>>>> eb5fc0d (Fixed like scheme && plug to db, add a modified version of the test script)
+  "id": "b9ecb183-c9a1-4da4-9488-91bf1fb9a786",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
