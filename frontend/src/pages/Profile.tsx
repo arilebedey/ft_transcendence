@@ -17,17 +17,15 @@ export function Profile() {
   // Check username existence immediately (parallel with own profile fetch)
   // available: true  → username is free → profile does NOT exist
   // available: false → username is taken → profile exists
-  const {
-    data: usernameCheck,
-    isPending: checkPending,
-  } = useQuery({
+  const { data: usernameCheck, isPending: checkPending } = useQuery({
     queryKey: ["profile", "check", username ?? ""],
     queryFn: () => checkUsernameAvailable(username!),
     enabled: !!username,
     staleTime: 30_000,
   });
 
-  const userNotFound = !!username && !checkPending && usernameCheck?.available === true;
+  const userNotFound =
+    !!username && !checkPending && usernameCheck?.available === true;
 
   // Always fetch own profile to determine ownership
   const {
@@ -42,7 +40,8 @@ export function Profile() {
 
   // Fetch other user's profile only once we know the username exists
   const isOtherUser = !!username && username !== ownProfile?.name;
-  const shouldFetchOtherProfile = isOtherUser && usernameCheck?.available === false;
+  const shouldFetchOtherProfile =
+    isOtherUser && usernameCheck?.available === false;
   const {
     data: otherProfile,
     isPending: otherPending,
@@ -67,7 +66,8 @@ export function Profile() {
     );
   }
 
-  const isPending = ownPending || (!!username && checkPending) || (isOtherUser && otherPending);
+  const isPending =
+    ownPending || (!!username && checkPending) || (isOtherUser && otherPending);
   const isError = ownError || (isOtherUser && otherError);
   const error = isOtherUser ? otherErrorObj : ownErrorObj;
   const isOwnProfile = !username || username === ownProfile?.name;
