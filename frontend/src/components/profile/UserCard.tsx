@@ -6,8 +6,10 @@ import { UserInfo } from "@/components/profile/UserInfo";
 import { UserStats } from "@/components/profile/UserStats";
 import { UserActionButton } from "@/components/profile/UserActionButton";
 import { EditPreferencesPopup } from "@/components/profile/EditPreferencesPopup";
+import { useNavigate } from "react-router-dom";
 import {
   profileMeQueryKey,
+  profileByNameQueryKey,
   type ProfileUserData,
   type PublicProfileData,
   updateProfileMe,
@@ -20,6 +22,7 @@ interface UserCardProps {
 
 export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [bio, setBio] = useState(profile.bio ?? "");
 
   useEffect(() => {
@@ -38,8 +41,36 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const { mutate: saveProfile, isPending: isSaving } = useMutation({
     mutationFn: updateProfileMe,
     onSuccess: (updatedProfile) => {
+      const previousName = profile.name.trim().toLowerCase();
+      const updatedName = updatedProfile.name.trim().toLowerCase();
+      const hasRenamed = previousName !== updatedName;
+
       queryClient.setQueryData(profileMeQueryKey, updatedProfile);
+
+      if (hasRenamed) {
+        queryClient.removeQueries({
+          queryKey: profileByNameQueryKey(previousName),
+          exact: true,
+        });
+        queryClient.removeQueries({
+          queryKey: profileByNameQueryKey(updatedName),
+          exact: true,
+        });
+        queryClient.removeQueries({
+          queryKey: ["profile", "check", previousName],
+          exact: true,
+        });
+        queryClient.removeQueries({
+          queryKey: ["profile", "check", updatedName],
+          exact: true,
+        });
+      }
+
       setShowEditPopup(false);
+
+      if (hasRenamed) {
+        navigate("/profile", { replace: true });
+      }
     },
     onError: (error) => {
       console.error("Profile update failed:", error);
