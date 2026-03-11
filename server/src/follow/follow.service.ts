@@ -22,6 +22,24 @@ export class FollowService {
     });
   }
 
+  /*async getFollowedUserIds(userId: string): Promise<string[]> {
+    const follows = await this.db.query.follow.findMany({
+      where: eq(this.db.query.follow.followerId, userId),
+      columns: { followedId: true },
+    });
+  
+    return [userId, ...follows.map(f => f.followedId)];
+  }*/
+
+  async getFollowedUserIds(userId: string): Promise<string[]> {
+    const follows = await this.db.query.follow.findMany({
+      where: (f) => eq(f.followerId, userId),
+      columns: { followedId: true },
+    });
+  
+    return [userId, ...follows.map(f => f.followedId)];
+  }
+
   async create(followerId: string, followedId: string) {
     if (followerId === followedId) {
       throw new ForbiddenException('You cannot follow yourself');

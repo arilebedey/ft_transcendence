@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { GetUser } from 'src/auth/get-user.decorator';
 import type { AuthUser } from 'src/auth/auth.types';
@@ -12,6 +12,20 @@ export class PostsController {
   @Get()
   findAll() {
     return this.postsService.findAll();
+  }
+
+  @Get('feed')
+  getFeed(@GetUser() user: AuthUser) {
+    console.log('📣 getFeed called');
+    return this.postsService.getFeed(user.id);
+  }
+
+  @Get('user/:id')
+    getPostsByUser(
+    @Param('id') userId: string,
+    @Query('filter') filter?: 'recent' | 'oldest' | 'most_liked'
+  ) {
+    return this.postsService.getPostsByUser(userId, filter);
   }
 
   @Get(':id')

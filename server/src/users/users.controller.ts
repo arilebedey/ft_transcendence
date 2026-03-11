@@ -30,6 +30,10 @@ export class UsersController {
   async getMe(@GetUser() user: AuthUser) {
     return this.userDataService.get(user.id);
   }
+  @Get('search')
+  async searchUsers(@Query('q') query: string) {
+  return this.userDataService.search(query);
+  }
 
   @Patch('me')
   async updateMe(@GetUser() user: AuthUser, @Body() dto: UpdateUserDataDto) {
