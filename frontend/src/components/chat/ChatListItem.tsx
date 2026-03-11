@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import type { Chat } from "@/lib/chat.types";
+import { UserAvatar } from "@/components/profile/UserAvatar";
 
 interface ChatListItemProps {
   chat: Chat;
@@ -22,17 +22,6 @@ function formatTimestamp(value: string | null) {
   return isSameDay
     ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : date.toLocaleDateString([], { month: "short", day: "numeric" });
-}
-
-function getInitials(name: string | null | undefined) {
-  if (!name) return "?";
-
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
 }
 
 export function ChatListItem({
@@ -56,11 +45,11 @@ export function ChatListItem({
           : "border-transparent bg-card hover:border-border hover:bg-accent/40",
       )}
     >
-      <Avatar className="h-11 w-11">
-        <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
-          {getInitials(chat.participant?.name)}
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar
+        name={chat.participant?.name ?? "?"}
+        avatarUrl={chat.participant?.avatarUrl}
+        className="h-11 w-11 shrink-0"
+      />
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
