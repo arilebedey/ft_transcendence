@@ -135,11 +135,12 @@ export class ChatService {
       .select({
         id: userData.id,
         name: userData.name,
+        avatarUrl: userData.avatarUrl,
       })
       .from(userData)
       .where(inArray(userData.id, [creatorId, dto.participantId]));
 
-    const nameMap = new Map(participantNames.map((pn) => [pn.id, pn.name]));
+    const nameMap = new Map(participantNames.map((pn) => [pn.id, pn]));
 
     const basePayload = {
       id: result.id,
@@ -152,7 +153,8 @@ export class ChatService {
       ...basePayload,
       participant: {
         id: dto.participantId,
-        name: nameMap.get(dto.participantId) ?? '',
+        name: nameMap.get(dto.participantId)?.name ?? '',
+        avatarUrl: nameMap.get(dto.participantId)?.avatarUrl ?? null,
       },
     };
 
@@ -160,7 +162,8 @@ export class ChatService {
       ...basePayload,
       participant: {
         id: creatorId,
-        name: nameMap.get(creatorId) ?? '',
+        name: nameMap.get(creatorId)?.name ?? '',
+        avatarUrl: nameMap.get(creatorId)?.avatarUrl ?? null,
       },
     };
 
@@ -312,6 +315,7 @@ export class ChatService {
         conversationId: conversationParticipant.conversationId,
         userId: conversationParticipant.userId,
         name: userData.name,
+        avatarUrl: userData.avatarUrl,
       })
       .from(conversationParticipant)
       .innerJoin(userData, eq(userData.id, conversationParticipant.userId))
@@ -350,7 +354,7 @@ export class ChatService {
           id: conv.id,
           createdAt: conv.createdAt,
           updatedAt: conv.updatedAt,
-          participant: other ? { id: other.userId, name: other.name } : null,
+          participant: other ? { id: other.userId, name: other.name, avatarUrl: other.avatarUrl ?? null } : null,
           lastMessage: lastMessage
             ? {
                 content: lastMessage.content,
