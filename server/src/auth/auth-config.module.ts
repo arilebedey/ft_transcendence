@@ -4,7 +4,6 @@ import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware, APIError } from 'better-auth/api';
-import { expo } from '@better-auth/expo';
 import { APP_GUARD } from '@nestjs/core';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';

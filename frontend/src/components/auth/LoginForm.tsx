@@ -15,17 +15,17 @@ const loginSchema = z.object({
 
 const DEV_USERS = [
   {
-    name: "Professor Wobblebottom",
+    name: "profwobble",
     email: "professor.wobblebottom@example.com",
     password: "WobbleBottom!42",
   },
   {
-    name: "Captain Turnip Deluxe",
+    name: "turnipdeluxe",
     email: "captain.turnip.deluxe@example.com",
     password: "TurnipDeluxe!42",
   },
   {
-    name: "DJ Sardine Eclipse",
+    name: "djsardineclipse",
     email: "dj.sardine.eclipse@example.com",
     password: "SardineEclipse!42",
   },
