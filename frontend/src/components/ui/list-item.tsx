@@ -23,6 +23,7 @@ interface ListItemProps {
   badge?: ReactNode;
   index?: number;
   className?: string;
+  onClick?: () => void;
 }
 
 export function ListItem({
@@ -33,9 +34,11 @@ export function ListItem({
   badge,
   index = 0,
   className,
+  onClick,
 }: ListItemProps) {
   return (
     <div
+      onClick={onClick}
       className={cn("flex items-center gap-3 p-3 rounded-lg card-hover", className)}
       style={{ animationDelay: `${index * 50}ms` }}
     >

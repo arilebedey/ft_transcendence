@@ -14,7 +14,7 @@ export const follow = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [
-    primaryKey(table.followerId, table.followedId), // ← clé composite
+    primaryKey(table.followerId, table.followedId),
     index('follow_follower_idx').on(table.followerId),
     index('follow_followed_idx').on(table.followedId),
   ],
