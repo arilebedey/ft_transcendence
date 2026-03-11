@@ -21,7 +21,9 @@ interface LayoutProps {
   showLanguageToggle?: boolean;
   showThemeToggle?: boolean;
   showPostCreationButton?: boolean;
+  onSelectUser?: (id: string | null) => void;
   onPostCreationClick?: () => void;
+  onFilterChange?: (filter: 'recent' | 'oldest' | 'most_liked') => void;
 }
 
 export function Layout({
@@ -31,6 +33,8 @@ export function Layout({
   showLanguageToggle,
   showThemeToggle,
   showPostCreationButton,
+  onSelectUser,
+  onFilterChange,
   onPostCreationClick, }: LayoutProps) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -40,6 +44,8 @@ export function Layout({
         showLanguageToggle={showLanguageToggle}
         showThemeToggle={showThemeToggle}
         showPostCreationButton={showPostCreationButton}
+        onSelectUser={onSelectUser}
+        onFilterChange={onFilterChange}
         onPostCreationClick={onPostCreationClick}
       />
 
