@@ -16,7 +16,6 @@ export class PostsController {
 
   @Get('feed')
   getFeed(@GetUser() user: AuthUser) {
-    console.log('📣 getFeed called');
     return this.postsService.getFeed(user.id);
   }
 

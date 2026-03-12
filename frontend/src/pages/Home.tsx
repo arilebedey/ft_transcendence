@@ -15,7 +15,7 @@
   import { useState } from "react";
   import { useEffect } from "react";
   import { Layout } from "@/components/Layout";
-  import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+  import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
   import { PostCard } from "@/components/ui/post-card";
   import { Button } from "@/components/ui/button";
   import { useTranslation } from "react-i18next";
@@ -55,7 +55,7 @@
           if (searchedUserId) {
             res = await fetch(`/api/posts/user/${searchedUserId}?filter=${filter}`);
           } else {
-            res = await fetch("/api/posts");
+            res = await fetch("/api/posts/feed");
           }
     
           if (!res.ok) {
