@@ -22,7 +22,20 @@ setup:
 	@bash scripts/setup-secrets.sh
 
 build:
-	$(PROD_COMPOSE) build
+	@if [ "$(TARGET_ENV)" = "prod" ]; then \
+		$(PROD_COMPOSE) build backend frontend; \
+		echo "Built application images for prod stack"; \
+	else \
+		echo "No application image build in dev mode (services run from base images). Use: make build prod"; \
+	fi
+
+clean-images:
+	@if [ "$(TARGET_ENV)" = "prod" ]; then \
+		docker image rm -f ft_transcendence-backend:prod ft_transcendence-frontend:prod 2>/dev/null || true; \
+		echo "Removed application images for prod stack"; \
+	else \
+		echo "No local application images managed in dev mode"; \
+	fi
 
 up:
 	-$(PROD_COMPOSE) rm -fs frontend backend
@@ -80,4 +93,4 @@ ps:
 fix-docker:
 	export DOCKER_API_VERSION=1.44
 
-.PHONY: all setup build up dev prod down clean fclean re logs ps fix-docker migrate regenerate
+.PHONY: all setup build clean-images up dev prod down clean fclean re logs ps fix-docker migrate regenerate
