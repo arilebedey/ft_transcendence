@@ -66,18 +66,6 @@ export function SearchBar( { onSelectUser, onFilterChange }: SearchBarProps) {
     }
   }, [results, onSelectUser]);
 
-
-  /*useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);*/
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -206,7 +194,19 @@ export function SearchBar( { onSelectUser, onFilterChange }: SearchBarProps) {
           )}
   
           {!loading &&
-            results.map((user) => (
+            results
+            .slice()
+            .sort((a, b) => {
+              const nameA = a.name.toLowerCase();
+              const nameB = b.name.toLowerCase();
+              const q = query.toLowerCase();
+
+              const indexA = nameA.indexOf(q);
+              const indexB = nameB.indexOf(q);
+
+              return (indexA === -1 ? Infinity : indexA) - (indexB === -1 ? Infinity : indexB);
+            })
+            .map((user) => (
               <Button
                 key={user.id}
                 variant="ghost"

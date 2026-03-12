@@ -4,11 +4,13 @@ import * as userDataSchema from '../users/user-data.schema';
 import * as likeSchema from '../likes/likes.schema';
 import * as chatSchema from '../chat/chat.schema';
 import * as postsSchema from '../posts/posts.schema';
+import * as followSchema from '../follow/follow.schema';
 
 export type AppDatabase = NodePgDatabase<
   typeof authSchema &
     typeof userDataSchema &
     typeof likeSchema &
     typeof chatSchema &
-    typeof postsSchema
+    typeof postsSchema &
+    typeof followSchema
 >;

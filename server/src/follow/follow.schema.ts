@@ -8,15 +8,15 @@ export const follow = pgTable(
     followerId: text('follower_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    followedId: text('followed_id')
+    followingId: text('following_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [
-    primaryKey(table.followerId, table.followedId),
-    index('follow_follower_idx').on(table.followerId),
-    index('follow_followed_idx').on(table.followedId),
+    primaryKey({ columns: [table.followerId, table.followingId] }),
+    index('follow_followerId_idx').on(table.followerId),
+    index('follow_followingId_idx').on(table.followingId),
   ],
 );
 
@@ -25,8 +25,8 @@ export const followRelations = relations(follow, ({ one }) => ({
     fields: [follow.followerId],
     references: [user.id],
   }),
-  followed: one(user, {
-    fields: [follow.followedId],
+  following: one(user, {
+    fields: [follow.followingId],
     references: [user.id],
   }),
 }));
