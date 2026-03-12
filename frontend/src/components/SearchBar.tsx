@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ListCard } from "@/components/ui/list-card";
 import { ListItem } from "@/components/ui/list-item";
+import { getProfileByName, profileByNameQueryKey } from "@/lib/profile-api";
+import { useQueries } from "@tanstack/react-query";
 
 interface UserResult {
   id: string;
@@ -55,6 +57,14 @@ export function SearchBar( { onSelectUser, onFilterChange }: SearchBarProps) {
       setLoading(false);
     }
   };
+
+  const profileQueries = useQueries({
+    queries: results.map((user) => ({
+      queryKey: profileByNameQueryKey(user.name),
+      queryFn: () => getProfileByName(user.name),
+      staleTime: 1000 * 60,
+    })),
+  });
 
   useEffect(() => {
     if (onSelectUser) {
@@ -206,16 +216,37 @@ export function SearchBar( { onSelectUser, onFilterChange }: SearchBarProps) {
 
               return (indexA === -1 ? Infinity : indexA) - (indexB === -1 ? Infinity : indexB);
             })
-            .map((user) => (
-              <Button
-                key={user.id}
-                variant="ghost"
-                onClick={() => goToProfile(user.name)}
-                className="w-full justify-start rounded-none px-4 py-3 hover:bg-accent"
-              >
-                {user.name}
-              </Button>
-            ))}
+            .map((user, idx) => {
+              const profileQuery = profileQueries[idx];
+              const profile = profileQuery?.data;
+
+              const userName = profile?.name || user.name;
+              const userAvatar = profile?.avatarUrl;
+
+              return (
+                <Button
+                  key={user.id}
+                  variant="ghost"
+                  onClick={() => goToProfile(user.name)}
+                  className="w-full justify-start rounded-none px-4 py-2 hover:bg-accent flex items-center gap-3"
+                >
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
+                    {userAvatar ? (
+                      <img
+                        src={"/storage/" + userAvatar}
+                        alt={userName}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-primary-foreground font-bold">
+                        {userName.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <span>{userName}</span>
+                </Button>
+              );
+            })}
         </div>
       )}
     </div>
