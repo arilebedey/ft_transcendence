@@ -83,10 +83,6 @@ export function SearchBar( { onSelectUser, onFilterChange }: SearchBarProps) {
       if (containerRef.current && !containerRef.current.contains(target)) {
         setShowDropdown(false);
       }
- 
-      if (filterDropdownRef.current && !filterDropdownRef.current.contains(target)) {
-        setShowFilterDropdown(false);
-      }
     };
   
     document.addEventListener("mousedown", handleClickOutside);
@@ -162,41 +158,47 @@ export function SearchBar( { onSelectUser, onFilterChange }: SearchBarProps) {
             className="absolute right-0 mt-2 w-44 z-50"
             ref={filterDropdownRef}
           >
-            <ListCard title="Sort by">
-              <ListItem
-                primary="Most Recent"
-                action={filter === 'recent' ? "✓" : undefined}
-                onClick={() => {
-                  setFilter('recent');
-                  setShowFilterDropdown(false);
-                  if (onFilterChange) onFilterChange('recent');
-                }}
-              />
-              <ListItem
-                primary="Oldest"
-                action={filter === 'oldest' ? "✓" : undefined}
-                onClick={() => {
-                  setFilter('oldest');
-                  setShowFilterDropdown(false);
-                  if (onFilterChange) onFilterChange('oldest');
-                }}
-              />
-              <ListItem
-                primary="Most Liked"
-                action={filter === 'most_liked' ? "✓" : undefined}
-                onClick={() => {
-                  setFilter('most_liked');
-                  setShowFilterDropdown(false);
-                  if (onFilterChange) onFilterChange('most_liked');
-                }}
-              />
-            </ListCard>
+          <ListCard title={t("SortBy")}>
+            <ListItem
+              primary={t("MostRecent")}
+              action={filter === 'recent' ? "✓" : undefined}
+              className="flex justify-between w-full"
+              onClick={() => {
+                setFilter('recent');
+                setShowFilterDropdown(false);
+                if (onFilterChange) onFilterChange('recent');
+              }}
+            />
+            <ListItem
+              primary={t("Oldest")}
+              action={filter === 'oldest' ? "✓" : undefined}
+              className="flex justify-between w-full"
+              onClick={() => {
+                setFilter('oldest');
+                setShowFilterDropdown(false);
+                if (onFilterChange) onFilterChange('oldest');
+              }}
+            />
+            <ListItem
+              primary={t("MostLiked")}
+              action={filter === 'most_liked' ? "✓" : undefined}
+              className="flex justify-between w-full"
+              onClick={() => {
+                setFilter('most_liked');
+                setShowFilterDropdown(false);
+                if (onFilterChange) onFilterChange('most_liked');
+              }}
+            />
+          </ListCard>
           </div>
         )}
       </div>
 
       {showDropdown && (
-        <div className="absolute mt-2 w-full bg-card border rounded-xl shadow-lg overflow-hidden z-50">
+        <div
+        className="absolute mt-2 bg-card border rounded-xl shadow-lg overflow-hidden z-50"
+        style={{ width: `calc(100% - 11rem - 0.5rem)` }}
+        >
           {!loading && results.length === 0 && (
             <div className="px-4 py-3 text-sm text-muted-foreground">
               {t("NoUsersFound")}
