@@ -1,16 +1,52 @@
 SECRETS_DIR = ./secrets
+DEV_COMPOSE = docker compose -f docker-compose.yaml
+PROD_COMPOSE = docker compose -f docker-compose.prod.yaml
 
-all: setup build up
+TARGET_ENV := dev
+ifneq ($(filter prod,$(MAKECMDGOALS)),)
+TARGET_ENV := prod
+endif
+ifneq ($(filter dev,$(MAKECMDGOALS)),)
+TARGET_ENV := dev
+endif
+
+ifeq ($(TARGET_ENV),prod)
+ACTIVE_COMPOSE = $(PROD_COMPOSE)
+else
+ACTIVE_COMPOSE = $(DEV_COMPOSE)
+endif
+
+all: setup up
 
 setup:
 	@bash scripts/setup-secrets.sh
 
 build:
-	docker compose build
+	$(PROD_COMPOSE) build
 
 up:
-	docker compose up -d
-	@echo "🎯 Services running (postgres, pgadmin & minio)"
+	-$(PROD_COMPOSE) rm -fs frontend backend
+	$(DEV_COMPOSE) up -d --remove-orphans
+	$(MAKE) migrate
+	@echo "Services running in dev mode (frontend, backend, postgres, pgadmin, minio)"
+
+ifeq ($(firstword $(MAKECMDGOALS)),prod)
+prod: setup
+	-$(DEV_COMPOSE) rm -fs frontend backend
+	$(PROD_COMPOSE) up -d --build --remove-orphans
+	$(MAKE) migrate
+	@echo "Services running in production mode"
+else
+prod:
+	@:
+endif
+
+ifeq ($(firstword $(MAKECMDGOALS)),dev)
+dev: setup up
+else
+dev:
+	@:
+endif
 
 install:
 	cd server && npm install && cd ../frontend && npm install && cd ..
@@ -22,21 +58,26 @@ migrate:
 	cd server && npx drizzle-kit migrate && cd ..
 
 down:
-	docker compose down
+	$(ACTIVE_COMPOSE) down --remove-orphans
+	@echo "Stopped $(TARGET_ENV) stack"
 
-clean: down
-	docker compose down -v
-	@echo "💥 Volumes cleaned (data gone)"
+clean:
+	$(ACTIVE_COMPOSE) down -v --remove-orphans
+	@echo "Volumes cleaned for $(TARGET_ENV) stack (data removed)"
+
+fclean:
+	$(ACTIVE_COMPOSE) down -v --remove-orphans --rmi local
+	@echo "Full cleanup done for $(TARGET_ENV) stack (containers, volumes, local images removed)"
 
 re: clean regenerate all install migrate
 
 logs:
-	docker compose logs -f
+	$(ACTIVE_COMPOSE) logs -f
 
 ps:
-	docker compose ps
+	$(ACTIVE_COMPOSE) ps
 
 fix-docker:
 	export DOCKER_API_VERSION=1.44
 
-.PHONY: all setup build up down clean re logs ps fix-docker migrate regenerate
+.PHONY: all setup build up dev prod down clean fclean re logs ps fix-docker migrate regenerate
