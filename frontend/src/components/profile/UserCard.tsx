@@ -72,6 +72,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
 
     try {
       if (isFollowing) {
+        setStats((prev) => ({ ...prev, followers: prev.followers - 1 }));
         await fetch("/api/follows", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -79,6 +80,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
         });
         setIsFollowing(false);
       } else {
+        setStats((prev) => ({ ...prev, followers: prev.followers + 1 }));
         await fetch("/api/follows", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
