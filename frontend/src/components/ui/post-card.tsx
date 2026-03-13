@@ -21,9 +21,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LikeToggle } from "@/components/LikeToggle";
 import { DropDownList } from "@/components/dropdown-list";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MessageCircle, Share2, MoreHorizontal } from "lucide-react";
+import { MessageCircle, Share2} from "lucide-react";
+import { getProfileByName, profileByNameQueryKey, PublicProfileData } from "@/lib/profile-api";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 interface Post {
@@ -61,6 +62,12 @@ export function PostCard({
 }: PostCardProps) {
   const formattedTime = new Date(post.createdAt).toLocaleString();
   const { t } = useTranslation();
+  const { data: authorProfile } = useQuery<PublicProfileData>({
+    queryKey: profileByNameQueryKey(post.author.name),
+    queryFn: () => getProfileByName(post.author.name),
+  });
+  const userName = authorProfile?.name || post.author.name;
+  const userAvatar = authorProfile?.avatarUrl;
 
   return (
     <Card
@@ -71,11 +78,19 @@ export function PostCard({
         <div className="flex gap-3">
 
           <div className="shrink-0">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="bg-secondary">
-                {post.author.name.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            {userAvatar ? (
+              <img
+                src={"/storage/" + userAvatar}
+                alt={userName}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-lg">
+                  {userName.charAt(0)}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex-1 min-w-0">

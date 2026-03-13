@@ -15,7 +15,7 @@
   import { useState } from "react";
   import { useEffect } from "react";
   import { Layout } from "@/components/Layout";
-  import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+  import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
   import { PostCard } from "@/components/ui/post-card";
   import { Button } from "@/components/ui/button";
   import { useTranslation } from "react-i18next";
@@ -42,23 +42,36 @@
     const sessionResult = authClient.useSession();
     const session = sessionResult?.data;
     const currentUserId = session?.user?.id;
+    const [searchedUserId, setSearchedUserId] = useState<string | null>(null);
+    const [filter, setFilter] = useState<'recent' | 'oldest' | 'most_liked'>('recent');
     const { t } = useTranslation();
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
       const fetchPosts = async () => {
-        const res = await fetch("/api/posts");
-        if (!res.ok) {
-          console.error("Erreur fetch posts");
-          return;
-        }
+        try {
+          let res: Response;
     
-        const data = await res.json();
-        setPosts(data);
+          if (searchedUserId) {
+            res = await fetch(`/api/posts/user/${searchedUserId}?filter=${filter}`);
+          } else {
+            res = await fetch("/api/posts/feed");
+          }
+    
+          if (!res.ok) {
+            console.error("Erreur fetch posts:", res.statusText);
+            return;
+          }
+    
+          const data = await res.json();
+          setPosts(data);
+        } catch (err) {
+          console.error("Erreur fetch posts (exception):", err);
+        }
       };
     
       fetchPosts();
-    }, []);
+    }, [searchedUserId, filter]);
 
     function extractLink(text: string): { url?: string; contentWithoutLink: string } {
       const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/i;
@@ -156,6 +169,8 @@
 
     return (
       <Layout
+        onSelectUser={setSearchedUserId}
+        onFilterChange={setFilter}
         showPostCreationButton={true}
         showThemeToggle={false}
         showLanguageToggle={false}

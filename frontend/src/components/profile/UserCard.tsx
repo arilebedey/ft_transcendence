@@ -23,19 +23,74 @@ interface UserCardProps {
 export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [stats, setStats] = useState({ followers: 0, following: 0 });
   const [bio, setBio] = useState(profile.bio ?? "");
 
   useEffect(() => {
     setBio(profile.bio ?? "");
   }, [profile.bio]);
 
-  const isFollowing = false;
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loadingFollow, setLoadingFollow] = useState(true);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showEditPreferencesPopup, setShowEditPreferencesPopup] =
     useState(false);
+  
+  useEffect(() => {
+    if (!isOwnProfile) {
+      setLoadingFollow(true);
+      fetch(`/api/follows/${profile.id}/is-following`)
+        .then(res => res.json())
+        .then(data => setIsFollowing(data.isFollowing))
+        .catch(console.error)
+        .finally(() => setLoadingFollow(false));
+    }
+  }, [profile.id, isOwnProfile]);
 
-  const onToggleFollow = () => {
-    // TODO: Implement follow/unfollow logic
+  useEffect(() => {
+    if (!profile?.id) return;
+  
+    const fetchStats = async () => {
+      try {
+        const res = await fetch(`/api/follows/${profile.id}/stats`);
+        if (!res.ok) {
+          console.error('Erreur fetch stats:', res.statusText);
+          return;
+        }
+        const data = await res.json();
+        setStats({ followers: data.followers, following: data.following });
+      } catch (err) {
+        console.error('Erreur fetch stats (exception):', err);
+      }
+    };
+  
+    fetchStats();
+  }, [profile?.id]);
+
+  const onToggleFollow = async () => {
+    if (loadingFollow) return;
+
+    try {
+      if (isFollowing) {
+        setStats((prev) => ({ ...prev, followers: prev.followers - 1 }));
+        await fetch("/api/follows", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ followingId: profile.id }),
+        });
+        setIsFollowing(false);
+      } else {
+        setStats((prev) => ({ ...prev, followers: prev.followers + 1 }));
+        await fetch("/api/follows", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ followingId: profile.id }),
+        });
+        setIsFollowing(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const { mutate: saveProfile, isPending: isSaving } = useMutation({
@@ -92,7 +147,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
           onToggleFollow={onToggleFollow}
         />
       </div>
-      <UserStats followers={0} following={0} />
+      <UserStats followers={stats.followers} following={stats.following} />
 
       {isOwnProfile && showEditPopup && "avatarUrl" in profile && (
         <EditProfilePopup
