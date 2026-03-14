@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+# Configure npm for resilience against flaky networks
+# (prevents ECONNRESET on slow/proxied connections)
+RUN npm config set fetch-retry-mintimeout 20000 \
+    && npm config set fetch-retry-maxtimeout 120000 \
+    && npm config set fetch-retries 5
+
+WORKDIR /app
+
+# Install deps into the image layer at build time.
+# A named volume overlays /app/node_modules at runtime so
+# the bind-mount (./frontend:/app) doesn't shadow these installs.
+COPY frontend/package*.json ./
+RUN npm install
+
+EXPOSE 5173
