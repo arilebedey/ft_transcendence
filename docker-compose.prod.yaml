@@ -1,39 +1,154 @@
 services:
+  # ── Infrastructure ──────────────────────────────────────────────────────────
+
+  db:
+    image: postgres:15-alpine
+    container_name: ftt_prod_postgres
+    environment:
+      POSTGRES_DB: prod_db
+      POSTGRES_USER: prod_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - prod-db-data:/var/lib/postgresql/data
+    secrets:
+      - db_password
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "prod_user", "-d", "prod_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  minio:
+    image: minio/minio
+    container_name: ftt_prod_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    secrets:
+      - minio_password
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  minio-init:
+    image: minio/mc
+    container_name: ftt_prod_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    secrets:
+      - minio_password
+    entrypoint: >
+      /bin/sh -c " MINIO_PASSWORD=$$(cat /run/secrets/minio_password); mc alias set local http://minio:9000 minioadmin $$MINIO_PASSWORD; mc mb --ignore-existing local/profile-pictures; mc anonymous set download local/profile-pictures; echo 'MinIO bucket ready.'; "
+    restart: "no"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: ftt_prod_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.com
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
+    ports:
+      - "8085:80"
+    secrets:
+      - pgadmin_password
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── One-shot migration ──────────────────────────────────────────────────────
+  # Uses the dev Dockerfile so drizzle-kit and schema source files are available.
+  # The prod backend image only contains the compiled dist and cannot run migrations.
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile.dev
+    image: ft_transcendence-backend:migrate
+    working_dir: /app
+    command: >
+      /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); npx drizzle-kit migrate "
+    environment:
+      NODE_ENV: production
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: prod_user
+      POSTGRES_DB: prod_db
+    secrets:
+      - db_password
+      - better_auth_secret
+    volumes:
+      - ./server:/app
+      - backend-node-modules:/app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  # ── Application ─────────────────────────────────────────────────────────────
+
   backend:
     build:
       context: .
       dockerfile: docker/backend/Dockerfile.prod
     image: ft_transcendence-backend:prod
     command: >
-      /bin/sh -c "export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret) && npm run start:prod"
+      /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); export MINIO_SECRET_KEY=$$(cat /run/secrets/minio_password); npm run start:prod "
     environment:
       NODE_ENV: production
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_USER: dev_user
-      POSTGRES_PASSWORD: dev_password
-      POSTGRES_DB: dev_db
+      POSTGRES_USER: prod_user
+      POSTGRES_DB: prod_db
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
       BETTER_AUTH_URL: http://localhost:3000
       CLIENT_URL: http://localhost:5173
     ports:
       - "3000:3000"
     secrets:
       - better_auth_secret
+      - db_password
+      - minio_password
     depends_on:
       db:
         condition: service_healthy
       minio:
         condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:3000/api/auth/get-session || exit 1"]
+      test: [ "CMD-SHELL", "wget -q -O /dev/null http://localhost:3000/api/auth/get-session || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 25s
+      start_period: 30s
+    restart: unless-stopped
 
   frontend:
     build:
@@ -47,90 +162,13 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
-
-  db:
-    image: postgres:15-alpine
-    container_name: dev_ftt_postgres
-    environment:
-      POSTGRES_DB: dev_db
-      POSTGRES_USER: dev_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - dev-db-data:/var/lib/postgresql/data
-    secrets:
-      - db_password
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "dev_user", "-d", "dev_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: dev_ftt_pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local.com
-      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
-    ports:
-      - "8085:80"
-    secrets:
-      - pgadmin_password
-    depends_on:
-      db:
-        condition: service_healthy
-
-  minio:
-    image: minio/minio
-    container_name: dev_ftt_minio
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio-data:/data
-    secrets:
-      - minio_password
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  minio-init:
-    image: minio/mc
-    container_name: dev_ftt_minio_init
-    depends_on:
-      minio:
-        condition: service_healthy
-    secrets:
-      - minio_password
-    entrypoint: >
-      /bin/sh -c "
-      MINIO_PASSWORD=$$(cat /run/secrets/minio_password);
-      mc alias set myminio http://minio:9000 minioadmin $$MINIO_PASSWORD;
-      mc mb --ignore-existing myminio/profile-pictures;
-      mc anonymous set download myminio/profile-pictures;
-      echo 'Bucket profile-pictures created and set to public-read';
-      "
+    restart: unless-stopped
 
 volumes:
-  dev-db-data:
+  prod-db-data:
   minio-data:
+  backend-node-modules:
+
 
 secrets:
   better_auth_secret:

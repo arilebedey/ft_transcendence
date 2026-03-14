@@ -1,96 +1,154 @@
-SECRETS_DIR = ./secrets
-DEV_COMPOSE = docker compose -f docker-compose.yaml
+SECRETS_DIR  = ./secrets
+DEV_COMPOSE  = docker compose -f docker-compose.yaml
 PROD_COMPOSE = docker compose -f docker-compose.prod.yaml
 
-TARGET_ENV := dev
-ifneq ($(filter prod,$(MAKECMDGOALS)),)
-TARGET_ENV := prod
-endif
-ifneq ($(filter dev,$(MAKECMDGOALS)),)
-TARGET_ENV := dev
-endif
+.DEFAULT_GOAL := help
 
-ifeq ($(TARGET_ENV),prod)
-ACTIVE_COMPOSE = $(PROD_COMPOSE)
-else
-ACTIVE_COMPOSE = $(DEV_COMPOSE)
-endif
+# ── Help ─────────────────────────────────────────────────────────────────────
 
-all: setup up
+help:
+	@echo ""
+	@echo "  ft_transcendence"
+	@echo ""
+	@echo "  ── Dev ─────────────────────────────────────────────────────────"
+	@echo "    make dev              Setup secrets + start full dev stack"
+	@echo "    make infra            Start only db, minio, pgadmin"
+	@echo "    make migrate          Run DB migrations inside Docker"
+	@echo "    make restart-backend  Restart only the backend container"
+	@echo "    make restart-frontend Restart only the frontend container"
+	@echo ""
+	@echo "  ── Prod ────────────────────────────────────────────────────────"
+	@echo "    make prod             Setup secrets + build + start prod stack"
+	@echo ""
+	@echo "  ── Build ───────────────────────────────────────────────────────"
+	@echo "    make build            Rebuild dev application images"
+	@echo "    make build-prod       Rebuild prod application images"
+	@echo "    make clean-images     Remove local dev images"
+	@echo ""
+	@echo "  ── Teardown ────────────────────────────────────────────────────"
+	@echo "    make down             Stop dev stack"
+	@echo "    make down-prod        Stop prod stack"
+	@echo "    make clean            Stop dev stack + remove volumes"
+	@echo "    make fclean           Stop dev stack + remove volumes + images"
+	@echo ""
+	@echo "  ── Logs & Debug ────────────────────────────────────────────────"
+	@echo "    make logs             Tail all dev service logs"
+	@echo "    make logs-backend     Tail backend logs only"
+	@echo "    make logs-frontend    Tail frontend logs only"
+	@echo "    make shell-backend    Open a shell in the backend container"
+	@echo "    make shell-frontend   Open a shell in the frontend container"
+	@echo "    make ps               Show running dev containers"
+	@echo ""
+
+# ── Setup ────────────────────────────────────────────────────────────────────
 
 setup:
 	@bash scripts/setup-secrets.sh
 
-build:
-	@if [ "$(TARGET_ENV)" = "prod" ]; then \
-		$(PROD_COMPOSE) build backend frontend; \
-		echo "Built application images for prod stack"; \
-	else \
-		echo "No application image build in dev mode (services run from base images). Use: make build prod"; \
-	fi
+# ── Dev ──────────────────────────────────────────────────────────────────────
+
+dev: setup
+	@echo "▶  Starting dev stack…"
+	$(DEV_COMPOSE) up -d --build --remove-orphans
+	@echo "✅ Dev stack is up."
+	@echo "   Frontend  → http://localhost:5173"
+	@echo "   Backend   → http://localhost:3000"
+	@echo "   pgAdmin   → http://localhost:8085"
+	@echo "   MinIO UI  → http://localhost:9001"
+
+infra: setup
+	@echo "▶  Starting infrastructure only…"
+	-$(DEV_COMPOSE) rm -fs frontend backend
+	$(DEV_COMPOSE) up -d db pgadmin minio minio-init --remove-orphans
+	@echo "✅ Infra running (postgres, pgadmin, minio)."
+
+migrate: setup
+	@echo "▶  Running DB migrations inside Docker…"
+	$(DEV_COMPOSE) run --rm migrate
+	@echo "✅ Migrations complete."
+
+# ── Per-service restart ───────────────────────────────────────────────────────
+
+restart-backend:
+	@echo "▶  Restarting backend…"
+	$(DEV_COMPOSE) restart backend
+	@echo "✅ Backend restarted."
+
+restart-frontend:
+	@echo "▶  Restarting frontend…"
+	$(DEV_COMPOSE) restart frontend
+	@echo "✅ Frontend restarted."
+
+# ── Build ────────────────────────────────────────────────────────────────────
+
+build: setup
+	$(DEV_COMPOSE) build backend frontend
+	@echo "✅ Dev images built."
+
+build-prod: setup
+	$(PROD_COMPOSE) build backend frontend
+	@echo "✅ Prod images built."
 
 clean-images:
-	@if [ "$(TARGET_ENV)" = "prod" ]; then \
-		docker image rm -f ft_transcendence-backend:prod ft_transcendence-frontend:prod 2>/dev/null || true; \
-		echo "Removed application images for prod stack"; \
-	else \
-		echo "No local application images managed in dev mode"; \
-	fi
+	docker image rm -f ft_transcendence-backend:dev ft_transcendence-frontend:dev 2>/dev/null || true
+	@echo "✅ Dev images removed."
 
-up:
-	-$(PROD_COMPOSE) rm -fs frontend backend
-	$(DEV_COMPOSE) up -d --remove-orphans
-	$(MAKE) migrate
-	@echo "Services running in dev mode (frontend, backend, postgres, pgadmin, minio)"
+# ── Prod ─────────────────────────────────────────────────────────────────────
 
-ifeq ($(firstword $(MAKECMDGOALS)),prod)
 prod: setup
+	@echo "▶  Starting prod stack…"
 	-$(DEV_COMPOSE) rm -fs frontend backend
 	$(PROD_COMPOSE) up -d --build --remove-orphans
-	$(MAKE) migrate
-	@echo "Services running in production mode"
-else
-prod:
-	@:
-endif
+	@echo "✅ Prod stack is up."
 
-ifeq ($(firstword $(MAKECMDGOALS)),dev)
-dev: setup up
-else
-dev:
-	@:
-endif
-
-install:
-	cd server && npm install && cd ../frontend && npm install && cd ..
-
-regenerate:
-	rm -rf server/drizzle && cd server && npx drizzle-kit generate --name=init_tables  && cd ..
-
-migrate:
-	cd server && npx drizzle-kit migrate && cd ..
+# ── Teardown ─────────────────────────────────────────────────────────────────
 
 down:
-	$(ACTIVE_COMPOSE) down --remove-orphans
-	@echo "Stopped $(TARGET_ENV) stack"
+	$(DEV_COMPOSE) down --remove-orphans
+	@echo "✅ Dev stack stopped."
+
+down-prod:
+	$(PROD_COMPOSE) down --remove-orphans
+	@echo "✅ Prod stack stopped."
 
 clean:
-	$(ACTIVE_COMPOSE) down -v --remove-orphans
-	@echo "Volumes cleaned for $(TARGET_ENV) stack (data removed)"
+	$(DEV_COMPOSE) down -v --remove-orphans
+	@echo "✅ Dev stack stopped and volumes removed."
 
 fclean:
-	$(ACTIVE_COMPOSE) down -v --remove-orphans --rmi local
-	@echo "Full cleanup done for $(TARGET_ENV) stack (containers, volumes, local images removed)"
+	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
+	@echo "✅ Dev full cleanup done (containers, volumes, images)."
 
-re: clean regenerate all install migrate
+re: fclean dev
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
 
 logs:
-	$(ACTIVE_COMPOSE) logs -f
+	$(DEV_COMPOSE) logs -f
+
+logs-backend:
+	$(DEV_COMPOSE) logs -f backend
+
+logs-frontend:
+	$(DEV_COMPOSE) logs -f frontend
+
+# ── Shell access ──────────────────────────────────────────────────────────────
+
+shell-backend:
+	$(DEV_COMPOSE) exec backend /bin/sh
+
+shell-frontend:
+	$(DEV_COMPOSE) exec frontend /bin/sh
+
+# ── Status ───────────────────────────────────────────────────────────────────
 
 ps:
-	$(ACTIVE_COMPOSE) ps
+	$(DEV_COMPOSE) ps
 
-fix-docker:
-	export DOCKER_API_VERSION=1.44
-
-.PHONY: all setup build clean-images up dev prod down clean fclean re logs ps fix-docker migrate regenerate
+.PHONY: help setup \
+        dev infra migrate restart-backend restart-frontend \
+        build build-prod clean-images \
+        prod \
+        down down-prod clean fclean re \
+        logs logs-backend logs-frontend \
+        shell-backend shell-frontend ps
