@@ -39,4 +39,7 @@ ps:
 fix-docker:
 	export DOCKER_API_VERSION=1.44
 
+populate:
+	scripts/populateDbs/apply.sh
+
 .PHONY: all setup build up down clean re logs ps fix-docker migrate regenerate

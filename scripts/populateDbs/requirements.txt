@@ -1,0 +1,3 @@
+names-dataset
+# Use the binary wheel for easier installation in development environments
+psycopg2-binary
