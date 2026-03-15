@@ -5,3 +5,4 @@ venv/
 venv
 *.ctx
 *.tmp
+.env

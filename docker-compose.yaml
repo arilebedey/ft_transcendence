@@ -183,7 +183,7 @@ services:
 
 volumes:
   dev-db-data:
-  minio-data: # Named volumes preserve image-installed node_modules under the source bind-mounts
+  minio-data:
 
   backend-node-modules:
   frontend-node-modules:
