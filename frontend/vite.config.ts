@@ -2,6 +2,11 @@ import path from "path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+const apiProxyTarget =
+  process.env.VITE_API_PROXY_TARGET || "http://localhost:3000";
+const storageProxyTarget =
+  process.env.VITE_STORAGE_PROXY_TARGET || "http://localhost:9000";
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -12,16 +17,16 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3000",
+        target: apiProxyTarget,
         changeOrigin: true,
       },
       "/storage": {
-        target: "http://localhost:9000",
+        target: storageProxyTarget,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/storage/, "/profile-pictures"),
       },
       "/socket.io": {
-        target: "http://localhost:3000",
+        target: apiProxyTarget,
         ws: true,
       },
     },

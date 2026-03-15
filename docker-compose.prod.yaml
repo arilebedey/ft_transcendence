@@ -3,22 +3,22 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: dev_ftt_postgres
+    container_name: ftt_prod_postgres
     environment:
-      POSTGRES_DB: dev_db
-      POSTGRES_USER: dev_user
+      POSTGRES_DB: prod_db
+      POSTGRES_USER: prod_user
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
     ports:
       - "5432:5432"
     volumes:
-      - dev-db-data:/var/lib/postgresql/data
+      - prod-db-data:/var/lib/postgresql/data
     secrets:
       - db_password
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "dev_user", "-d", "dev_db" ]
-      interval: 10s
+      test: [ "CMD", "pg_isready", "-U", "prod_user", "-d", "prod_db" ]
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -26,24 +26,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: dev_ftt_pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local.com
-      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
-    ports:
-      - "8085:80"
-    secrets:
-      - pgadmin_password
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: unless-stopped
-
   minio:
     image: minio/minio
-    container_name: dev_ftt_minio
+    container_name: ftt_prod_minio
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -57,9 +42,9 @@ services:
       - minio_password
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
     restart: unless-stopped
     logging:
       driver: "json-file"
@@ -67,43 +52,55 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # One-shot: creates the MinIO bucket then exits.
   minio-init:
     image: minio/mc
-    container_name: dev_ftt_minio_init
+    container_name: ftt_prod_minio_init
     depends_on:
       minio:
         condition: service_healthy
     secrets:
       - minio_password
     entrypoint: >
-      /bin/sh -c " MINIO_PASSWORD=$$(cat /run/secrets/minio_password); mc alias set myminio http://minio:9000 minioadmin $$MINIO_PASSWORD; mc mb --ignore-existing myminio/profile-pictures; mc anonymous set download myminio/profile-pictures; echo 'Bucket profile-pictures created and set to public-read'; "
+      /bin/sh -c " MINIO_PASSWORD=$$(cat /run/secrets/minio_password); mc alias set local http://minio:9000 minioadmin $$MINIO_PASSWORD; mc mb --ignore-existing local/profile-pictures; mc anonymous set download local/profile-pictures; echo 'MinIO bucket ready.'; "
     restart: "no"
 
-  # ── One-shot migration ──────────────────────────────────────────────────────
-  # Runs drizzle-kit migrate inside Docker so no local Node.js is needed.
-  # backend depends on this completing successfully before it starts.
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: ftt_prod_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@local.com
+      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
+    ports:
+      - "8085:80"
+    secrets:
+      - pgadmin_password
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
+  # ── One-shot migration ──────────────────────────────────────────────────────
+  # Uses the dev Dockerfile so drizzle-kit and schema source files are available.
+  # The prod backend image only contains the compiled dist and cannot run migrations.
   migrate:
     build:
       context: .
       dockerfile: docker/backend/Dockerfile.dev
-    image: ft_transcendence-backend:dev
+    image: ft_transcendence-backend:migrate
     working_dir: /app
     command: >
       /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); npx drizzle-kit migrate "
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_USER: dev_user
-      POSTGRES_DB: dev_db
+      POSTGRES_USER: prod_user
+      POSTGRES_DB: prod_db
     secrets:
       - db_password
       - better_auth_secret
     volumes:
       - ./server:/app
-      # Named volume prevents the bind-mount from shadowing the image's node_modules
       - backend-node-modules:/app/node_modules
     depends_on:
       db:
@@ -115,28 +112,23 @@ services:
   backend:
     build:
       context: .
-      dockerfile: docker/backend/Dockerfile.dev
-    image: ft_transcendence-backend:dev
-    working_dir: /app
+      dockerfile: docker/backend/Dockerfile.prod
+    image: ft_transcendence-backend:prod
     command: >
-      /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); export MINIO_SECRET_KEY=$$(cat /run/secrets/minio_password); npm run dev "
+      /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); export MINIO_SECRET_KEY=$$(cat /run/secrets/minio_password); npm run start:prod "
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      POSTGRES_USER: dev_user
-      POSTGRES_DB: dev_db
+      POSTGRES_USER: prod_user
+      POSTGRES_DB: prod_db
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ACCESS_KEY: minioadmin
       BETTER_AUTH_URL: http://localhost:3000
       CLIENT_URL: http://localhost:5173
-      CHOKIDAR_USEPOLLING: "true"
     ports:
       - "3000:3000"
-    volumes:
-      - ./server:/app
-      - backend-node-modules:/app/node_modules
     secrets:
       - better_auth_secret
       - db_password
@@ -156,37 +148,26 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-    restart: on-failure
+    restart: unless-stopped
 
   frontend:
     build:
       context: .
-      dockerfile: docker/frontend/Dockerfile.dev
-    image: ft_transcendence-frontend:dev
-    working_dir: /app
-    command: npm run dev -- --host 0.0.0.0 --port 5173
-    environment:
-      NODE_ENV: development
-      VITE_API_PROXY_TARGET: http://backend:3000
-      VITE_STORAGE_PROXY_TARGET: http://minio:9000
-      CHOKIDAR_USEPOLLING: "true"
+      dockerfile: docker/frontend/Dockerfile.prod
+    image: ft_transcendence-frontend:prod
     ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - frontend-node-modules:/app/node_modules
+      - "5173:80"
     depends_on:
       backend:
         condition: service_healthy
-        restart: true
-    restart: on-failure
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  dev-db-data:
-  minio-data: # Named volumes preserve image-installed node_modules under the source bind-mounts
-
+  prod-db-data:
+  minio-data:
   backend-node-modules:
-  frontend-node-modules:
 
 
 secrets:

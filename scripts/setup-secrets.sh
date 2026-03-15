@@ -1,34 +1,37 @@
 #!/bin/bash
-
+# setup-secrets.sh
+# Ensures all required secret files exist.
+# For dev: auto-generates sensible defaults if files are missing.
+set -e
 SECRETS_DIR="./secrets"
-
 mkdir -p "$SECRETS_DIR"
-
-touch "$SECRETS_DIR/db_password.txt"
-touch "$SECRETS_DIR/pgadmin_password.txt"
-touch "$SECRETS_DIR/minio_password.txt"
-
-errors=()
-
+generated=()
+# ── db_password ──────────────────────────────────────────────────────────────
 if [ ! -s "$SECRETS_DIR/db_password.txt" ]; then
-  errors+=("Please write postgres password at $SECRETS_DIR/db_password.txt")
-  errors+=("The dev DB password should be \`dev_password\`")
+  echo "dev_password" > "$SECRETS_DIR/db_password.txt"
+  generated+=("db_password.txt  → 'dev_password'")
 fi
-
-if [ ! -s "$SECRETS_DIR/pgadmin_password.txt" ]; then
-  errors+=("Please write pgadmin password at $SECRETS_DIR/pgadmin_password.txt")
-fi
-
+# ── minio_password ───────────────────────────────────────────────────────────
 if [ ! -s "$SECRETS_DIR/minio_password.txt" ]; then
-  errors+=("Please write minio password at $SECRETS_DIR/minio_password.txt")
-  errors+=("The minio password should be \`minioadmin\`")
+  echo "minioadmin" > "$SECRETS_DIR/minio_password.txt"
+  generated+=("minio_password.txt → 'minioadmin'")
 fi
-
-if [ ${#errors[@]} -gt 0 ]; then
-  for error in "${errors[@]}"; do
-    echo "$error"
+# ── pgadmin_password ─────────────────────────────────────────────────────────
+if [ ! -s "$SECRETS_DIR/pgadmin_password.txt" ]; then
+  echo "pgadmin" > "$SECRETS_DIR/pgadmin_password.txt"
+  generated+=("pgadmin_password.txt → 'pgadmin'")
+fi
+# ── better_auth_secret ───────────────────────────────────────────────────────
+if [ ! -s "$SECRETS_DIR/better_auth_secret.txt" ]; then
+  openssl rand -hex 32 > "$SECRETS_DIR/better_auth_secret.txt"
+  generated+=("better_auth_secret.txt → (random 32-byte hex)")
+fi
+# ── Report ───────────────────────────────────────────────────────────────────
+if [ ${#generated[@]} -gt 0 ]; then
+  echo "⚙️  Auto-generated dev secrets (safe defaults — change for production!):"
+  for entry in "${generated[@]}"; do
+    echo "   • $entry"
   done
-  exit 1
+else
+  echo "✅ All secrets already configured."
 fi
-
-echo "✅ Secrets configured"
