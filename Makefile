@@ -119,7 +119,7 @@ fclean:
 	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
 	@echo "✅ Dev full cleanup done (containers, volumes, images)."
 
-re: fclean dev
+re: clean dev
 
 # ── Logs ─────────────────────────────────────────────────────────────────────
 
