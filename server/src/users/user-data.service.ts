@@ -73,7 +73,13 @@ export class UserDataService {
 
     return results;
   }
-
+/*
+TODO: 
+ Edit logging so it can log how much user has updated (which fields)
+ without logging the actual values (for privacy).
+ Just the language can be logged as is since it's not personally identifiable information,
+ but for doing stats on user behavior.
+*/
   async update(userId: string, dto: UpdateUserDataDto) {
     if (dto.name) {
       const available = await this.isUsernameAvailable(dto.name, userId);
@@ -94,6 +100,7 @@ export class UserDataService {
       throw new NotFoundException(msg);
     }
 
+    this.logger.log(`Updated user data for userId: ${userId}`);
     return result[0];
   }
 
@@ -110,6 +117,7 @@ export class UserDataService {
       throw new NotFoundException(msg);
     }
 
+    this.logger.log(`Updated avatar URL for userId: ${userId}`);
     return result[0];
   }
 
