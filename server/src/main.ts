@@ -2,12 +2,16 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { toNodeHandler } from 'better-auth/node';
 import { AuthService } from '@thallesp/nestjs-better-auth';
+import { CustomLogger } from './utils/custom-logger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   // Disable NestJS's built-in body parser so we can control ordering
-  const app = await NestFactory.create(AppModule, { bodyParser: false });
+  const app = await NestFactory.create(AppModule, { bodyParser: false, logger: new CustomLogger() });
 
+  // debuging logs 
+  console.log('Logstash URL:', process.env.LOGSTASH_HOST, process.env.LOGSTASH_PORT);
+  
   // Access Express instance
   const expressApp = app.getHttpAdapter().getInstance();
 
