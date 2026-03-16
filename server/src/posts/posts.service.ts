@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Logger, Injectable, NotFoundException } from '@nestjs/common';
 import { eq, ilike, inArray, or, and} from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from '../database/database-connection';
@@ -14,6 +14,8 @@ import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
+  private readonly logger = new Logger(PostsService.name);
+
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
@@ -100,8 +102,12 @@ export class PostsService {
       .insert(schema.post)
       .values({ ...createPostDto, userId })
       .returning();
+<<<<<<< HEAD
 
     return this.db.query.post.findFirst({
+=======
+    const post = await this.db.query.post.findFirst({
+>>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
       where: eq(schema.post.id, created.id),
       with: {
         author: {
@@ -112,12 +118,28 @@ export class PostsService {
         },
       },
     });
+<<<<<<< HEAD
+=======
+
+    if (!post) {
+      this.logger.warn(
+        `Created post #${created.id} by user ${userId}, but failed to reload it with author details`,
+      );
+      return null;
+    }
+
+    this.logger.log(`Created post #${created.id} by user ${userId}`);
+    return post;
+>>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
   }
 
   async update(id: number, updatePostDto: UpdatePostDto, userId: string) {
     const post = await this.findOne(id);
 
     if (post.userId !== userId) {
+      this.logger.warn(
+        `User ${userId} attempted to update post #${id} owned by ${post.userId}`,
+      );
       throw new ForbiddenException('You do not own this post');
     }
 
@@ -126,7 +148,11 @@ export class PostsService {
       .set(updatePostDto)
       .where(eq(schema.post.id, id))
       .returning();
+<<<<<<< HEAD
 
+=======
+    this.logger.log(`Updated post #${id} by user ${userId}`);
+>>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
     return updated;
   }
 
@@ -134,6 +160,9 @@ export class PostsService {
     const post = await this.findOne(id);
 
     if (post.userId !== userId) {
+      this.logger.warn(
+        `User ${userId} attempted to delete post #${id} owned by ${post.userId}`,
+      );
       throw new ForbiddenException('You do not own this post');
     }
 
@@ -141,7 +170,11 @@ export class PostsService {
       .delete(schema.post)
       .where(eq(schema.post.id, id))
       .returning();
+<<<<<<< HEAD
 
+=======
+    this.logger.log(`Deleted post #${id} by user ${userId}`);
+>>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
     return deleted;
   }
 
