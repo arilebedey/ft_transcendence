@@ -19,6 +19,15 @@ export class PostsController {
     return this.postsService.getFeed(user.id);
   }
 
+  @Get('search')
+  async search(
+    @Query('q') q: string,
+    @Query('filter') filter: 'recent' | 'oldest' | 'most_liked' = 'recent',
+    @GetUser() user: any,
+  ) {
+    return this.postsService.searchPosts(q, user?.id, filter);
+  }
+
   @Get('user/:id')
     getPostsByUser(
     @Param('id') userId: string,

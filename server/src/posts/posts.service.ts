@@ -1,8 +1,10 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, ilike, inArray, or, and} from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import { FollowService } from '../follow/follow.service';
+import { LikesService } from '../likes/likes.service';
+import { UserDataService } from '../users/user-data.service';
 
 import * as schema from './posts.schema';
 
@@ -16,6 +18,8 @@ export class PostsService {
     @Inject(DATABASE_CONNECTION)
     private readonly db: NodePgDatabase<typeof schema>,
     private readonly followService: FollowService,
+    private readonly likesService: LikesService,
+    private readonly UserDataService: UserDataService,
 
   ) {}
 
@@ -48,13 +52,23 @@ export class PostsService {
   async getFeed(userId: string) {
     const ids = await this.followService.getFollowedUserIds(userId);
 
-    return this.db.query.post.findMany({
+    const posts = await this.db.query.post.findMany({
       where: (post) => inArray(post.userId, ids),
       with: {
         author: { columns: { id: true, name: true } },
       },
       orderBy: (post, { desc }) => [desc(post.createdAt)],
     });
+
+    const postsComplete = await Promise.all(
+      posts.map(async (post) => ({
+        ...post,
+        liked: await this.likesService.isLikedByUser(post.id, userId),
+        author: post.author,
+      }))
+    );
+
+    return postsComplete;
   }
 
   async getPostsByUser(userId: string, filter: 'recent' | 'oldest' | 'most_liked' = 'recent') {
@@ -120,5 +134,101 @@ export class PostsService {
       .returning();
 
     return deleted;
+  }
+
+  private async buildUserFilter(userTokens: string[]) {
+    if (userTokens.length === 0) return null;
+    const users = await this.UserDataService.findByNames(userTokens);
+    const userIds = users.map(u => u.id);
+    if (userIds.length === 0) return null;
+    return inArray(schema.post.userId, userIds);
+  }
+  
+  private buildKeywordFilter(keywordTokens: string[]) {
+    if (keywordTokens.length === 0) return null;
+    return or(
+      ...keywordTokens.map(kw => ilike(schema.post.content, `%${kw}%`))
+    );
+  }
+  
+  private combineFilters(userFilter: any, keywordFilter: any) {
+    if (userFilter && keywordFilter) return and(userFilter, keywordFilter);
+    return userFilter || keywordFilter || null;
+  }
+
+  private parseSearchQuery(q: string) {
+    const tokens = q.trim().split(/\s+/);
+  
+    const userTokens = tokens
+      .filter((t) => t.startsWith("@"))
+      .map((t) => t.slice(1).toLowerCase())
+      .filter((t) => t.length > 0);
+  
+    const keywordTokens = tokens
+      .filter((t) => !t.startsWith("@"))
+      .map((t) => t.toLowerCase());
+  
+    return { userTokens, keywordTokens };
+  }
+
+  private async buildSearchQuery(
+    userTokens: string[],
+    keywordTokens: string[],
+    filter: 'recent' | 'oldest' | 'most_liked'
+  ) {
+    const userFilter = await this.buildUserFilter(userTokens);
+    const keywordFilter = this.buildKeywordFilter(keywordTokens);
+    const whereFilter = this.combineFilters(userFilter, keywordFilter);
+  
+    if (!whereFilter) return [];
+  
+    return this.db.query.post.findMany({
+      columns: {
+        id: true,
+        content: true,
+        link: true,
+        createdAt: true,
+        likes: true,
+        userId: true,
+      },
+      with: {
+        author: { columns: { id: true, name: true } },
+      },
+      where: whereFilter,
+      orderBy: (post, { desc, asc }) => {
+        switch (filter) {
+          case 'recent':
+            return [desc(post.createdAt)];
+          case 'oldest':
+            return [asc(post.createdAt)];
+          case 'most_liked':
+            return [desc(post.likes)];
+        }
+      },
+    });
+  }
+
+  async searchPosts(
+    q: string,
+    currentUserId: string,
+    filter: 'recent' | 'oldest' | 'most_liked',
+  ) {
+    if (!q) return this.getFeed(currentUserId);
+
+    const { userTokens, keywordTokens } = this.parseSearchQuery(q);
+
+    const query = await this.buildSearchQuery(userTokens, keywordTokens, filter);
+    const rows = await query;
+
+    if (!rows || rows.length === 0) return [];
+
+    const postsComplete = await Promise.all(
+      rows.map(async (post) => ({
+        ...post,
+        liked: await this.likesService.isLikedByUser(post.id, currentUserId),
+        author: post.author,
+      }))
+    );
+    return postsComplete;
   }
 }

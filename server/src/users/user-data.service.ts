@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
 import { userData } from './user-data.schema';
-import { and, asc, eq, ilike, ne } from 'drizzle-orm';
+import { and, asc, eq, ilike, ne, or } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import type { AppDatabase } from 'src/database/database.types';
 
@@ -131,5 +131,17 @@ export class UserDataService {
     }
 
     return result[0];
+  }
+
+  async findByNames(names: string[]): Promise<{ id: string; name: string }[]> {
+    if (!names.length) return [];
+
+    return this.db.query.userData.findMany({
+      columns: {
+        id: true,
+        name: true,
+      },
+      where: or(...names.map((n) => ilike(userData.name, `%${n}%`))),
+    });
   }
 }

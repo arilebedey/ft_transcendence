@@ -27,7 +27,7 @@
     content: string;
     createdAt: string;
     likes: number;
-    likedByUser?: boolean;
+    liked: boolean;
     author: {
       id: string;
       name: string;
@@ -42,21 +42,19 @@
     const sessionResult = authClient.useSession();
     const session = sessionResult?.data;
     const currentUserId = session?.user?.id;
-    const [searchedUserId, setSearchedUserId] = useState<string | null>(null);
     const [filter, setFilter] = useState<'recent' | 'oldest' | 'most_liked'>('recent');
     const { t } = useTranslation();
+    const [searchQuery, setSearchQuery] = useState("");
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
       const fetchPosts = async () => {
         try {
-          let res: Response;
+          const params = new URLSearchParams();
+          params.set("filter", filter);
+          if (searchQuery.trim()) params.set("q", searchQuery.trim());
     
-          if (searchedUserId) {
-            res = await fetch(`/api/posts/user/${searchedUserId}?filter=${filter}`);
-          } else {
-            res = await fetch("/api/posts/feed");
-          }
+          const res = await fetch(`/api/posts/search?${params.toString()}`);
     
           if (!res.ok) {
             console.error("Erreur fetch posts:", res.statusText);
@@ -71,7 +69,7 @@
       };
     
       fetchPosts();
-    }, [searchedUserId, filter]);
+    }, [searchQuery, filter]);
 
     function extractLink(text: string): { url?: string; contentWithoutLink: string } {
       const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/i;
@@ -132,16 +130,33 @@
       setPostFormOpen(false);
     };
 
-    const handleLike = (postId: number) => {
-      console.log("Like post:", postId);
-    };
+    const handleLike = async (postId: number) => {
+      try {
+        const res = await fetch(`/api/likes/toggle`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ postId }),
+        });
 
-    const handleComment = (postId: number) => {
-      console.log("Comment post:", postId);
-    };
+        if (!res.ok) {
+          console.error("Toggle like failed:", res.statusText);
+          return;
+        }
+    
+        const data = await res.json();
 
-    const handleShare = (postId: number) => {
-      console.log("Share post:", postId);
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? { ...post, likes: data.likes, liked: data.liked }
+              : post
+          )
+        );
+      } catch (err) {
+        console.error("Error toggling like:", err);
+      }
     };
 
     async function handleDelete(postId: number) {
@@ -169,7 +184,7 @@
 
     return (
       <Layout
-        onSelectUser={setSearchedUserId}
+        onSearch={setSearchQuery}
         onFilterChange={setFilter}
         showPostCreationButton={true}
         showThemeToggle={false}
@@ -219,18 +234,22 @@
             postFormOpen ? "mt-4" : "mt-0"
           }`}
         >
-          {posts.map((post, index) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              index={index}
-              currentUserId={currentUserId}
-              onLike={() => handleLike(post.id)}
-              onDelete={handleDelete}
-              onComment={() => handleComment(post.id)}
-              onShare={() => handleShare(post.id)}
-            />
-          ))}
+          {posts.length === 0 ? (
+            <div className="text-center text-muted-foreground py-6">
+              {searchQuery ? t("NoResult") : t("homeDefault")}
+            </div>
+          ) : (
+            posts.map((post, index) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                index={index}
+                currentUserId={currentUserId}
+                onLike={() => handleLike(post.id)}
+                onDelete={handleDelete}
+              />
+            ))
+          )}
         </div>
       </Layout>
     );

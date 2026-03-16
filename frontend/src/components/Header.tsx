@@ -10,9 +10,9 @@ interface HeaderProps {
   showLanguageToggle?: boolean;
   showThemeToggle?: boolean;
   showPostCreationButton?: boolean;
-  onSelectUser?: (id: string | null) => void;
   onFilterChange?: (filter: 'recent' | 'oldest' | 'most_liked') => void;
   onPostCreationClick?: () => void;
+  onSearch?: (query: string) => void;
 }
 
 export function Header({
@@ -21,7 +21,7 @@ export function Header({
   showLanguageToggle = true,
   showThemeToggle = true,
   showPostCreationButton = false,
-  onSelectUser,
+  onSearch,
   onFilterChange,
   onPostCreationClick,
 }: HeaderProps) {
@@ -40,7 +40,7 @@ export function Header({
         </div>
 
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          {showSearchBar ? <SearchBar onSelectUser={onSelectUser} onFilterChange={onFilterChange}/> : <div />}
+          {showSearchBar ? <SearchBar onSearch={onSearch} onFilterChange={onFilterChange}/> : <div />}
         </div>
       </div>
     </header>

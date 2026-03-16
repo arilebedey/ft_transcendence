@@ -18,12 +18,11 @@
  */
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { LikeToggle } from "@/components/LikeToggle";
 import { DropDownList } from "@/components/dropdown-list";
-import { MessageCircle, Share2} from "lucide-react";
 import { getProfileByName, profileByNameQueryKey, PublicProfileData } from "@/lib/profile-api";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +32,7 @@ interface Post {
   content: string;
   createdAt: string;
   likes: number;
+  liked: boolean;
   author: {
     id: string;
     name: string;
@@ -54,14 +54,13 @@ export function PostCard({
   post,
   currentUserId,
   onLike,
-  onComment,
-  onShare,
   onDelete,
   index = 0,
   className,
 }: PostCardProps) {
   const formattedTime = new Date(post.createdAt).toLocaleString();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { data: authorProfile } = useQuery<PublicProfileData>({
     queryKey: profileByNameQueryKey(post.author.name),
     queryFn: () => getProfileByName(post.author.name),
@@ -76,8 +75,10 @@ export function PostCard({
     >
       <CardContent className="pt-4">
         <div className="flex gap-3">
-
-          <div className="shrink-0">
+          <div
+            className="shrink-0"
+            onClick={() => navigate(`/profile/${userName}`)}
+          >
             {userAvatar ? (
               <img
                 src={"/storage/" + userAvatar}
@@ -94,8 +95,11 @@ export function PostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold">{post.author.name}</span>
+            <div className="flex items-center gap-2 flex-wrap"
+              onClick={() => navigate(`/profile/${userName}`)}
+            >
+              <span className="font-semibold">{post.author.name}
+              </span>
               <span className="text-muted-foreground text-sm">
                 • {formattedTime}
               </span>
@@ -134,25 +138,9 @@ export function PostCard({
             <div className="flex items-center gap-6 mt-4">
               <LikeToggle
                 likes={post.likes}
+                liked={post.liked}
                 onToggle={() => onLike && onLike()}
               />
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-muted-foreground hover:text-primary"
-                onClick={onComment}
-              >
-                <MessageCircle className="h-4 w-4" />
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 text-muted-foreground hover:text-primary"
-                onClick={onShare}
-              >
-                <Share2 className="h-4 w-4" />
-              </Button>
             </div>
 
           </div>
