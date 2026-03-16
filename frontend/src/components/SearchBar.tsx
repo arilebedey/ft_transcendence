@@ -15,30 +15,57 @@ interface UserResult {
 }
 
 interface SearchBarProps {
-  onSelectUser?: (id: string | null) => void;
+  onSearch?: (query: string) => void;
   onFilterChange?: (filter: "recent" | "oldest" | "most_liked") => void;
 }
 
-export function SearchBar({ onSelectUser, onFilterChange }: SearchBarProps) {
+export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"recent" | "oldest" | "most_liked">("recent");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
+  const getCurrentAtWord = () => {
+    const el = inputRef.current;
+    if (!el) return "";
+    const pos = el.selectionStart ?? 0;
+    const textBeforeCursor = el.value.slice(0, pos);
+    const words = textBeforeCursor.split(/\s+/);
+    const currentWord = words[words.length - 1];
+    return currentWord.startsWith("@") ? currentWord.slice(1) : "";
+  };
+
+  const searchQuery = getCurrentAtWord();
+
   const { data: users = [], isLoading } = useQuery({
-    queryKey: ["search-users", query],
-    enabled: query.trim().length > 0,
+    queryKey: ["search-users", searchQuery],
+    enabled: searchQuery.length > 0,
     queryFn: async () => {
-      const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`);
       if (!res.ok) return [];
-      return res.json() as Promise<UserResult[]>;
+      const data: UserResult[] = await res.json();
+      return data.slice(0, 5);
     },
     staleTime: 1000 * 60,
   });
+
+
+  const updateDropdownVisibility = () => {
+    const el = inputRef.current;
+    if (!el) return setShowDropdown(false);
+  
+    const pos = el.selectionStart ?? 0;
+    const textBeforeCursor = el.value.slice(0, pos);
+    const words = textBeforeCursor.split(/\s+/);
+    const currentWord = words[words.length - 1];
+  
+    setShowDropdown(currentWord.startsWith("@"));
+  };
 
   const profileQueries = useQueries({
     queries: users.map((user) => ({
@@ -47,20 +74,6 @@ export function SearchBar({ onSelectUser, onFilterChange }: SearchBarProps) {
       staleTime: 1000 * 60,
     })),
   });
-
-  useEffect(() => {
-    if (!query) {
-      setShowDropdown(false);
-      return;
-    }
-    setShowDropdown(true);
-  }, [query]);
-
-  useEffect(() => {
-    if (onSelectUser) {
-      onSelectUser(users.length > 0 ? users[0].id : null);
-    }
-  }, [users, onSelectUser]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -83,12 +96,10 @@ export function SearchBar({ onSelectUser, onFilterChange }: SearchBarProps) {
       setQuery("");
       setShowDropdown(false);
     }
-
+  
     if (e.key === "Enter") {
-      const exact = users.find(
-        (u) => u.name.toLowerCase() === query.trim().toLowerCase()
-      );
-      if (exact) goToProfile(exact.name);
+      setShowDropdown(false);
+      onSearch?.(query.trim());
     }
   };
 
@@ -110,12 +121,10 @@ export function SearchBar({ onSelectUser, onFilterChange }: SearchBarProps) {
   }
 
   const sortedUsers = users
-  .map((user) => ({
-    ...user,
-    rank: rankUser(user.name, query),
-  }))
-  .filter((user) => user.rank !== Infinity)
-  .sort((a, b) => a.rank - b.rank);
+    .map((user) => ({ ...user, rank: rankUser(user.name, searchQuery) }))
+    .filter((user) => user.rank !== Infinity)
+    .sort((a, b) => a.rank - b.rank);
+
 
   return (
     <div ref={containerRef} className="flex items-center gap-2 w-[400px] md:w-[600px] relative">
@@ -124,11 +133,15 @@ export function SearchBar({ onSelectUser, onFilterChange }: SearchBarProps) {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
 
         <Input
+          ref={inputRef}
           type="search"
           placeholder={t("SearchUsers")}
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => query && setShowDropdown(true)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            updateDropdownVisibility();
+          }}
+          onFocus={() => updateDropdownVisibility()}
           onKeyDown={handleKeyDown}
           className="pl-12 h-12 text-base rounded-full bg-secondary border-none focus-visible:ring-primary"
         />
@@ -230,7 +243,6 @@ export function SearchBar({ onSelectUser, onFilterChange }: SearchBarProps) {
           </div>
         )}
       </div>
-
     </div>
   );
 }

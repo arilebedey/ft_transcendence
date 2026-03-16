@@ -21,9 +21,9 @@ interface LayoutProps {
   showLanguageToggle?: boolean;
   showThemeToggle?: boolean;
   showPostCreationButton?: boolean;
-  onSelectUser?: (id: string | null) => void;
   onPostCreationClick?: () => void;
   onFilterChange?: (filter: 'recent' | 'oldest' | 'most_liked') => void;
+  onSearch?: (query: string) => void;
 }
 
 export function Layout({
@@ -33,7 +33,7 @@ export function Layout({
   showLanguageToggle,
   showThemeToggle,
   showPostCreationButton,
-  onSelectUser,
+  onSearch,
   onFilterChange,
   onPostCreationClick, }: LayoutProps) {
   return (
@@ -44,7 +44,7 @@ export function Layout({
         showLanguageToggle={showLanguageToggle}
         showThemeToggle={showThemeToggle}
         showPostCreationButton={showPostCreationButton}
-        onSelectUser={onSelectUser}
+        onSearch={onSearch}
         onFilterChange={onFilterChange}
         onPostCreationClick={onPostCreationClick}
       />
