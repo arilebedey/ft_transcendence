@@ -120,7 +120,7 @@ export function PostCard({
               </DropDownList>
             </div>
 
-            <p className="mt-2 text-foreground leading-relaxed">
+            <p className="mt-2 text-foreground leading-relaxed break-words">
               {post.content}
             </p>
 
