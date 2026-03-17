@@ -22,18 +22,41 @@ def init_parser() -> argparse.Namespace:
     p.add_argument("--start-date", type=str, default=None, help="Start date for timestamps (ISO format) e.g. 2024-01-01")
     p.add_argument("--end-date", type=str, default=None, help="End date for timestamps (ISO format) e.g. 2024-12-31")
     p.add_argument("--out", type=str, default="populate.sql", help="Write SQL to this file instead of executing")
-    p.add_argument("--exec", action="store_true", help="Execute directly against DATABASE_URL (requires psycopg2)")
+    p.add_argument("--apply", action="store_true", help="Execute directly against DATABASE_URL (requires psycopg2)")
     p.add_argument("--batch-size", type=int, default=500, help="Batch size for DB inserts (default: 500)")
-    p.add_argument("--no-dry-run", dest="dry_run", action="store_false", help="Disable dry-run and apply changes when provided (use with --exec)")
-    p.set_defaults(dry_run=True)
     return p.parse_args()
 
 
 def _rand_name() -> Tuple[str, str]:
     first = random.choice(_FIRST_KEYS)
     last = random.choice(_LAST_KEYS)
-    print(f"Generated name: {first} {last}")
     return first, last
+
+
+def _generate_valid_username(uid: str, used_names: set) -> str:
+    """Generate a username matching the validation schema: 3-12 chars, lowercase, a-z0-9_, no leading underscore"""
+    max_attempts = 100
+    for attempt in range(max_attempts):
+        first, last = _rand_name()
+        # Create a valid username: lowercase, max 12 chars
+        base = f"{first.lower()}{last.lower()}"[:12]
+        
+        # If base is too short, pad with numbers
+        if len(base) < 3:
+            base = f"{base}{random.randint(10, 99)}"[:12]
+        
+        # Ensure it doesn't start with underscore and is 3-12 chars
+        if base.startswith("_"):
+            base = base[1:]
+        
+        if 3 <= len(base) <= 12 and base not in used_names:
+            # Validate it matches the regex pattern /^[a-z0-9][a-z0-9_]*$/
+            if base and base[0].isalnum() and all(c.isalnum() or c == "_" for c in base):
+                return base
+    
+    # Fallback: use uid-based username if generation fails
+    fallback = f"user{uid[:8]}".lower()[:12]
+    return fallback
 
 
 def generate_users(n: int, created_at: datetime.datetime) -> List[dict]:
@@ -42,22 +65,15 @@ def generate_users(n: int, created_at: datetime.datetime) -> List[dict]:
     used_names = set()
     for _ in range(n):
         uid = str(uuid.uuid4())
-        attempts = 0
-        while True:
-            first, last = _rand_name()
-            name = f"{first} {last}"
-            if name not in used_names:
-                used_names.add(name)
-                break
-            attempts += 1
-            if attempts >= 50:
-                name = f"{first} {last}-{uid[:6]}"
-                used_names.add(name)
-                break
-        email = f"{first.lower()}.{last.lower()}.{uid[:8]}@example.test"
+        # Generate a valid username
+        username = _generate_valid_username(uid, used_names)
+        used_names.add(username)
+        
+        first_name = username.split("_")[0] if "_" in username else username[:6]
+        email = f"{username}.{uid[:8]}@example.test"
         users.append({
             "id": uid,
-            "name": name,
+            "name": username,
             "email": email,
             "created_at": created_at,
             "updated_at": created_at,
@@ -115,21 +131,32 @@ def generate_likes(users: List[dict], posts: List[dict], likes_count: int, start
 
 def to_sql(users: List[dict], posts: List[dict], likes: List[dict]) -> str:
     parts = []
-    # Users
+    # Insert into user table
     for u in users:
         parts.append(
             "INSERT INTO \"user\" (id, name, email, email_verified, image, created_at, updated_at) VALUES ({id}, {name}, {email}, false, NULL, {created}, {updated});".format(
                 id=sql_val(u["id"]), name=sql_val(u["name"]), email=sql_val(u["email"]), created=sql_val(u["created_at"]), updated=sql_val(u["updated_at"])  # noqa: E501
             )
         )
+    
+    # Insert into user_data table
+    for u in users:
+        parts.append(
+            "INSERT INTO user_data (id, name, email, theme, language, avatar_url, bio, created_at, updated_at) VALUES ({id}, {name}, {email}, 'light', 'en', NULL, NULL, {created}, {updated});".format(
+                id=sql_val(u["id"]), name=sql_val(u["name"]), email=sql_val(u["email"]), created=sql_val(u["created_at"]), updated=sql_val(u["updated_at"])  # noqa: E501
+            )
+        )
+    
+    # Insert posts
     for p in posts:
         parts.append(
             "INSERT INTO post (link, content, created_at, user_id, likes) VALUES ({link}, {content}, {created}, {user_id}, {likes});".format(
                 link=sql_val(p["link"]), content=sql_val(p["content"]), created=sql_val(p["created_at"]), user_id=sql_val(p["user_id"]), likes=p["likes"]
             )
         )
-    parts.append("\n-- Insert likes (mapping posts by link to find their assigned ids)\n")
-    parts.append("WITH inserted_posts AS (SELECT id, link FROM post WHERE link IN (SELECT link FROM post))")
+    
+    # Insert likes and update post likes counter
+    parts.append("\n-- Insert likes and update post likes counter\n")
     for l in likes:
         post = posts[l["post_id_idx"]]
         parts.append(
@@ -137,6 +164,11 @@ def to_sql(users: List[dict], posts: List[dict], likes: List[dict]) -> str:
                 user_id=sql_val(l["user_id"]), created=sql_val(l["created_at"]), link=sql_val(post["link"])
             )
         )
+    
+    # Update post likes counter
+    parts.append("\n-- Update post likes counter\n")
+    parts.append("UPDATE post SET likes = (SELECT COUNT(*) FROM post_like WHERE post_like.post_id = post.id);")
+    
     return "\n".join(parts)
 
 
@@ -178,6 +210,14 @@ def execute_batches(db_url: str, users: List[dict], posts: List[dict], likes: Li
                 for i in range(0, len(user_vals), batch_size):
                     batch = user_vals[i:i+batch_size]
                     execute_values(cur, "INSERT INTO \"user\" (id, name, email, email_verified, image, created_at, updated_at) VALUES %s ON CONFLICT (id) DO NOTHING", batch)
+                
+                # insert into user_data table in batches
+                user_data_vals = [(
+                    u["id"], u["name"], u["email"], "light", "en", None, None, u["created_at"], u["updated_at"]
+                ) for u in users]
+                for i in range(0, len(user_data_vals), batch_size):
+                    batch = user_data_vals[i:i+batch_size]
+                    execute_values(cur, "INSERT INTO user_data (id, name, email, theme, language, avatar_url, bio, created_at, updated_at) VALUES %s ON CONFLICT (id) DO NOTHING", batch)
 
                 # insert posts in batches
                 post_vals = [(
@@ -207,9 +247,13 @@ def execute_batches(db_url: str, users: List[dict], posts: List[dict], likes: Li
                         continue
                     like_vals.append((l["user_id"], post_id, l["created_at"]))
 
+                # insert likes in batches
                 for i in range(0, len(like_vals), batch_size):
                     batch = like_vals[i:i+batch_size]
                     execute_values(cur, "INSERT INTO post_like (user_id, post_id, created_at) VALUES %s ON CONFLICT DO NOTHING", batch)
+                
+                # update post likes counter
+                cur.execute("UPDATE post SET likes = (SELECT COUNT(*) FROM post_like WHERE post_like.post_id = post.id)")
     finally:
         conn.close()
 
@@ -252,16 +296,15 @@ def main():
         f.write(sql)
     print(f"Wrote SQL to {args.out}")
 
-    if args.exec:
-        if args.dry_run:
-            print("Dry-run: no changes applied to database. Use --apply to execute against DATABASE_URL.")
-            return
-        db_url = os.environ.get("DATABASE_URL") or os.environ.get("PG_URI") or os.environ.get("PGDATABASE")
+    if args.apply:
+        db_url = get_db_url()
         if not db_url:
-            raise RuntimeError("DATABASE_URL environment variable not found.")
+            raise RuntimeError("No database URL found in environment (DATABASE_URL or POSTGRES_ variables)")
         print("Applying changes to database in batches...")
         execute_batches(db_url, users, posts, likes, batch_size=args.batch_size)
         print("Database update complete.")
+    else:
+        print("Dry-run: no changes applied to database. Use --apply to execute against DATABASE_URL.")
 
 
 if __name__ == "__main__":
