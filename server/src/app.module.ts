@@ -9,6 +9,10 @@ import { ChatModule } from './chat/chat.module';
 import { FollowModule } from './follow/follow.module';
 import { PublicApiModule } from './public-api/public-api.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+<<<<<<< HEAD
+=======
+
+>>>>>>> 122ccb9 (feature: Dashbaord works fine)
 
 @Module({
   imports: [

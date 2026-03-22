@@ -48,11 +48,7 @@ export function useDashboard() {
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
-<<<<<<< HEAD
         console.log('Dashboard data fetch error:', err);
-=======
-        console.error('Dashboard data fetch error:', err);
->>>>>>> e4510cd (feature: Dashbaord works fine)
       } finally {
         setLoading(false);
       }
@@ -65,11 +61,7 @@ export function useDashboard() {
     try {
       return await api.get(`/dashboard/post/${postId}`);
     } catch (err) {
-<<<<<<< HEAD
       console.log('Failed to fetch post likes:', err);
-=======
-      console.error('Failed to fetch post likes:', err);
->>>>>>> e4510cd (feature: Dashbaord works fine)
       throw err;
     }
   }, []);
