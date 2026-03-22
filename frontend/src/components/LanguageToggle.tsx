@@ -17,7 +17,7 @@ export function LanguageToggle() {
     if (savedLanguage && savedLanguage !== i18n.language) {
       i18n.changeLanguage(savedLanguage);
     }
-  }, [i18n]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const cycleLanguage = () => {
     const currentIndex = languages.indexOf(currentLanguage);
