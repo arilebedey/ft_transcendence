@@ -8,6 +8,8 @@ import { LikesModule } from './likes/likes.module';
 import { ChatModule } from './chat/chat.module';
 import { FollowModule } from './follow/follow.module';
 import { PublicApiModule } from './public-api/public-api.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import { PublicApiModule } from './public-api/public-api.module';
     ChatModule,
     FollowModule,
     PublicApiModule,
+    DashboardModule,
   ],
   controllers: [],
   providers: [],
