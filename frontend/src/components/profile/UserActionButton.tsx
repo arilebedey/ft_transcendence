@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { Settings, BarChart3 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface UserActionButtonProps {
   isOwnProfile: boolean;
@@ -20,6 +21,7 @@ export function UserActionButton({
   onToggleFollow,
 }: UserActionButtonProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <div className="shrink-0">
@@ -34,6 +36,13 @@ export function UserActionButton({
             onClick={onOpenApiDocs}
           >
             {t("publicApi.sidebar.title")}
+          </Button>
+          <Button
+            className="h-10 w-10 p-2"
+            onClick={() => navigate("/dashboard")}
+            title={t("dashboard.title")}
+          >
+            <BarChart3 className="h-5 w-5" />
           </Button>
           <Button className="h-10 w-10 p-2" onClick={onEditPreferences}>
             <Settings className="h-5 w-5" />
