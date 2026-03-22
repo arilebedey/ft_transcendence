@@ -10,7 +10,6 @@ import { FollowModule } from './follow/follow.module';
 import { PublicApiModule } from './public-api/public-api.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
