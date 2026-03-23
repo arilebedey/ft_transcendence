@@ -88,7 +88,7 @@ services:
     build:
       context: .
       dockerfile: docker/backend/Dockerfile.dev
-    image: ft_transcendence-backend:dev
+    image: ft_transcendence-backend:migrate
     working_dir: /app
     command: >
       /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); npx drizzle-kit migrate "
