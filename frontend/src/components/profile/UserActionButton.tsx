@@ -7,6 +7,7 @@ interface UserActionButtonProps {
   isFollowing: boolean;
   onEdit: () => void;
   onEditPreferences: () => void;
+  onOpenApiDocs: () => void;
   onToggleFollow: () => void;
 }
 
@@ -15,6 +16,7 @@ export function UserActionButton({
   isFollowing,
   onEdit,
   onEditPreferences,
+  onOpenApiDocs,
   onToggleFollow,
 }: UserActionButtonProps) {
   const { t } = useTranslation();
@@ -25,6 +27,13 @@ export function UserActionButton({
         <div className="flex gap-2 h-10">
           <Button className="px-5 text-lg" onClick={onEdit}>
             {t("editProfile")}
+          </Button>
+          <Button
+            className="px-5 text-lg"
+            variant="outline"
+            onClick={onOpenApiDocs}
+          >
+            {t("publicApi.sidebar.title")}
           </Button>
           <Button className="h-10 w-10 p-2" onClick={onEditPreferences}>
             <Settings className="h-5 w-5" />

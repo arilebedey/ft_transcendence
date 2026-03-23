@@ -123,14 +123,89 @@ const resources = {
           dismiss: "Dismiss",
         },
       },
+      publicApi: {
+        sections: {
+          keys: "Create and manage API keys",
+        },
+        sidebar: {
+          title: "API docs",
+          description:
+            "Use a `seenit` key in the `Authorization: Bearer ...` header. The whole public API is limited to 15 requests per minute.",
+        },
+        content: {
+          keysTitle: "Manage your API keys",
+        },
+        actions: {
+          back: "Back",
+          copy: "Copy",
+          copied: "Copied",
+          remove: "Remove",
+        },
+        endpoint: {
+          queryParams: "Query params",
+          jsonBody: "JSON body",
+          copyableExample: "Copyable example",
+        },
+        documentation: {
+          title: "Documentation",
+          overview:
+            "Create a personal API key to authenticate requests to the public Seenit API. Each endpoint in this page includes the route, accepted parameters, and a copyable example to help you get started quickly.",
+          auth: "Send your key in the `Authorization: Bearer ...` header. The whole public API is currently limited to 15 requests per minute.",
+          security:
+            "Treat API keys like passwords: keep them private, store them securely, and create a new one if you think a key has been exposed.",
+        },
+        keys: {
+          createDescription:
+            "Generate and organize the keys you use for scripts, prototypes, or external integrations.",
+          namePlaceholder: "Key name",
+          nameRequired: "API key name is required.",
+          creating: "Creating...",
+          generate: "Generate key",
+          copyNewKey: "Copy your new key now",
+          yourKeys: "Your keys",
+          yourKeysDescription:
+            "Existing keys can be identified by their stored prefix/start and creation date. The full secret is only shown when a key is created.",
+          loading: "Loading keys...",
+          empty: "No API keys yet.",
+          unnamed: "Unnamed key",
+          created: "created",
+          limitLabel: "Limit:",
+          requestsPer: "req /",
+          minutesShort: "min",
+        },
+        endpoints: {
+          "list-posts": {
+            description:
+              "List posts ordered by newest first. Supports limit/offset pagination.",
+          },
+          "list-likes": {
+            description:
+              "List likes for a post and return the total like count.",
+          },
+          "list-followers": {
+            description:
+              "List followers for a user and return follower/following totals.",
+          },
+          "create-post": {
+            description: "Create a new post owned by the API key's user.",
+          },
+          "update-post": {
+            description: "Replace the editable fields of a post you own.",
+          },
+          "delete-post": {
+            description: "Delete a post you own.",
+          },
+        },
+      },
       NoUsersFound: "No users found.",
-      NoResult:"No results for your search.",
-      homeDefault:"Here you’ll see your posts and those of the users you follow, share your ideas!",
+      NoResult: "No results for your search.",
+      homeDefault:
+        "Here you’ll see your posts and those of the users you follow, share your ideas!",
       SearchUsers: "Search users",
-      SortBy:"Sort by",
-      MostRecent:"Most recent",
-      MostLiked:"Most liked",
-      Oldest:"Oldest",
+      SortBy: "Sort by",
+      MostRecent: "Most recent",
+      MostLiked: "Most liked",
+      Oldest: "Oldest",
       ...TOSen,
     },
   },
@@ -257,14 +332,91 @@ const resources = {
           dismiss: "Ignorer",
         },
       },
+      publicApi: {
+        sections: {
+          keys: "Créer et gérer les clés API",
+        },
+        sidebar: {
+          title: "Documentation API",
+          description:
+            "Utilisez une clé `seenit` dans l'en-tête `Authorization: Bearer ...`. Toute l'API publique est limitée à 15 requêtes par minute.",
+        },
+        content: {
+          keysTitle: "Gérer vos clés API",
+        },
+        actions: {
+          back: "Retour",
+          copy: "Copier",
+          copied: "Copié",
+          remove: "Supprimer",
+        },
+        endpoint: {
+          queryParams: "Paramètres de requête",
+          jsonBody: "Corps JSON",
+          copyableExample: "Exemple copiable",
+        },
+        documentation: {
+          title: "Documentation",
+          overview:
+            "Créez une clé API personnelle pour authentifier vos requêtes vers l'API publique de Seenit. Chaque endpoint présenté ici indique la route, les paramètres acceptés et un exemple copiable pour démarrer rapidement.",
+          auth: "Envoyez votre clé dans l'en-tête `Authorization: Bearer ...`. Toute l'API publique est actuellement limitée à 15 requêtes par minute.",
+          security:
+            "Traitez vos clés API comme des mots de passe : gardez-les privées, stockez-les de façon sécurisée et créez-en une nouvelle si vous pensez qu'une clé a été exposée.",
+        },
+        keys: {
+          createDescription:
+            "Générez et organisez les clés que vous utilisez pour vos scripts, prototypes ou intégrations externes.",
+          namePlaceholder: "Nom de la clé",
+          nameRequired: "Le nom de la clé API est requis.",
+          creating: "Création...",
+          generate: "Générer une clé",
+          copyNewKey: "Copiez votre nouvelle clé maintenant",
+          yourKeys: "Vos clés",
+          yourKeysDescription:
+            "Les clés existantes peuvent être identifiées par leur préfixe/début enregistré et leur date de création. Le secret complet n'est affiché qu'au moment de la création.",
+          loading: "Chargement des clés...",
+          empty: "Aucune clé API pour le moment.",
+          unnamed: "Clé sans nom",
+          created: "créée le",
+          limitLabel: "Limite :",
+          requestsPer: "req /",
+          minutesShort: "min",
+        },
+        endpoints: {
+          "list-posts": {
+            description:
+              "Liste les posts du plus récent au plus ancien. Prend en charge la pagination limit/offset.",
+          },
+          "list-likes": {
+            description:
+              "Liste les likes d'un post et renvoie le nombre total de likes.",
+          },
+          "list-followers": {
+            description:
+              "Liste les abonnés d'un utilisateur et renvoie les totaux abonnés/abonnements.",
+          },
+          "create-post": {
+            description:
+              "Crée un nouveau post appartenant à l'utilisateur de la clé API.",
+          },
+          "update-post": {
+            description:
+              "Remplace les champs modifiables d'un post dont vous êtes propriétaire.",
+          },
+          "delete-post": {
+            description: "Supprime un post dont vous êtes propriétaire.",
+          },
+        },
+      },
       NoUsersFound: "Aucun utilisateur trouvé",
-      NoResult:"Aucun résultat pour votre recherche.",
-      homeDefault:"Ici s'afficheront vos posts et ceux des utilisateurs que vous suivez, partagez vos idées !",
+      NoResult: "Aucun résultat pour votre recherche.",
+      homeDefault:
+        "Ici s'afficheront vos posts et ceux des utilisateurs que vous suivez, partagez vos idées !",
       SearchUsers: "Rechercher des utilisateurs",
-      SortBy:"Trier par",
-      MostRecent:"Les plus récents",
-      MostLiked:"Les plus aimés",
-      Oldest:"Les plus anciens",
+      SortBy: "Trier par",
+      MostRecent: "Les plus récents",
+      MostLiked: "Les plus aimés",
+      Oldest: "Les plus anciens",
       ...TOSfr,
     },
   },
@@ -389,14 +541,91 @@ const resources = {
           dismiss: "Chiudi",
         },
       },
+      publicApi: {
+        sections: {
+          keys: "Crea e gestisci chiavi API",
+        },
+        sidebar: {
+          title: "Documentazione API",
+          description:
+            "Usa una chiave `seenit` nell'header `Authorization: Bearer ...`. L'intera API pubblica è limitata a 15 richieste al minuto.",
+        },
+        content: {
+          keysTitle: "Gestisci le tue chiavi API",
+        },
+        actions: {
+          back: "Indietro",
+          copy: "Copia",
+          copied: "Copiato",
+          remove: "Rimuovi",
+        },
+        endpoint: {
+          queryParams: "Parametri di query",
+          jsonBody: "Corpo JSON",
+          copyableExample: "Esempio copiabile",
+        },
+        documentation: {
+          title: "Documentazione",
+          overview:
+            "Crea una chiave API personale per autenticare le richieste verso l'API pubblica di Seenit. Ogni endpoint in questa pagina include il percorso, i parametri supportati e un esempio copiabile per iniziare rapidamente.",
+          auth: "Invia la chiave nell'header `Authorization: Bearer ...`. L'intera API pubblica è attualmente limitata a 15 richieste al minuto.",
+          security:
+            "Tratta le chiavi API come password: mantienile private, conservale in modo sicuro e creane una nuova se pensi che una chiave sia stata esposta.",
+        },
+        keys: {
+          createDescription:
+            "Genera e organizza le chiavi che usi per script, prototipi o integrazioni esterne.",
+          namePlaceholder: "Chiave di produzione",
+          nameRequired: "Il nome della chiave API è obbligatorio.",
+          creating: "Creazione...",
+          generate: "Genera chiave",
+          copyNewKey: "Copia subito la tua nuova chiave",
+          yourKeys: "Le tue chiavi",
+          yourKeysDescription:
+            "Le chiavi esistenti possono essere identificate dal prefisso/inizio memorizzato e dalla data di creazione. Il segreto completo viene mostrato solo quando una chiave viene creata.",
+          loading: "Caricamento chiavi...",
+          empty: "Nessuna chiave API.",
+          unnamed: "Chiave senza nome",
+          created: "creata",
+          limitLabel: "Limite:",
+          requestsPer: "rich. /",
+          minutesShort: "min",
+        },
+        endpoints: {
+          "list-posts": {
+            description:
+              "Elenca i post ordinati dal più recente. Supporta la paginazione con limit/offset.",
+          },
+          "list-likes": {
+            description:
+              "Elenca i like di un post e restituisce il conteggio totale dei like.",
+          },
+          "list-followers": {
+            description:
+              "Elenca i follower di un utente e restituisce i totali follower/seguiti.",
+          },
+          "create-post": {
+            description:
+              "Crea un nuovo post appartenente all'utente della chiave API.",
+          },
+          "update-post": {
+            description:
+              "Sostituisce i campi modificabili di un post di tua proprietà.",
+          },
+          "delete-post": {
+            description: "Elimina un post di tua proprietà.",
+          },
+        },
+      },
       NoUsersFound: "Nessun utente trovato",
-      NoResult:"Nessun risultato per la tua ricerca.",
-      homeDefault:"Qui vedrai i tuoi post e quelli degli utenti che segui, condividi le tue idee!",
+      NoResult: "Nessun risultato per la tua ricerca.",
+      homeDefault:
+        "Qui vedrai i tuoi post e quelli degli utenti che segui, condividi le tue idee!",
       SearchUsers: "Cerca utenti",
-      SortBy:"Ordina per",
-      MostRecent:"Più recenti",
-      MostLiked:"Più apprezzati",
-      Oldest:"Più vecchi",
+      SortBy: "Ordina per",
+      MostRecent: "Più recenti",
+      MostLiked: "Più apprezzati",
+      Oldest: "Più vecchi",
       ...TOSit,
     },
   },
@@ -522,14 +751,91 @@ const resources = {
           dismiss: "Descartar",
         },
       },
+      publicApi: {
+        sections: {
+          keys: "Crear y gestionar claves API",
+        },
+        sidebar: {
+          title: "Documentación API",
+          description:
+            "Usa una clave `seenit` en el encabezado `Authorization: Bearer ...`. Toda la API pública está limitada a 15 solicitudes por minuto.",
+        },
+        content: {
+          keysTitle: "Gestiona tus claves API",
+        },
+        actions: {
+          back: "Atrás",
+          copy: "Copiar",
+          copied: "Copiado",
+          remove: "Eliminar",
+        },
+        endpoint: {
+          queryParams: "Parámetros de consulta",
+          jsonBody: "Cuerpo JSON",
+          copyableExample: "Ejemplo copiable",
+        },
+        documentation: {
+          title: "Documentación",
+          overview:
+            "Crea una clave API personal para autenticar solicitudes a la API pública de Seenit. Cada endpoint de esta página incluye la ruta, los parámetros admitidos y un ejemplo copiable para empezar rápido.",
+          auth: "Envía la clave en el encabezado `Authorization: Bearer ...`. Toda la API pública está limitada actualmente a 15 solicitudes por minuto.",
+          security:
+            "Trata las claves API como contraseñas: mantenlas privadas, guárdalas de forma segura y crea una nueva si crees que alguna se ha visto comprometida.",
+        },
+        keys: {
+          createDescription:
+            "Genera y organiza las claves que usas para scripts, prototipos o integraciones externas.",
+          namePlaceholder: "Clave de producción",
+          nameRequired: "El nombre de la clave API es obligatorio.",
+          creating: "Creando...",
+          generate: "Generar clave",
+          copyNewKey: "Copia tu nueva clave ahora",
+          yourKeys: "Tus claves",
+          yourKeysDescription:
+            "Las claves existentes pueden identificarse por su prefijo/inicio guardado y fecha de creación. El secreto completo solo se muestra cuando se crea una clave.",
+          loading: "Cargando claves...",
+          empty: "Todavía no hay claves API.",
+          unnamed: "Clave sin nombre",
+          created: "creada",
+          limitLabel: "Límite:",
+          requestsPer: "solic. /",
+          minutesShort: "min",
+        },
+        endpoints: {
+          "list-posts": {
+            description:
+              "Lista las publicaciones ordenadas de la más reciente a la más antigua. Admite paginación con limit/offset.",
+          },
+          "list-likes": {
+            description:
+              "Lista los me gusta de una publicación y devuelve el total de me gusta.",
+          },
+          "list-followers": {
+            description:
+              "Lista los seguidores de un usuario y devuelve los totales de seguidores/seguidos.",
+          },
+          "create-post": {
+            description:
+              "Crea una nueva publicación propiedad del usuario de la clave API.",
+          },
+          "update-post": {
+            description:
+              "Reemplaza los campos editables de una publicación que te pertenece.",
+          },
+          "delete-post": {
+            description: "Elimina una publicación que te pertenece.",
+          },
+        },
+      },
       NoUsersFound: "No se encontraron usuarios",
-      NoResult:"No hay resultados para tu búsqueda.",
-      homeDefault:"Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
-      SearchUsers:"Buscar usuarios",
-      SortBy:"Ordenar por",
-      MostRecent:"Más recientes",
-      MostLiked:"Más gustados",
-      Oldest:"Más antiguos",
+      NoResult: "No hay resultados para tu búsqueda.",
+      homeDefault:
+        "Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
+      SearchUsers: "Buscar usuarios",
+      SortBy: "Ordenar por",
+      MostRecent: "Más recientes",
+      MostLiked: "Más gustados",
+      Oldest: "Más antiguos",
       ...TOSes,
     },
   },
