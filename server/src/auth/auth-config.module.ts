@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthGuard, AuthModule } from '@thallesp/nestjs-better-auth';
+import { apiKey } from '@better-auth/api-key';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { createAuthMiddleware, APIError } from 'better-auth/api';
 import { APP_GUARD } from '@nestjs/core';
 import { eq } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DatabaseModule } from '../database/database.module';
 import { DATABASE_CONNECTION } from '../database/database-connection';
+import type { AppDatabase } from '../database/database.types';
 import { userData } from '../users/user-data.schema';
 
 @Module({
@@ -17,7 +18,7 @@ import { userData } from '../users/user-data.schema';
     DatabaseModule,
     AuthModule.forRootAsync({
       imports: [ConfigModule, DatabaseModule],
-      useFactory: (database: NodePgDatabase, configService: ConfigService) => ({
+      useFactory: (database: AppDatabase, configService: ConfigService) => ({
         auth: betterAuth({
           baseURL: configService.getOrThrow('BETTER_AUTH_URL'),
           database: drizzleAdapter(database, {
@@ -27,24 +28,31 @@ import { userData } from '../users/user-data.schema';
             autoSignIn: true,
             enabled: true,
           },
-          // socialProviders: {
-          //   google: {
-          //     clientId: readSecret('google-client-id.txt'),
-          //     clientSecret: readSecret('google-client-secret.txt'),
-          //     prompt: 'select_account',
-          //   },
-          // },
           trustedOrigins: [configService.getOrThrow('CLIENT_URL')],
+          plugins: [
+            apiKey({
+              defaultPrefix: 'seenit',
+              requireName: true,
+              rateLimit: {
+                enabled: true,
+                timeWindow: 60_000,
+                maxRequests: 5,
+              },
+            }),
+          ],
           hooks: {
             before: createAuthMiddleware(async (ctx) => {
               if (!ctx.path.startsWith('/sign-up')) return;
+
               const body = ctx.body as { name?: string } | undefined;
               if (!body?.name) return;
+
               const existing = await database
                 .select({ id: userData.id })
                 .from(userData)
                 .where(eq(userData.name, body.name))
                 .limit(1);
+
               if (existing.length > 0) {
                 throw new APIError('UNPROCESSABLE_ENTITY', {
                   message: 'Username already taken',
@@ -53,8 +61,10 @@ import { userData } from '../users/user-data.schema';
             }),
             after: createAuthMiddleware(async (ctx) => {
               if (!ctx.path.startsWith('/sign-up')) return;
+
               const newSession = ctx.context.newSession;
               if (!newSession) return;
+
               const { id, name, email } = newSession.user;
               await database
                 .insert(userData)
