@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Home } from "@/pages/Home";
 import { Dashboard } from "@/pages/Dashboard";
 import { Messages } from "@/pages/Messages";
+import { PublicApi } from "@/pages/PublicApi";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,14 @@ function AppContentWithNav() {
           element={
             <ProtectedRoute>
               <Messages />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/public-api"
+          element={
+            <ProtectedRoute>
+              <PublicApi />
             </ProtectedRoute>
           }
         />
