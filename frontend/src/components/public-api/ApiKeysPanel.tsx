@@ -1,14 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ListCard } from "@/components/ui/list-card";
-import { ListItem } from "@/components/ui/list-item";
 import { useForm } from "@tanstack/react-form";
 import { Copy, KeyRound, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -60,127 +51,133 @@ export function ApiKeysPanel({
 
   return (
     <div className="space-y-6">
-      <Card className="rounded-2xl shadow-none">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">
-            {t("publicApi.documentation.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <CardDescription>
-            {t("publicApi.documentation.overview")}
-          </CardDescription>
-          <CardDescription>{t("publicApi.documentation.auth")}</CardDescription>
-          <CardDescription>
-            {t("publicApi.documentation.security")}
-          </CardDescription>
-        </CardContent>
-      </Card>
+      <div className="rounded-2xl border border-border bg-background p-4">
+        <h3 className="text-lg font-semibold">
+          {t("publicApi.documentation.title")}
+        </h3>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("publicApi.documentation.overview")}
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("publicApi.documentation.auth")}
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("publicApi.documentation.security")}
+        </p>
+      </div>
 
-      <Card className="rounded-2xl shadow-none">
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">
-            {t("publicApi.content.keysTitle")}
-          </CardTitle>
-          <CardDescription>
-            {t("publicApi.keys.createDescription")}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              void form.handleSubmit();
-            }}
-          >
-            <form.Field
-              name="name"
-              children={(field) => {
-                const errors = field.state.meta.errors;
-                const isInvalid = errors.length > 0;
+      <div className="rounded-2xl border border-border bg-background p-4">
+        <h3 className="text-lg font-semibold">{t("publicApi.content.keysTitle")}</h3>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("publicApi.keys.createDescription")}
+        </p>
+        <form
+          className="mt-5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void form.handleSubmit();
+          }}
+        >
+          <form.Field
+            name="name"
+            children={(field) => {
+              const errors = field.state.meta.errors;
+              const isInvalid = errors.length > 0;
 
-                return (
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                    <div className="flex-1 space-y-2">
-                      <Input
-                        name={field.name}
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(event) =>
-                          field.handleChange(event.target.value)
-                        }
-                        placeholder={t("publicApi.keys.namePlaceholder")}
-                        aria-invalid={isInvalid}
-                      />
-                      {isInvalid ? (
-                        <p className="text-sm text-destructive">
-                          {typeof errors[0] === "string"
-                            ? t(errors[0])
-                            : errors[0]?.message
-                              ? t(errors[0].message)
-                              : ""}
-                        </p>
-                      ) : null}
-                    </div>
-                    <Button type="submit" disabled={createKeyMutationPending}>
-                      <KeyRound className="mr-2 h-4 w-4" />
-                      {createKeyMutationPending
-                        ? t("publicApi.keys.creating")
-                        : t("publicApi.keys.generate")}
-                    </Button>
+              return (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                  <div className="flex-1 space-y-2">
+                    <Input
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) =>
+                        field.handleChange(event.target.value)
+                      }
+                      placeholder={t("publicApi.keys.namePlaceholder")}
+                      aria-invalid={isInvalid}
+                    />
+                    {isInvalid ? (
+                      <p className="text-sm text-destructive">
+                        {typeof errors[0] === "string"
+                          ? t(errors[0])
+                          : errors[0]?.message
+                            ? t(errors[0].message)
+                            : ""}
+                      </p>
+                    ) : null}
                   </div>
-                );
-              }}
-            />
-          </form>
+                  <Button type="submit" disabled={createKeyMutationPending}>
+                    <KeyRound className="mr-2 h-4 w-4" />
+                    {createKeyMutationPending
+                      ? t("publicApi.keys.creating")
+                      : t("publicApi.keys.generate")}
+                  </Button>
+                </div>
+              );
+            }}
+          />
+        </form>
 
-          {latestCreatedKey ? (
-            <Card className="rounded-xl border-dashed bg-muted/40 shadow-none">
-              <CardHeader className="flex-row items-center justify-between gap-4 space-y-0 pb-3">
-                <CardTitle className="text-sm font-medium">
-                  {t("publicApi.keys.copyNewKey")}
-                </CardTitle>
-                <Button
-                  variant="outline"
-                  onClick={() => void onCopy(latestCreatedKey)}
-                >
-                  <Copy className="mr-2 h-4 w-4" />
-                  {copiedText === latestCreatedKey
-                    ? t("publicApi.actions.copied")
-                    : t("publicApi.actions.copy")}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <pre className="overflow-x-auto text-xs">{latestCreatedKey}</pre>
-              </CardContent>
-            </Card>
-          ) : null}
-        </CardContent>
-      </Card>
+        {latestCreatedKey ? (
+          <div className="mt-4 rounded-xl border border-border bg-muted p-4">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm font-medium">
+                {t("publicApi.keys.copyNewKey")}
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => void onCopy(latestCreatedKey)}
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                {copiedText === latestCreatedKey
+                  ? t("publicApi.actions.copied")
+                  : t("publicApi.actions.copy")}
+              </Button>
+            </div>
+            <pre className="mt-3 overflow-x-auto text-xs">
+              {latestCreatedKey}
+            </pre>
+          </div>
+        ) : null}
+      </div>
 
-      <ListCard title={t("publicApi.keys.yourKeys")} className="rounded-2xl">
-        <p className="text-sm text-muted-foreground">
+      <div className="rounded-2xl border border-border bg-background p-4">
+        <p className="text-sm font-medium">{t("publicApi.keys.yourKeys")}</p>
+        <p className="mt-3 text-sm text-muted-foreground">
           {t("publicApi.keys.yourKeysDescription")}
         </p>
 
         {error ? (
-          <p className="text-sm text-destructive">{error}</p>
+          <p className="mt-4 text-sm text-destructive">{error}</p>
         ) : null}
 
         {isPending ? (
-          <p className="text-sm text-muted-foreground">{t("publicApi.keys.loading")}</p>
+          <p className="mt-4 text-sm text-muted-foreground">
+            {t("publicApi.keys.loading")}
+          </p>
         ) : keys.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("publicApi.keys.empty")}</p>
+          <p className="mt-4 text-sm text-muted-foreground">
+            {t("publicApi.keys.empty")}
+          </p>
         ) : (
-          <div className="space-y-2">
+          <div className="mt-4 space-y-3">
             {keys.map((key) => (
-              <ListItem
+              <div
                 key={key.id}
-                primary={key.name || t("publicApi.keys.unnamed")}
-                secondary={`${t("publicApi.keys.created")} ${new Date(
-                  key.createdAt,
-                ).toLocaleString()}`}
-                action={
+                className="rounded-xl border border-border bg-muted/40 p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">
+                      {key.name || t("publicApi.keys.unnamed")}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t("publicApi.keys.created")}{" "}
+                      {new Date(key.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+
                   <Button
                     variant="outline"
                     disabled={deleteKeyMutationPending}
@@ -189,13 +186,12 @@ export function ApiKeysPanel({
                     <Trash2 className="mr-2 h-4 w-4" />
                     {t("publicApi.actions.remove")}
                   </Button>
-                }
-                className="rounded-xl border border-border bg-muted/40"
-              />
+                </div>
+              </div>
             ))}
           </div>
         )}
-      </ListCard>
+      </div>
     </div>
   );
 }

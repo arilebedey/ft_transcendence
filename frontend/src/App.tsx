@@ -12,6 +12,7 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Messages } from "@/pages/Messages";
 import { PublicApi } from "@/pages/PublicApi";
 import { Legal } from "@/pages/Legal";
+import { PublicApi } from "@/pages/PublicApi";
 
 const queryClient = new QueryClient();
 
@@ -80,6 +81,14 @@ function AppContentWithNav() {
           }
         />
         <Route path="/legal" element={<Legal />} />
+        <Route
+          path="/public-api"
+          element={
+            <ProtectedRoute>
+              <PublicApi />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {location.pathname !== "/" && <BottomNav />}
