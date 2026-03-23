@@ -47,11 +47,21 @@ help:
 setup:
 	@bash scripts/setup-secrets.sh
 
+# ── Database ──────────────────────────────────────────────────────────────────
+
+regenerate:
+	cd server && rm -rf drizzle && npx drizzle-kit generate --name=init_tables
+
+migrate:
+	cd server && npx drizzle-kit migrate
+
 # ── Dev ──────────────────────────────────────────────────────────────────────
 
 dev: setup
 	@echo "▶  Starting dev stack…"
 	$(DEV_COMPOSE) up -d --build --remove-orphans
+	@echo "▶  Running migrations…"
+	$(DEV_COMPOSE) run --rm migrate
 	@echo "✅ Dev stack is up."
 	@echo "   Frontend  → http://localhost:5173"
 	@echo "   Backend   → http://localhost:3000"
@@ -63,11 +73,6 @@ infra: setup
 	-$(DEV_COMPOSE) rm -fs frontend backend
 	$(DEV_COMPOSE) up -d db pgadmin minio minio-init --remove-orphans
 	@echo "✅ Infra running (postgres, pgadmin, minio)."
-
-migrate: setup
-	@echo "▶  Running DB migrations inside Docker…"
-	$(DEV_COMPOSE) run --rm migrate
-	@echo "✅ Migrations complete."
 
 # ── Per-service restart ───────────────────────────────────────────────────────
 
@@ -101,6 +106,8 @@ prod: setup
 	@echo "▶  Starting prod stack…"
 	-$(DEV_COMPOSE) rm -fs frontend backend
 	$(PROD_COMPOSE) up -d --build --remove-orphans
+	@echo "▶  Running migrations…"
+	$(PROD_COMPOSE) run --rm migrate
 	@echo "✅ Prod stack is up."
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
@@ -121,7 +128,7 @@ fclean:
 	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
 	@echo "✅ Dev full cleanup done (containers, volumes, images)."
 
-re: clean dev
+re: clean regenerate dev
 
 # ── Logs ─────────────────────────────────────────────────────────────────────
 
@@ -154,9 +161,10 @@ populate:
 	scripts/populateDbs/apply.sh
 
 .PHONY: help setup \
-        dev infra migrate restart-backend restart-frontend \
+        dev infra regenerate migrate restart-backend restart-frontend \
         build build-prod clean-images \
         prod populate fix-docker  \
         down down-prod clean fclean re \
         logs logs-backend logs-frontend \
         shell-backend shell-frontend ps
+
