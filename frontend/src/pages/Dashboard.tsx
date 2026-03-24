@@ -78,7 +78,7 @@ export function Dashboard() {
           const likes = await getPostLikes(selectedPostId);
           setPostLikesData(likes);
         } catch (err) {
-          console.error("Failed to load post likes:", err);
+          console.log("Failed to load post likes:", err);
           setPostLikesData([]);
         } finally {
           setLoadingPostLikes(false);
@@ -98,7 +98,12 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout
+        showSearchBar={false}
+        showLanguageToggle={false}
+        showThemeToggle={false}
+        showPostCreationButton={false}
+      >
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           <Title title={t("dashboard.title")} />
           <div className="text-center py-12">
@@ -111,7 +116,12 @@ export function Dashboard() {
 
   if (error) {
     return (
-      <Layout>
+      <Layout
+        showSearchBar={false}
+        showLanguageToggle={false}
+        showThemeToggle={false}
+        showPostCreationButton={false}
+      >
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           <Title title={t("dashboard.title")} />
           <Card className="border-destructive">
@@ -126,7 +136,12 @@ export function Dashboard() {
   }
 
   return (
-    <Layout>
+    <Layout
+      showSearchBar={false}
+      showLanguageToggle={false}
+      showThemeToggle={false}
+      showPostCreationButton={false}
+    >
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         <Title title={t("dashboard.title")} />
 

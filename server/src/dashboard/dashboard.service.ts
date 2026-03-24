@@ -1,5 +1,5 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { sql, eq, and, desc } from 'drizzle-orm';
+import { sql, eq, and, desc, count } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { AppDatabase } from '../database/database.types';
@@ -31,18 +31,20 @@ export class DashboardService {
 
   /**
    * Get account likes over time grouped by day
+   * Uses post_like table to count actual likes with timestamps
    * Returns last 30 days of data
    */
   async getAccountLikesOverTime(userId: string): Promise<LikesOverTime[]> {
     const result = await this.db.execute(sql`
       SELECT 
-        DATE(p.created_at)::TEXT as date,
-        SUM(p.likes) as likes
-      FROM post p
+        DATE(pl.created_at)::TEXT as date,
+        COUNT(*) as likes
+      FROM post_like pl
+      JOIN post p ON pl.post_id = p.id
       WHERE p.user_id = ${userId}
-        AND p.created_at >= NOW() - INTERVAL '30 days'
-      GROUP BY DATE(p.created_at)
-      ORDER BY DATE(p.created_at) ASC
+        AND pl.created_at >= NOW() - INTERVAL '30 days'
+      GROUP BY DATE(pl.created_at)
+      ORDER BY DATE(pl.created_at) ASC
     `);
 
     return (result.rows as any[]).map((row) => ({
@@ -53,18 +55,24 @@ export class DashboardService {
 
   /**
    * Get followers count over time grouped by day
+   * Shows cumulative follower count at each point in time
    * Returns last 30 days of data
    */
   async getFollowersOverTime(userId: string): Promise<FollowersOverTime[]> {
+    // Get all follow events for this user in the last 30 days
     const result = await this.db.execute(sql`
-      SELECT 
-        DATE(f.created_at)::TEXT as date,
-        COUNT(*) as followers
-      FROM follow f
-      WHERE f.following_id = ${userId}
-        AND f.created_at >= NOW() - INTERVAL '30 days'
-      GROUP BY DATE(f.created_at)
-      ORDER BY DATE(f.created_at) ASC
+      WITH follow_timeline AS (
+        SELECT 
+          DATE(f.created_at)::TEXT as date,
+          COUNT(*) OVER (ORDER BY DATE(f.created_at)) as cumulative_followers
+        FROM follow f
+        WHERE f.following_id = ${userId}
+          AND f.created_at >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE(f.created_at)
+      )
+      SELECT DISTINCT date, cumulative_followers as followers
+      FROM follow_timeline
+      ORDER BY date ASC
     `);
 
     return (result.rows as any[]).map((row) => ({
@@ -120,12 +128,14 @@ export class DashboardService {
 
   /**
    * Get user statistics for dashboard
+   * Calculates total likes from post_like table instead of static column
    */
   async getUserStats(userId: string) {
-    // Total likes on user's posts
+    // Total likes on user's posts (count from post_like table)
     const likesRes = await this.db.execute(sql`
-      SELECT SUM(p.likes) as total
-      FROM post p
+      SELECT COUNT(*) as total
+      FROM post_like pl
+      JOIN post p ON pl.post_id = p.id
       WHERE p.user_id = ${userId}
     `);
 

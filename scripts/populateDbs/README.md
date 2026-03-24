@@ -19,19 +19,25 @@ Usage
 ```bash
 python3 populate.py --users 200 --posts-per-user 2 --likes 1000 --out populate.sql
 ```
-- Execute directly against a DB: export `DATABASE_URL` and run with `--exec` (requires `psycopg2`):
+- Execute directly against a DB: export `DATABASE_URL` and run with `--apply` (requires `psycopg2`):
 ```bash
 export DATABASE_URL=postgres://user:pass@host:5432/dbname
-python3 populate.py --users 200 --posts-per-user 2 --likes 1000 --exec
+python3 populate.py --users 200 --posts-per-user 2 --likes 1000 --apply
+```
+- Create data for testing with a specific registered user:
+```bash
+python3 populate.py --users 100 --posts-per-user 5 --likes 500 --follows 50 --user-id "your-user-uuid" --apply
 ```
 
 Options (important ones)
 - `--users`: number of users to generate (default 1000)
-- `--posts-per-user`: posts per user (default 1)
+- `--posts-per-user`: posts per user (default 1). When `--user-id` is set, creates posts only for that user.
 - `--likes`: total number of likes to generate (default 5000)
+- `--follows`: total number of follow relationships to generate (default 0). When `--user-id` is set, creates follows TO that user.
+- `--user-id`: if specified, create posts only for this user and generate follows/likes targeting them (for easier dashboard testing)
 - `--start-date` / `--end-date`: ISO dates to bound generated timestamps
 - `--out`: output SQL file path (default `populate.sql`)
-- `--exec`: execute SQL directly using `DATABASE_URL`
+- `--apply`: execute SQL directly using `DATABASE_URL` (requires `psycopg2`)
 
 Notes
 - The script generates unique user `id` values (UUIDs) and lets the `post` table assign serial `id`s.
