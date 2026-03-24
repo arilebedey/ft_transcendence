@@ -353,8 +353,6 @@ def execute_batches(db_url: str, users: List[dict], posts: List[dict], likes: Li
                 cur.execute("UPDATE post SET likes = (SELECT COUNT(*) FROM post_like WHERE post_like.post_id = post.id)")
     finally:
         conn.close()
-    finally:
-        conn.close()
 
 
 def fetch_user_by_id(
