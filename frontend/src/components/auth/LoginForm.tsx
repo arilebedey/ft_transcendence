@@ -66,7 +66,7 @@ export default function LoginForm() {
           onSuccess: () => {
             navigate("/home");
           },
-          onError: (ctx) => {
+          onError: (ctx: any) => {
             setSubmitError(ctx.error.message || "Invalid email or password");
           },
         },

@@ -95,10 +95,10 @@ export function PostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap"
-              onClick={() => navigate(`/profile/${userName}`)}
-            >
-              <span className="font-semibold">{post.author.name}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold"
+                onClick={() => navigate(`/profile/${userName}`)}
+              >{post.author.name}
               </span>
               <span className="text-muted-foreground text-sm">
                 • {formattedTime}

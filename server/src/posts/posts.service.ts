@@ -71,19 +71,28 @@ export class PostsService {
     return postsComplete;
   }
 
-  async getPostsByUser(userId: string, filter: 'recent' | 'oldest' | 'most_liked' = 'recent') {
+  async getPostsByUser(userId: string, currentUserId: string, filter: 'recent' | 'oldest' | 'most_liked' = 'recent') {
     let orderBy;
     if (filter === 'recent') orderBy = (p, { desc }) => [desc(p.createdAt)];
     else if (filter === 'oldest') orderBy = (p, { asc }) => [asc(p.createdAt)];
     else if (filter === 'most_liked') orderBy = (p, { desc }) => [desc(p.likes)];
   
-    return this.db.query.post.findMany({
+    const posts  = await this.db.query.post.findMany({
       where: (p) => eq(p.userId, userId),
       with: {
         author: { columns: { id: true, name: true } },
       },
       orderBy,
     });
+
+    const postsComplete = await Promise.all(
+      posts.map(async (post) => ({
+        ...post,
+        liked: await this.likesService.isLikedByUser(post.id, currentUserId),
+      }))
+    );
+
+    return postsComplete;
   }
 
   async create(createPostDto: CreatePostDto, userId: string) {

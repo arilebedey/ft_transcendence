@@ -31,9 +31,10 @@ export class PostsController {
   @Get('user/:id')
     getPostsByUser(
     @Param('id') userId: string,
-    @Query('filter') filter?: 'recent' | 'oldest' | 'most_liked'
+    @GetUser() user: any,
+    @Query('filter') filter?: 'recent' | 'oldest' | 'most_liked',
   ) {
-    return this.postsService.getPostsByUser(userId, filter);
+    return this.postsService.getPostsByUser(userId, user?.id, filter);
   }
 
   @Get(':id')

@@ -7,6 +7,7 @@ import { UserStats } from "@/components/profile/UserStats";
 import { UserActionButton } from "@/components/profile/UserActionButton";
 import { EditPreferencesPopup } from "@/components/profile/EditPreferencesPopup";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   profileMeQueryKey,
   profileByNameQueryKey,
@@ -23,6 +24,7 @@ interface UserCardProps {
 export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [stats, setStats] = useState({ followers: 0, following: 0 });
   const [bio, setBio] = useState(profile.bio ?? "");
 
