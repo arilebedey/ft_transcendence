@@ -26,7 +26,11 @@ export const Legal = () => {
   ];
 
   return (
-    <Layout showFooter={false}>
+    <Layout
+      showPostCreationButton={false}
+      showThemeToggle={false}
+      showLanguageToggle={false}
+    >
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* <h1 className="text-2xl font-bold animate-fade-in">{t("page.legal")}</h1> */}
 

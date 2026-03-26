@@ -8,10 +8,10 @@ import { Profile } from "@/pages/Profile";
 import { GreetPage } from "@/pages/GreetPage";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Home } from "@/pages/Home";
+import { Legal } from "@/pages/Legal";
 import { Dashboard } from "@/pages/Dashboard";
 import { Messages } from "@/pages/Messages";
 import { PublicApi } from "@/pages/PublicApi";
-import { Legal } from "@/pages/Legal";
 
 const queryClient = new QueryClient();
 

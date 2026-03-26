@@ -1,4 +1,5 @@
 import { UserCard } from "@/components/profile/UserCard";
+import { UserPosts } from "@/components/profile/UserPosts";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -102,6 +103,7 @@ export function Profile() {
       <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
         <div className="w-full px-10 py-8">
           <UserCard profile={displayProfile} isOwnProfile={isOwnProfile} />
+          <UserPosts profileId={displayProfile.id} />
         </div>
       </div>
     </div>
