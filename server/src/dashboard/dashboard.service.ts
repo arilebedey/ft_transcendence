@@ -36,15 +36,17 @@ export class DashboardService {
    */
   async getAccountLikesOverTime(userId: string): Promise<LikesOverTime[]> {
     const rows = await this.db
-      .select({ date: sql`DATE(pl.created_at)::TEXT`, likes: sql`COUNT(*)` })
+      .select({ date: sql`DATE(${likesSchema.post_like.createdAt})::TEXT`, likes: sql`COUNT(*)` })
       .from(likesSchema.post_like as any)
       .innerJoin(postsSchema.post, eq(postsSchema.post.id, likesSchema.post_like.postId))
       .where(
-        eq(postsSchema.post.userId, userId),
-        sql`pl.created_at >= NOW() - INTERVAL '30 days'`
+        and(
+          eq(postsSchema.post.userId, userId),
+          sql`${likesSchema.post_like.createdAt} >= NOW() - INTERVAL '30 days'`
+        )
       )
-      .groupBy(sql`DATE(pl.created_at)`)
-      .orderBy(sql`DATE(pl.created_at) ASC`);
+      .groupBy(sql`DATE(${likesSchema.post_like.createdAt})`)
+      .orderBy(sql`DATE(${likesSchema.post_like.createdAt}) ASC`);
 
     return (rows as any[]).map((row) => ({
       date: row.date,
@@ -60,11 +62,16 @@ export class DashboardService {
   async getFollowersOverTime(userId: string): Promise<FollowersOverTime[]> {
     // Get daily follow counts for this user in the last 30 days, then compute cumulative in JS
     const rows = await this.db
-      .select({ date: sql`DATE(f.created_at)::TEXT`, count: sql`COUNT(*)` })
+      .select({ date: sql`DATE(${followSchema.follow.createdAt})::TEXT`, count: sql`COUNT(*)` })
       .from(followSchema.follow as any)
-      .where(sql`f.created_at >= NOW() - INTERVAL '30 days'`, eq(followSchema.follow.followingId, userId))
-      .groupBy(sql`DATE(f.created_at)`)
-      .orderBy(sql`DATE(f.created_at) ASC`);
+      .where(
+        and(
+          sql`${followSchema.follow.createdAt} >= NOW() - INTERVAL '30 days'`,
+          eq(followSchema.follow.followingId, userId)
+        )
+      )
+      .groupBy(sql`DATE(${followSchema.follow.createdAt})`)
+      .orderBy(sql`DATE(${followSchema.follow.createdAt}) ASC`);
 
     // compute cumulative followers
     let cumulative = 0;
@@ -89,11 +96,11 @@ export class DashboardService {
     }
 
     const rows = await this.db
-      .select({ date: sql`DATE(pl.created_at)::TEXT`, likes: sql`COUNT(*)` })
+      .select({ date: sql`DATE(${likesSchema.post_like.createdAt})::TEXT`, likes: sql`COUNT(*)` })
       .from(likesSchema.post_like as any)
       .where(eq(likesSchema.post_like.postId, postId))
-      .groupBy(sql`DATE(pl.created_at)`)
-      .orderBy(sql`DATE(pl.created_at) ASC`);
+      .groupBy(sql`DATE(${likesSchema.post_like.createdAt})`)
+      .orderBy(sql`DATE(${likesSchema.post_like.createdAt}) ASC`);
 
     return (rows as any[]).map((row) => ({
       date: row.date,
