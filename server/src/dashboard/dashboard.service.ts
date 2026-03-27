@@ -31,16 +31,10 @@ export class DashboardService {
 
   /**
    * Get account likes over time grouped by day
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 2f90766 (Chore: Fix issues raised by @ari - push before rebasing)
    * Uses post_like table to count actual likes with timestamps
    * Returns last 30 days of data
    */
   async getAccountLikesOverTime(userId: string): Promise<LikesOverTime[]> {
-<<<<<<< HEAD
     const rows = await this.db
       .select({ date: sql`DATE(${likesSchema.post_like.createdAt})::TEXT`, likes: sql`COUNT(*)` })
       .from(likesSchema.post_like as any)
@@ -53,19 +47,6 @@ export class DashboardService {
       )
       .groupBy(sql`DATE(${likesSchema.post_like.createdAt})`)
       .orderBy(sql`DATE(${likesSchema.post_like.createdAt}) ASC`);
-=======
-    const result = await this.db.execute(sql`
-      SELECT 
-        DATE(pl.created_at)::TEXT as date,
-        COUNT(*) as likes
-      FROM post_like pl
-      JOIN post p ON pl.post_id = p.id
-      WHERE p.user_id = ${userId}
-        AND pl.created_at >= NOW() - INTERVAL '30 days'
-      GROUP BY DATE(pl.created_at)
-      ORDER BY DATE(pl.created_at) ASC
-    `);
->>>>>>> 2f90766 (Chore: Fix issues raised by @ari - push before rebasing)
 
     return (rows as any[]).map((row) => ({
       date: row.date,
@@ -79,27 +60,6 @@ export class DashboardService {
    * Returns last 30 days of data
    */
   async getFollowersOverTime(userId: string): Promise<FollowersOverTime[]> {
-<<<<<<< HEAD
-    // Get daily follow counts for this user in the last 30 days, then compute cumulative in JS
-    const rows = await this.db
-      .select({ date: sql`DATE(${followSchema.follow.createdAt})::TEXT`, count: sql`COUNT(*)` })
-      .from(followSchema.follow as any)
-      .where(
-        and(
-          sql`${followSchema.follow.createdAt} >= NOW() - INTERVAL '30 days'`,
-          eq(followSchema.follow.followingId, userId)
-        )
-      )
-      .groupBy(sql`DATE(${followSchema.follow.createdAt})`)
-      .orderBy(sql`DATE(${followSchema.follow.createdAt}) ASC`);
-
-    // compute cumulative followers
-    let cumulative = 0;
-    return (rows as any[]).map((row) => {
-      cumulative += parseInt(String(row.count)) || 0;
-      return { date: row.date, followers: cumulative };
-    });
-=======
     // Get all follow events for this user in the last 30 days
     const result = await this.db.execute(sql`
       WITH follow_timeline AS (
@@ -136,19 +96,16 @@ export class DashboardService {
       throw new NotFoundException(`Post #${postId} not found`);
     }
 
-    const result = await this.db.execute(sql`
-      SELECT 
-        DATE(pl.created_at)::TEXT as date,
-        COUNT(*) as likes
-      FROM post_like pl
-      WHERE pl.post_id = ${postId}
-      GROUP BY DATE(pl.created_at)
-      ORDER BY DATE(pl.created_at) ASC
-    `);
+    const rows = await this.db
+      .select({ date: sql`DATE(pl.created_at)::TEXT`, likes: sql`COUNT(*)` })
+      .from(likesSchema.post_like as any)
+      .where(eq(likesSchema.post_like.postId, postId))
+      .groupBy(sql`DATE(pl.created_at)`)
+      .orderBy(sql`DATE(pl.created_at) ASC`);
 
-    return (result.rows as any[]).map((row) => ({
+    return (rows as any[]).map((row) => ({
       date: row.date,
-      likes: parseInt(row.likes) || 0,
+      likes: parseInt(String(row.likes)) || 0,
     }));
   }
 
@@ -172,37 +129,33 @@ export class DashboardService {
    * Calculates total likes from post_like table instead of static column
    */
   async getUserStats(userId: string) {
-    // Total likes on user's posts (count from post_like table)
-    const likesRes = await this.db.execute(sql`
-      SELECT COUNT(*) as total
-      FROM post_like pl
-      JOIN post p ON pl.post_id = p.id
-      WHERE p.user_id = ${userId}
-    `);
+    const likesRow = await this.db
+      .select({ total: sql`COUNT(*)` })
+      .from(likesSchema.post_like as any)
+      .innerJoin(postsSchema.post, eq(postsSchema.post.id, likesSchema.post_like.postId))
+      .where(eq(postsSchema.post.userId, userId))
+      .limit(1);
 
-    // Total followers
-    const followersRes = await this.db.execute(sql`
-      SELECT COUNT(*) as total
-      FROM follow f
-      WHERE f.following_id = ${userId}
-    `);
+    const followersRow = await this.db
+      .select({ total: sql`COUNT(*)` })
+      .from(followSchema.follow as any)
+      .where(eq(followSchema.follow.followingId, userId))
+      .limit(1);
 
-    // Total posts
-    const postsRes = await this.db.execute(sql`
-      SELECT COUNT(*) as total
-      FROM post p
-      WHERE p.user_id = ${userId}
-    `);
+    const postsRow = await this.db
+      .select({ total: sql`COUNT(*)` })
+      .from(postsSchema.post as any)
+      .where(eq(postsSchema.post.userId, userId))
+      .limit(1);
 
-    const likesCount = (likesRes.rows as any[])[0]?.total;
-    const followersCount = (followersRes.rows as any[])[0]?.total;
-    const postsCount = (postsRes.rows as any[])[0]?.total;
+    const likesCount = Number((likesRow as any[])[0]?.total) || 0;
+    const followersCount = Number((followersRow as any[])[0]?.total) || 0;
+    const postsCount = Number((postsRow as any[])[0]?.total) || 0;
 
     return {
-      totalLikes: parseInt(likesCount) || 0,
-      totalFollowers: parseInt(followersCount) || 0,
-      totalPosts: parseInt(postsCount) || 0,
+      totalLikes: likesCount,
+      totalFollowers: followersCount,
+      totalPosts: postsCount,
     };
   }
 }
->>>>>>> 2f90766 (Chore: Fix issues raised by @ari - push before rebasing)
