@@ -65,7 +65,7 @@ Relationships: `post.user_id -> user.id`, `post_like.post_id -> post.id`, `post_
 - Likes system — Backend & Frontend — `Paul`
 - Follow system and dashboard analytics — Backend (Drizzle) — `Paul && chrleroy`
 - Realtime chat — Backend (socket.io) + Frontend — `alebedev`
-- File uploads / avatars (MinIO) — Backend — `Theo`
+- File uploads / avatars (MinIO) — Backend — `tbabou`
 
 **Modules and Points**
 - Major modules (2 pts each):
@@ -80,7 +80,7 @@ For each module include implementation notes and which team members worked on th
 **Individual Contributions**
 - `alebedev`: backend API endpoints, Drizzle schemas, dashboard analytics.
 - `chrleroy`: frontend components, theming, responsive layout, chat UI.
-- `tbabou`: CI, Dockerfiles, deployment scripts, storage integration.
+- `theo`: CI, Dockerfiles, deployment scripts, storage integration.
 
 **Database Schema (detailed)**
 - See `server/drizzle/0000_init_tables.sql` and `server/src/*/*.schema.ts` for Drizzle table definitions.
