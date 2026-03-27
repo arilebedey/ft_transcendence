@@ -1,8 +1,10 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { GetUser } from '../auth/get-user.decorator';
 import type { AuthUser } from '../auth/auth.types';
 import { DashboardService, type LikesOverTime, type FollowersOverTime, type PostLikesData } from './dashboard.service';
+// import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
+// @UseGuards(AuthGuard)
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}

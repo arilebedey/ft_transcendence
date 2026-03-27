@@ -24,4 +24,4 @@ pip install -q -r requirements.txt
 
 echo "Populating database..."
 #python3 populate.py --users 500 --posts-per-user 3 --likes 5000 --user-id AFcL5gbpFlYSfxmOEWtsXyb8YnXBhBTx --apply
-python3 populate.py --users 500 --posts-per-user 3 --likes 5000 --user  profwobble --apply
+python3 populate.py --users 5181 --posts-per-user 17 --likes 7270 --follows 317 --user  profwobble --apply
