@@ -60,21 +60,18 @@ export class DashboardService {
    * Returns last 30 days of data
    */
   async getFollowersOverTime(userId: string): Promise<FollowersOverTime[]> {
-    // Get all follow events for this user in the last 30 days
-    const result = await this.db.execute(sql`
-      WITH follow_timeline AS (
-        SELECT 
-          DATE(f.created_at)::TEXT as date,
-          COUNT(*) OVER (ORDER BY DATE(f.created_at)) as cumulative_followers
-        FROM follow f
-        WHERE f.following_id = ${userId}
-          AND f.created_at >= NOW() - INTERVAL '30 days'
-        GROUP BY DATE(f.created_at)
+    // Get daily follow counts for this user in the last 30 days, then compute cumulative in JS
+    const rows = await this.db
+      .select({ date: sql`DATE(${followSchema.follow.createdAt})::TEXT`, count: sql`COUNT(*)` })
+      .from(followSchema.follow as any)
+      .where(
+        and(
+          sql`${followSchema.follow.createdAt} >= NOW() - INTERVAL '30 days'`,
+          eq(followSchema.follow.followingId, userId)
+        )
       )
-      SELECT DISTINCT date, cumulative_followers as followers
-      FROM follow_timeline
-      ORDER BY date ASC
-    `);
+      .groupBy(sql`DATE(${followSchema.follow.createdAt})`)
+      .orderBy(sql`DATE(${followSchema.follow.createdAt}) ASC`);
 
     return (result.rows as any[]).map((row) => ({
       date: row.date,
@@ -97,11 +94,11 @@ export class DashboardService {
     }
 
     const rows = await this.db
-      .select({ date: sql`DATE(pl.created_at)::TEXT`, likes: sql`COUNT(*)` })
+      .select({ date: sql`DATE(${likesSchema.post_like.createdAt})::TEXT`, likes: sql`COUNT(*)` })
       .from(likesSchema.post_like as any)
       .where(eq(likesSchema.post_like.postId, postId))
-      .groupBy(sql`DATE(pl.created_at)`)
-      .orderBy(sql`DATE(pl.created_at) ASC`);
+      .groupBy(sql`DATE(${likesSchema.post_like.createdAt})`)
+      .orderBy(sql`DATE(${likesSchema.post_like.createdAt}) ASC`);
 
     return (rows as any[]).map((row) => ({
       date: row.date,
