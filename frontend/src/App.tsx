@@ -1,4 +1,3 @@
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { NotFound } from "@/pages/NotFound";
@@ -11,16 +10,20 @@ import { Legal } from "@/pages/Legal";
 import { Dashboard } from "@/pages/Dashboard";
 import { Messages } from "@/pages/Messages";
 import { PublicApi } from "@/pages/PublicApi";
+import { Logout } from "./pages/Logout";
 
 const queryClient = new QueryClient();
 
 export const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <BrowserRouter>
-        <AppContentWithNav />
-      </BrowserRouter>
-    </TooltipProvider>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
+      <AppContentWithNav />
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
@@ -30,6 +33,7 @@ function AppContentWithNav() {
     <div className="min-h-screen bg-background">
       <Routes>
         <Route path="/" element={<GreetPage />} />
+        <Route path="/logging-out" element={<Logout />} />
         <Route
           path="/home"
           element={
@@ -80,7 +84,9 @@ function AppContentWithNav() {
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {location.pathname !== "/" && <BottomNav />}
+      {location.pathname !== "/" && location.pathname !== "/logging-out" && (
+        <BottomNav />
+      )}
     </div>
   );
 }

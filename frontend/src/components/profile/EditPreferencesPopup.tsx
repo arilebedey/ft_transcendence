@@ -86,8 +86,8 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
   };
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    navigate("/");
+    onClose();
+    navigate("/logging-out", { replace: true });
   };
 
   const Modal = isMobile ? MobileModal : DesktopModal;
