@@ -14,6 +14,31 @@ CREATE TABLE "account" (
 	"updated_at" timestamp NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "apikey" (
+	"id" text PRIMARY KEY NOT NULL,
+	"config_id" text DEFAULT 'default' NOT NULL,
+	"name" text,
+	"start" text,
+	"reference_id" text NOT NULL,
+	"prefix" text,
+	"key" text NOT NULL,
+	"refill_interval" integer,
+	"refill_amount" integer,
+	"last_refill_at" timestamp,
+	"enabled" boolean DEFAULT true,
+	"rate_limit_enabled" boolean DEFAULT true,
+	"rate_limit_time_window" integer DEFAULT 60000,
+	"rate_limit_max" integer DEFAULT 5,
+	"request_count" integer DEFAULT 0,
+	"remaining" integer,
+	"last_request" timestamp,
+	"expires_at" timestamp,
+	"created_at" timestamp NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	"permissions" text,
+	"metadata" text
+);
+--> statement-breakpoint
 CREATE TABLE "session" (
 	"id" text PRIMARY KEY NOT NULL,
 	"expires_at" timestamp NOT NULL,
@@ -117,6 +142,9 @@ ALTER TABLE "post_like" ADD CONSTRAINT "post_like_post_id_post_id_fk" FOREIGN KE
 ALTER TABLE "post" ADD CONSTRAINT "post_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_data" ADD CONSTRAINT "user_data_id_user_id_fk" FOREIGN KEY ("id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "apikey_configId_idx" ON "apikey" USING btree ("config_id");--> statement-breakpoint
+CREATE INDEX "apikey_referenceId_idx" ON "apikey" USING btree ("reference_id");--> statement-breakpoint
+CREATE INDEX "apikey_key_idx" ON "apikey" USING btree ("key");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "verification" USING btree ("identifier");--> statement-breakpoint
 CREATE UNIQUE INDEX "chat_message_conversation_seq_idx" ON "chat_message" USING btree ("conversation_id","seq");--> statement-breakpoint

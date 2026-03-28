@@ -1,4 +1,10 @@
-import { IsString, IsOptional, IsNotEmpty, MaxLength, IsUrl } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  MaxLength,
+  IsUrl,
+} from 'class-validator';
 
 export class UpdatePostDto {
   @IsOptional()
