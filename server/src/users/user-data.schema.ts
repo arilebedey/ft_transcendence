@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { user } from '../auth/better-auth.schema';
-import { conversationParticipant } from 'src/chat/chat.schema';
+import { conversationParticipant } from '../chat/chat.schema';
 
 export const userData = pgTable('user_data', {
   id: text('id')

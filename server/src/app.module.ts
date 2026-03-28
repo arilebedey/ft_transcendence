@@ -7,7 +7,7 @@ import { PostsModule } from './posts/posts.module';
 import { LikesModule } from './likes/likes.module';
 import { ChatModule } from './chat/chat.module';
 import { FollowModule } from './follow/follow.module';
-
+import { PublicApiModule } from './public-api/public-api.module';
 
 @Module({
   imports: [
@@ -19,6 +19,7 @@ import { FollowModule } from './follow/follow.module';
     LikesModule,
     ChatModule,
     FollowModule,
+    PublicApiModule,
   ],
   controllers: [],
   providers: [],

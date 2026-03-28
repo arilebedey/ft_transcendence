@@ -36,7 +36,7 @@ import { userData } from '../users/user-data.schema';
               rateLimit: {
                 enabled: true,
                 timeWindow: 60_000,
-                maxRequests: 5,
+                maxRequests: 15,
               },
             }),
           ],
