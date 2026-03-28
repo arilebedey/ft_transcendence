@@ -4,20 +4,29 @@ import { authClient } from "@/lib/auth-client";
 import { Auth } from "./Auth";
 import { Header } from "@/components/Header";
 import { useTranslation } from "react-i18next";
+import { useAuthUiStore } from "@/stores/auth-ui-store";
 
 export function GreetPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const sessionResult = authClient.useSession();
   const session = sessionResult?.data;
+  const isLoggingOut = useAuthUiStore((state) => state.isLoggingOut);
+  const endLogout = useAuthUiStore((state) => state.endLogout);
 
   React.useEffect(() => {
-    if (session) {
+    if (!session && isLoggingOut) {
+      endLogout();
+    }
+  }, [session, isLoggingOut, endLogout]);
+
+  React.useEffect(() => {
+    if (session && !isLoggingOut) {
       navigate("/home");
     }
-  }, [session, navigate]);
+  }, [session, isLoggingOut, navigate]);
 
-  if (session) {
+  if (session && !isLoggingOut) {
     return null;
   }
 

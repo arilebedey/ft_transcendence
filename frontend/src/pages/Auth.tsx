@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authClient } from "@/lib/auth-client";
 import LoginForm from "@/components/auth/LoginForm";
@@ -6,6 +6,7 @@ import SignUpForm from "@/components/auth/SignUpForm";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useAuthUiStore } from "@/stores/auth-ui-store";
 
 interface AuthProps {
   className?: string;
@@ -18,9 +19,15 @@ export const Auth = ({ className = "flex items-center justify-center w-full", ca
   const navigate = useNavigate();
   const sessionResult = authClient.useSession();
   const session = sessionResult?.data;
+  const isLoggingOut = useAuthUiStore((state) => state.isLoggingOut);
 
-  if (session) {
-    navigate("/");
+  useEffect(() => {
+    if (session && !isLoggingOut) {
+      navigate("/", { replace: true });
+    }
+  }, [session, isLoggingOut, navigate]);
+
+  if (session && !isLoggingOut) {
     return null;
   }
 

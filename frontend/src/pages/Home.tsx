@@ -19,7 +19,6 @@
   import { PostCard } from "@/components/ui/post-card";
   import { Button } from "@/components/ui/button";
   import { useTranslation } from "react-i18next";
-  import { authClient } from "@/lib/auth-client";
 
   interface Post {
     id: number;
@@ -39,9 +38,6 @@
     const [submitError, setSubmitError] = useState("");
     const [postFormOpen, setPostFormOpen] = useState(false);
     const [newPostContent, setNewPostContent] = useState("");
-    const sessionResult = authClient.useSession();
-    const session = sessionResult?.data;
-    const currentUserId = session?.user?.id;
     const [filter, setFilter] = useState<'recent' | 'oldest' | 'most_liked'>('recent');
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState("");
