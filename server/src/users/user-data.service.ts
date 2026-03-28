@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
 import { userData } from './user-data.schema';
-import { and, asc, eq, ilike, ne, or } from 'drizzle-orm';
+import { and, asc, eq, ilike, ne, or, sql } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import type { AppDatabase } from 'src/database/database.types';
 
@@ -54,6 +54,23 @@ export class UserDataService {
 
   async search(userId: string, query?: string) {
     const sanitized = query?.trim().slice(0, 50) ?? '';
+    const lowerSanitized = sanitized.toLowerCase();
+
+    const relevanceOrder =
+      sanitized.length > 0
+        ? sql<number>`
+            CASE
+              WHEN lower(${userData.name}) = ${lowerSanitized} THEN 0
+              WHEN lower(${userData.name}) LIKE ${`${lowerSanitized}%`} THEN 1
+              ELSE 2
+            END
+          `
+        : undefined;
+
+    const positionOrder =
+      sanitized.length > 0
+        ? sql<number>`position(${lowerSanitized} in lower(${userData.name}))` // Plus le nombre est petit, plus la query apparaît tôt dans le nom, donc plus le résultat est pertinent
+        : undefined;
 
     const baseQuery = this.db
       .select({
@@ -67,9 +84,12 @@ export class UserDataService {
           : ne(userData.id, userId),
       );
 
-    const results = await baseQuery
-      .orderBy(asc(userData.name))
-      .limit(sanitized.length > 0 ? 40 : 20);
+    const results =
+      sanitized.length > 0
+        ? await baseQuery
+            .orderBy(relevanceOrder!, positionOrder!, asc(userData.name))
+            .limit(40)
+        : await baseQuery.orderBy(asc(userData.name)).limit(20);
 
     return results;
   }
