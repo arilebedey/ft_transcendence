@@ -1,5 +1,14 @@
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import type { SectionId } from "@/components/public-api/types";
+import { cn } from "@/lib/utils";
 
 interface PublicApiSidebarProps {
   mobileView: "list" | "detail";
@@ -20,44 +29,43 @@ export function PublicApiSidebar({
   const { t } = useTranslation();
 
   return (
-    <div
+    <Card
       className={[
-        "border-border bg-card h-full min-h-0 min-w-0 overflow-y-auto border-b md:w-[24rem] md:min-w-[24rem] md:rounded-2xl md:border",
+        "h-full min-h-0 min-w-0 overflow-y-auto rounded-none border-x-0 border-t-0 shadow-none md:w-[24rem] md:min-w-[24rem] md:rounded-2xl",
         mobileView === "detail" ? "hidden md:block" : "block",
       ].join(" ")}
     >
-      <div className="space-y-4 p-4">
-        <div>
-          <h1 className="text-2xl font-semibold">
+      <CardHeader className="space-y-2 pb-4">
+        <CardTitle className="text-2xl">
             {t("publicApi.sidebar.title")}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("publicApi.sidebar.description")}
-          </p>
-        </div>
+        </CardTitle>
+        <CardDescription>{t("publicApi.sidebar.description")}</CardDescription>
+      </CardHeader>
 
+      <CardContent className="grid gap-2">
         <div className="grid gap-2">
           {sections.map((section) => (
-            <button
+            <Button
               key={section.id}
               type="button"
               onClick={() => onSelectSection(section.id)}
-              className={[
-                "w-full rounded-xl border px-3 py-3 text-left text-sm transition",
+              variant={selectedSection === section.id ? "default" : "outline"}
+              className={cn(
+                "h-auto w-full justify-start rounded-xl px-3 py-3 text-left text-sm transition",
                 section.id === "keys"
                   ? selectedSection === section.id
-                    ? "border-emerald-700 bg-emerald-600 text-white"
-                    : "border-emerald-600 bg-emerald-500 text-white hover:bg-emerald-600"
+                    ? "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-600"
+                    : "border-emerald-600 bg-emerald-500 text-white hover:bg-emerald-600 hover:text-white"
                   : selectedSection === section.id
-                    ? "border-foreground bg-accent text-accent-foreground"
-                    : "border-border hover:bg-accent/60",
-              ].join(" ")}
+                    ? "border-foreground"
+                    : "hover:bg-accent/60",
+              )}
             >
               {section.label}
-            </button>
+            </Button>
           ))}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
