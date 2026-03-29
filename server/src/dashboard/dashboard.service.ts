@@ -115,6 +115,7 @@ export class DashboardService {
       columns: {
         id: true,
         content: true,
+        link: true,
       },
       orderBy: [desc(postsSchema.post.createdAt)],
       limit: 50,
