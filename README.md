@@ -80,7 +80,7 @@ For each module include implementation notes and which team members worked on th
 **Individual Contributions**
 - `alebedev`: backend API endpoints, Drizzle schemas, dashboard analytics.
 - `chrleroy`: frontend components, theming, responsive layout, chat UI.
-- `theo`: CI, Dockerfiles, deployment scripts, storage integration.
+- `tbabou`: CI, Dockerfiles, deployment scripts, storage integration.
 
 **Database Schema (detailed)**
 - See `server/drizzle/0000_init_tables.sql` and `server/src/*/*.schema.ts` for Drizzle table definitions.
