@@ -297,13 +297,15 @@ export function Dashboard() {
                 }}
                 className="mt-2 w-full rounded-md border border-border bg-card text-card-foreground px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                {data.posts.map((post) => (
-                  <option key={post.id} value={post.id}>
-                    {post.content.length > 50
-                      ? post.content.substring(0, 50) + "..."
-                      : post.content}
-                  </option>
-                ))}
+                {data.posts.map((post) => {
+                  const displayText = post.content && post.content.trim() ? post.content : post.link || "(no content)";
+                  const label = displayText.length > 50 ? displayText.substring(0, 50) + "..." : displayText;
+                  return (
+                    <option key={post.id} value={post.id}>
+                      {label}
+                    </option>
+                  );
+                })}
               </select>
             </CardHeader>
             <CardContent>

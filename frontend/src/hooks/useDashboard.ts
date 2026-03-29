@@ -14,7 +14,7 @@ interface FollowersOverTime {
 interface DashboardData {
   accountLikes: LikesOverTime[];
   followers: FollowersOverTime[];
-  posts: Array<{ id: number; content: string }>;
+  posts: Array<{ id: number; content: string; link: string }>;
   stats: {
     totalLikes: number;
     totalFollowers: number;
