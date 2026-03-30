@@ -2,12 +2,15 @@ import { useState, type ReactNode } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { DesktopModal } from "@/components/ui/DesktopModal";
+import { MobileModal } from "@/components/ui/MobileModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 import { authClient } from "@/lib/auth-client";
+import { useIsMobileViewport } from "@/hooks/useIsMobileViewport";
 import { profileMeQueryKey, updateProfileMe } from "@/lib/profile-api";
 
 const themes: { value: Theme; icon: ReactNode }[] = [
@@ -30,11 +33,11 @@ interface EditPreferencesPopupProps {
 
 export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
   const { t, i18n } = useTranslation();
+  const isMobile = useIsMobileViewport(700);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { theme, setTheme } = useThemeStore();
   const [initialTheme] = useState<Theme>(theme);
-  const currentTheme = themes.find((th) => th.value === theme) ?? themes[0];
 
   const normalizeLanguage = (language?: string): Language => {
     const languageBase = language?.split("-")[0]?.toUpperCase();
@@ -87,87 +90,125 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
     navigate("/");
   };
 
+  const Modal = isMobile ? MobileModal : DesktopModal;
+  const body = (
+    <Card
+      className={`relative flex h-full w-full flex-col rounded-none border-0 shadow-none ${
+        isMobile ? "pt-0" : "pt-6"
+      }`}
+    >
+      <CardContent
+        className={`min-h-0 flex-1 space-y-6 overflow-y-auto ${
+          isMobile ? "px-4 pt-4" : "px-6"
+        }`}
+      >
+        {/* Theme */}
+        <div className="space-y-3">
+          <Label className="pb-3">{t("Theme")}</Label>
+          <div className="grid grid-cols-3 gap-2">
+            {themes.map((th) => (
+              <button
+                key={th.value}
+                onClick={() => setTheme(th.value)}
+                className={`flex items-center gap-2 flex-1 justify-center rounded-md border px-3 py-2 text-sm transition-colors ${
+                  theme === th.value
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-card text-muted-foreground border-input hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                {th.icon}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Language */}
+        <div className="space-y-3">
+          <Label>
+            <span className="flex items-center gap-1.5 pb-3">
+              <Globe className="h-4 w-4" />
+              {t("language")}
+            </span>
+          </Label>
+          <div className="grid grid-cols-2 gap-2">
+            {languages.map((lang) => (
+              <button
+                key={lang}
+                onClick={() => handleLanguageSelect(lang)}
+                className={`flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+                  selectedLanguage === lang
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-card text-muted-foreground border-input hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+
+      <CardFooter
+        className={`border-t ${
+          isMobile
+            ? "grid grid-cols-1 gap-4 px-4 py-4 pb-20"
+            : "justify-between gap-4 py-4"
+        }`}
+      >
+        <Button
+          onClick={() => void handleLogout()}
+          variant="outline"
+          className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+        >
+          <LogOut className="h-4 w-4" />
+          {t("Logout")}
+        </Button>
+        <div
+          className={
+            isMobile ? "contents" : "flex items-center justify-end gap-2"
+          }
+        >
+          {!isMobile ? (
+            <>
+              <Button
+                onClick={handleCloseWithoutSaving}
+                variant="outline"
+                className="px-8"
+              >
+                {t("Close")}
+              </Button>
+
+              <Button
+                onClick={handleSave}
+                className="px-8"
+                disabled={isSavingPreferences}
+              >
+                {t("save")}
+              </Button>
+            </>
+          ) : null}
+        </div>
+      </CardFooter>
+    </Card>
+  );
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div
-        className="absolute inset-0 bg-black opacity-40"
-        onClick={handleCloseWithoutSaving}
-      />
-      <Card className="relative w-120 shadow-lg z-50 flex flex-col pt-6">
-        <CardContent className="space-y-6 px-6">
-          {/* Theme */}
-          <div className="space-y-3">
-            <Label>{t("Theme")}</Label>
-            <div className="flex gap-2">
-              {themes.map((th) => (
-                <button
-                  key={th.value}
-                  onClick={() => setTheme(th.value)}
-                  className={`flex items-center gap-2 flex-1 justify-center rounded-md border px-3 py-2 text-sm transition-colors ${
-                    theme === th.value
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-card text-muted-foreground border-input hover:text-foreground hover:bg-secondary"
-                  }`}
-                >
-                  {th.icon}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Language */}
-          <div className="space-y-3">
-            <Label>
-              <span className="flex items-center gap-1.5">
-                <Globe className="h-4 w-4" />
-                {t("language")}
-              </span>
-            </Label>
-            <div className="flex gap-2">
-              {languages.map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => handleLanguageSelect(lang)}
-                  className={`flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
-                    selectedLanguage === lang
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "bg-card text-muted-foreground border-input hover:text-foreground hover:bg-secondary"
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-
-        <CardFooter className="justify-between gap-4 py-4">
+    <Modal
+      onClose={handleCloseWithoutSaving}
+      title={t("Settings")}
+      panelClassName="shadow-lg"
+      action={
+        isMobile ? (
           <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+            onClick={handleSave}
+            className="px-3"
+            disabled={isSavingPreferences}
           >
-            <LogOut className="h-4 w-4" />
-            {t("Logout")}
+            {t("save")}
           </Button>
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={handleCloseWithoutSaving}
-              variant="outline"
-              className="px-8"
-            >
-              {t("Close")}
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="px-8"
-              disabled={isSavingPreferences}
-            >
-              {t("save")}
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+        ) : undefined
+      }
+      body={body}
+    />
   );
 }
