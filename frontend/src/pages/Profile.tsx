@@ -1,5 +1,6 @@
 import { UserCard } from "@/components/profile/UserCard";
 import { UserPosts } from "@/components/profile/UserPosts";
+import { Layout } from "@/components/Layout";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -54,17 +55,32 @@ export function Profile() {
     enabled: shouldFetchOtherProfile,
   });
 
-  // Show not found immediately as soon as the check returns
-  if (userNotFound) {
-    return (
-      <div className="flex justify-center min-h-screen p-6">
-        <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
-          <div className="w-full px-10 py-8 text-destructive">
-            {t("profileNotFound")}
+  const renderStateCard = (
+    content: string,
+    tone: "default" | "error" = "default",
+  ) => (
+    <Layout
+      showSearchBar={false}
+      showLanguageToggle={false}
+      showThemeToggle={false}
+    >
+      <div className="flex justify-center px-4 py-4 sm:px-6 sm:py-6">
+        <div className="w-full max-w-5xl rounded-2xl bg-card shadow-sm sm:rounded-3xl">
+          <div
+            className={`w-full px-4 py-6 sm:px-8 sm:py-8 md:px-10 ${
+              tone === "error" ? "text-destructive" : "text-muted-foreground"
+            }`}
+          >
+            {content}
           </div>
         </div>
       </div>
-    );
+    </Layout>
+  );
+
+  // Show not found immediately as soon as the check returns
+  if (userNotFound) {
+    return renderStateCard(t("profileNotFound"), "error");
   }
 
   const isPending =
@@ -75,37 +91,30 @@ export function Profile() {
   const displayProfile = isOwnProfile ? ownProfile : otherProfile;
 
   if (isPending) {
-    return (
-      <div className="flex justify-center min-h-screen p-6">
-        <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
-          <div className="w-full px-10 py-8 text-muted-foreground">
-            {t("loadingProfile")}
-          </div>
-        </div>
-      </div>
-    );
+    return renderStateCard(t("loadingProfile"));
   }
 
   if (isError || !displayProfile) {
-    return (
-      <div className="flex justify-center min-h-screen p-6">
-        <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
-          <div className="w-full px-10 py-8 text-destructive">
-            {error instanceof Error ? error.message : t("unableToLoadProfile")}
-          </div>
-        </div>
-      </div>
+    return renderStateCard(
+      error instanceof Error ? error.message : t("unableToLoadProfile"),
+      "error",
     );
   }
 
   return (
-    <div className="flex justify-center min-h-screen p-6">
-      <div className="w-full max-w-5xl rounded-lg bg-card shadow-sm">
-        <div className="w-full px-10 py-8">
-          <UserCard profile={displayProfile} isOwnProfile={isOwnProfile} />
-          <UserPosts profileId={displayProfile.id} />
+    <Layout
+      showSearchBar={false}
+      showLanguageToggle={false}
+      showThemeToggle={false}
+    >
+      <div className="flex justify-center px-4 py-4 sm:px-6 sm:py-6">
+        <div className="w-full max-w-5xl rounded-2xl bg-card shadow-sm sm:rounded-3xl">
+          <div className="w-full px-4 py-6 sm:px-8 sm:py-8 md:px-10">
+            <UserCard profile={displayProfile} isOwnProfile={isOwnProfile} />
+            <UserPosts profileId={displayProfile.id} />
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

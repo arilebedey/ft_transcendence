@@ -3,8 +3,11 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DesktopModal } from "@/components/ui/DesktopModal";
+import { MobileModal } from "@/components/ui/MobileModal";
 import { useTranslation } from "react-i18next";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
+import { useIsMobileViewport } from "@/hooks/useIsMobileViewport";
 import {
   checkUsernameAvailable,
   usernameSchema,
@@ -29,6 +32,7 @@ export function EditProfilePopup({
   onClose,
 }: EditProfilePopupProps) {
   const { t } = useTranslation();
+  const isMobile = useIsMobileViewport(700);
   const [name, setName] = useState(currentUser.name);
   const [bio, setBio] = useState(currentUser.bio);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
@@ -96,74 +100,80 @@ export function EditProfilePopup({
     onSave({ name: usernameResult.data, bio: bioResult.data, avatarUrl });
   };
 
-  return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div
-        className="absolute inset-0 bg-black opacity-20"
-        onClick={onClose}
-      ></div>
+  const Modal = isMobile ? MobileModal : DesktopModal;
+  const body = (
+    <Card
+      className={`relative flex h-full w-full flex-col rounded-none border-0 shadow-none ${
+        isMobile
+          ? "pt-0"
+          : "max-h-[min(37.5rem,calc(100vh-2rem))] pt-6"
+      }`}
+    >
+      <CardContent
+        className={`min-h-0 flex-1 space-y-4 overflow-y-auto ${
+          isMobile ? "px-4 pt-4" : "px-6"
+        }`}
+      >
+        {/* Avatar upload */}
+        <div className="flex justify-center">
+          <AvatarUpload
+            name={name}
+            currentAvatarUrl={avatarUrl}
+            onUploaded={(newUrl) => setAvatarUrl(newUrl)}
+          />
+        </div>
 
-      <Card className="relative w-120 max-h-150  shadow-lg z-50 flex flex-col pt-6">
-        <CardContent className="space-y-4 px-6">
-          {/* Avatar upload */}
-          <div className="flex justify-center">
-            <AvatarUpload
-              name={name}
-              currentAvatarUrl={avatarUrl}
-              onUploaded={(newUrl) => setAvatarUrl(newUrl)}
-            />
+        <div className="space-y-2">
+          <Label htmlFor="edit-name">{t("Name")}</Label>
+          <Input
+            id="edit-name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setUsernameError(null);
+              setUsernameTaken(false);
+            }}
+            placeholder={"John Doe"}
+            className={usernameError || usernameTaken ? "border-red-500" : ""}
+          />
+          {usernameChecking && (
+            <p className="text-sm text-muted-foreground">
+              {t("checkingUsername")}
+            </p>
+          )}
+          {!usernameChecking && usernameTaken && (
+            <p className="text-sm text-red-500">{t("usernameTaken")}</p>
+          )}
+          {usernameError && (
+            <p className="text-sm text-red-500">{usernameError}</p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="edit-bio">{t("Bio")}</Label>
+            <span className="text-sm text-muted-foreground">
+              {bio.length}/160
+            </span>
           </div>
+          <textarea
+            id="edit-bio"
+            value={bio}
+            onChange={(e) => {
+              setBio(e.target.value);
+              setBioError(null);
+            }}
+            placeholder={t("profileBioPlaceholder")}
+            className={`flex min-h-20 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+              bioError ? "border-red-500" : "border-input"
+            }`}
+            rows={4}
+          />
+          {bioError && <p className="text-sm text-red-500">{bioError}</p>}
+        </div>
+      </CardContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-name">{t("Name")}</Label>
-            <Input
-              id="edit-name"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setUsernameError(null);
-                setUsernameTaken(false);
-              }}
-              placeholder={"John Doe"}
-              className={usernameError || usernameTaken ? "border-red-500" : ""}
-            />
-            {usernameChecking && (
-              <p className="text-sm text-muted-foreground">
-                {t("checkingUsername")}
-              </p>
-            )}
-            {!usernameChecking && usernameTaken && (
-              <p className="text-sm text-red-500">{t("usernameTaken")}</p>
-            )}
-            {usernameError && (
-              <p className="text-sm text-red-500">{usernameError}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="edit-bio">{t("Bio")}</Label>
-              <span className="text-sm text-muted-foreground">
-                {bio.length}/160
-              </span>
-            </div>
-            <textarea
-              id="edit-bio"
-              value={bio}
-              onChange={(e) => {
-                setBio(e.target.value);
-                setBioError(null);
-              }}
-              placeholder={t("profileBioPlaceholder")}
-              className={`flex min-h-20 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
-                bioError ? "border-red-500" : "border-input"
-              }`}
-              rows={4}
-            />
-            {bioError && <p className="text-sm text-red-500">{bioError}</p>}
-          </div>
-        </CardContent>
-
-        <CardFooter className="justify-center gap-3 py-3">
+      {!isMobile ? (
+        <CardFooter className="justify-center gap-3 border-t py-3">
           <Button
             variant="outline"
             onClick={onClose}
@@ -173,14 +183,36 @@ export function EditProfilePopup({
             {t("Close")}
           </Button>
           <Button
-            onClick={handleSave}
+            onClick={() => void handleSave()}
             className="px-6"
             disabled={isSaving || usernameChecking || usernameTaken}
           >
             {t("save")}
           </Button>
         </CardFooter>
-      </Card>
-    </div>
+      ) : null}
+    </Card>
+  );
+
+  return (
+    <Modal
+      onClose={onClose}
+      overlayClassName="bg-black/20"
+      panelClassName={isMobile ? undefined : "max-h-[min(37.5rem,calc(100vh-2rem))]"}
+      title={isMobile ? t("editProfile") : undefined}
+      action={
+        isMobile ? (
+          <Button
+            type="button"
+            onClick={() => void handleSave()}
+            disabled={isSaving || usernameChecking || usernameTaken}
+            className="px-3"
+          >
+            {t("save")}
+          </Button>
+        ) : undefined
+      }
+      body={body}
+    />
   );
 }

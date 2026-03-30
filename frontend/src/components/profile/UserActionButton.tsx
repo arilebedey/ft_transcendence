@@ -24,15 +24,14 @@ export function UserActionButton({
   const navigate = useNavigate();
 
   return (
-    <div className="shrink-0">
+    <div className="w-full shrink-0 sm:w-auto">
       {isOwnProfile ? (
-        <div className="flex gap-2 h-10">
-          <Button className="px-5 text-lg" onClick={onEdit}>
+        <div className="flex h-auto w-full gap-2 sm:h-10 sm:w-auto">
+          <Button className="flex-1 px-5 text-base sm:text-lg" onClick={onEdit}>
             {t("editProfile")}
           </Button>
           <Button
-            className="px-5 text-lg"
-            variant="outline"
+            className="px-5 text-base sm:text-lg"
             onClick={onOpenApiDocs}
           >
             {t("publicApi.sidebar.title")}
@@ -44,14 +43,17 @@ export function UserActionButton({
           >
             <BarChart3 className="h-5 w-5" />
           </Button>
-          <Button className="h-10 w-10 p-2" onClick={onEditPreferences}>
+          <Button
+            onClick={onEditPreferences}
+            className="h-10 w-10 shrink-0 p-2"
+          >
             <Settings className="h-5 w-5" />
           </Button>
         </div>
       ) : (
         <Button
           onClick={onToggleFollow}
-          className="h-12 px-6 text-lg"
+          className="h-12 w-full px-6 text-lg sm:w-auto"
           variant={isFollowing ? "outline" : "default"}
         >
           {isFollowing ? t("unfollow") : t("follow")}

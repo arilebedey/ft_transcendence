@@ -136,8 +136,8 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
 
   return (
     <div className="flex flex-col w-full gap-6">
-      <div className="flex items-center justify-between w-full gap-8">
-        <div className="flex items-center space-x-4 flex-1">
+      <div className="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <div className="flex min-w-0 flex-1 items-center space-x-4">
           <UserAvatar name={profile.name} avatarUrl={profile.avatarUrl} />
           <UserInfo name={profile.name} bio={bio} />
         </div>
