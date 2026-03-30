@@ -1,17 +1,129 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import TOSen from "./TOSen.json";
-import TOSfr from "./TOSfr.json";
-import TOSit from "./TOSit.json";
-import TOSes from "./TOSes.json";
+
+const TOSen = {
+  legal: {
+    terms: "Terms of Service",
+    termsContent: [
+      "1. Introduction: Welcome to our social network. By using our services, you agree to comply with these Terms of Service and all applicable laws. These rules aim to ensure a safe, respectful, and enjoyable experience for all users.",
+      "2. Registration: To create an account, you must provide accurate, complete, and up-to-date information. You are responsible for the confidentiality of your credentials and all activities performed with your account. Any unauthorized use must be reported immediately.",
+      "3. User Content: You retain ownership of your content, but by posting on our platform, you grant us a non-exclusive, transferable, worldwide license to use, modify, publish, and distribute it within the service.",
+      "4. User Conduct: It is prohibited to post defamatory, illegal, offensive, or violent content. Harassment, spam, or impersonation is strictly forbidden. Violations may result in account suspension or deletion.",
+      "5. Privacy and Personal Data: We collect and use certain personal information according to our privacy policy. You agree that your data may be processed to improve the service and for targeted advertising if you have given consent.",
+      "6. Advertising and Promotions: You understand that we may display ads and promotional content. You must not interfere with or manipulate these ads. The platform does not guarantee specific exposure for your content.",
+      "7. Limitation of Liability: We do our best to ensure service availability but are not responsible for interruptions, data loss, or damages resulting from platform use. You use our services at your own risk.",
+      "8. Suspension and Termination: We reserve the right to suspend or terminate your account if you violate the Terms of Service or any applicable law. Account deletion does not release you from past obligations, including content-related responsibilities.",
+      "9. Changes to the Terms: We may update these terms at any time. Updates will be posted on our site and take effect immediately. Continued use of the service constitutes acceptance of the updated Terms.",
+      "10. Governing Law and Jurisdiction: These Terms are governed by the laws of our country of incorporation. Any disputes regarding interpretation or application will be subject to competent courts.",
+      "11. Miscellaneous: If any part of these Terms is deemed invalid or unenforceable, the remaining provisions remain in effect. Failure to exercise a right does not constitute waiver of that right.",
+      "12. Acceptance: By checking the 'I accept the Terms of Service' box and creating an account, you confirm that you have read, understood, and accepted these Terms in their entirety."
+    ],
+    privacy: "Privacy Policy",
+    privacyContent: [
+      "We collect and use personal data as described in our Privacy Policy. Please consult the dedicated Privacy section for details about the types of data we collect, how it is used, and your rights regarding that data."
+    ],
+    about: "About",
+    aboutContent: [
+      "Our platform enables people to connect, share content, and discover communities. We build tools to help people express themselves and find others with shared interests."
+    ],
+    copyright: "© 2026 Transcendence"
+  }
+};
+
+const TOSfr = {
+  legal: {
+    terms: "Conditions générales d'utilisation",
+    termsContent: [
+      "1. Introduction : Bienvenue sur notre réseau social. En utilisant nos services, vous acceptez de respecter ces conditions générales d'utilisation (CGU) ainsi que toutes les lois applicables. Ces règles visent à garantir une expérience sûre, respectueuse et agréable pour tous les utilisateurs.",
+      "2. Inscription : Pour créer un compte, vous devez fournir des informations exactes, complètes et à jour. Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités réalisées avec votre compte. Tout usage non autorisé doit être signalé immédiatement.",
+      "3. Contenu des utilisateurs : Vous conservez la propriété de vos contenus, mais en publiant sur notre plateforme, vous accordez une licence non exclusive, transférable et mondiale nous permettant de les utiliser, modifier, publier et distribuer dans le cadre du service.",
+      "4. Conduite des utilisateurs : Il est interdit de publier des contenus diffamatoires, illégaux, offensants ou violents. Les comportements de harcèlement, spam ou usurpation d'identité sontstrictement interdits. Tout manquement peut entraîner la suspension ou la suppression de votre compte.",
+      "5. Confidentialité et données personnelles : Nous collectons et utilisons certaines informations personnelles conformément à notre politique de confidentialité. Vous acceptez que vos données soient traitées pour améliorer le service et pour la publicité ciblée, si vous avez donné votre consentement.",
+      "6. Publicité et promotions : Vous comprenez que nous pouvons afficher des publicités et contenus promotionnels. Vous ne devez pas interférer avec ces publicités ni les manipuler. La plateforme ne garantit pas que vous profiterez d’une exposition spécifique pour vos contenus.",
+      "7. Limitation de responsabilité : Nous faisons de notre mieux pour assurer le fonctionnement de nos services, mais nous ne sommes pas responsables des interruptions, pertes de données ou dommages résultant de l'utilisation de la plateforme. Vous utilisez nos services à vos propres risques.",
+      "8. Suspension et résiliation : Nous nous réservons le droit de suspendre ou de résilier votre compte si vous violez les CGU ou toute loi applicable. La suppression de votre compte ne vous libère pas de vos obligations passées, y compris celles concernant le contenu publié.",
+      "9. Modifications des CGU : Nous pouvons modifier ces conditions à tout moment. Les modifications seront publiées sur notre site et entreront en vigueur immédiatement. Votre utilisation continue du service vaut acceptation des CGU mises à jour.",
+      "10. Loi applicable et juridiction : Ces CGU sont régies par la législation en vigueur dans notre pays de siège social. Tout litige relatif à l’interprétation ou à l’application des présentes sera soumis aux tribunaux compétents.",
+      "11. Dispositions diverses : Si une partie de ces CGU est jugée invalide ou inapplicable, les autres dispositions restent en vigueur. Le fait que nous n’exercions pas un droit ne constitue pas une renonciation à ce droit.",
+      "12. Acceptation : En cochant la case « J’accepte les conditions d’utilisation » et en créant un compte, vous confirmez avoir lu, compris et accepté l’intégralité de ces CGU."
+    ],
+    privacy: "Politique de confidentialité",
+    privacyContent: [
+      "Nous collectons et utilisons des données personnelles comme décrit dans notre politique de confidentialité. Consultez la section dédiée pour connaître les types de données collectées, leur utilisation et vos droits."
+    ],
+    about: "À propos",
+    aboutContent: [
+      "Notre plateforme permet aux personnes de se connecter, partager du contenu et découvrir des communautés. Nous créons des outils pour aider les utilisateurs à s'exprimer et à trouver d'autres personnes partageant les mêmes centres d'intérêt."
+    ],
+    copyright: "© 2026 Transcendence"
+  }
+};
+
+const TOSit = {
+  legal: {
+    terms: "Termini di servizio",
+    termsContent: [
+      "1. Introduzione: Benvenuti nel nostro social network. Utilizzando i nostri servizi, accetti di rispettare questi Termini di servizio e tutte le leggi applicabili. Queste regole mirano a garantire un’esperienza sicura, rispettosa e piacevole per tutti gli utenti.",
+      "2. Registrazione: Per creare un account, devi fornire informazioni accurate, complete e aggiornate. Sei responsabile della riservatezza delle tue credenziali e di tutte le attività effettuate con il tuo account. Qualsiasi uso non autorizzato deve essere segnalato immediatamente.",
+      "3. Contenuti degli utenti: Mantieni la proprietà dei tuoi contenuti, ma pubblicando sulla nostra piattaforma ci concedi una licenza non esclusiva, trasferibile e mondiale per utilizzarli, modificarli, pubblicarli e distribuirli nell’ambito del servizio.",
+      "4. Condotta degli utenti: È vietato pubblicare contenuti diffamatori, illegali, offensivi o violenti. Comportamenti di molestie, spam o impersonificazione sono severamente vietati. Le violazioni possono comportare la sospensione o la cancellazione dell’account.",
+      "5. Privacy e dati personali: Raccogliamo e utilizziamo alcune informazioni personali in conformità con la nostra informativa sulla privacy. Accetti che i tuoi dati possano essere trattati per migliorare il servizio e per pubblicità mirata, se hai dato il tuo consenso.",
+      "6. Pubblicità e promozioni: Comprendi che possiamo visualizzare pubblicità e contenuti promozionali. Non devi interferire o manipolare tali annunci. La piattaforma non garantisce esposizione specifica ai tuoi contenuti.",
+      "7. Limitazione di responsabilità: Facciamo del nostro meglio per garantire la disponibilità del servizio, ma non siamo responsabili per interruzioni, perdita di dati o danni derivanti dall’utilizzo della piattaforma. Usi i nostri servizi a tuo rischio.",
+      "8. Sospensione e terminazione: Ci riserviamo il diritto di sospendere o terminare il tuo account se violi i Termini di servizio o qualsiasi legge applicabile. La cancellazione dell’account non ti solleva dagli obblighi passati, inclusi quelli relativi ai contenuti pubblicati.",
+      "9. Modifiche ai Termini: Possiamo aggiornare questi termini in qualsiasi momento. Le modifiche saranno pubblicate sul nostro sito ed entreranno in vigore immediatamente. L’uso continuato del servizio costituisce accettazione dei Termini aggiornati.",
+      "10. Legge applicabile e giurisdizione: Questi Termini sono disciplinati dalle leggi del nostro paese di costituzione. Qualsiasi controversia relativa all’interpretazione o all’applicazione sarà sottoposta ai tribunali competenti.",
+      "11. Varie: Se una parte di questi Termini è ritenuta invalida o inapplicabile, le restanti disposizioni rimangono in vigore. Il mancato esercizio di un diritto non costituisce rinuncia a tale diritto.",
+      "12. Accettazione: Spuntando la casella 'Accetto i Termini di servizio' e creando un account, confermi di aver letto, compreso e accettato questi Termini nella loro interezza."
+    ],
+    privacy: "Informativa sulla Privacy",
+    privacyContent: [
+      "Raccogliamo e utilizziamo i dati personali come descritto nella nostra Informativa sulla Privacy. Consulta la sezione dedicata per dettagli sui tipi di dati raccolti, sul loro utilizzo e sui tuoi diritti."
+    ],
+    about: "Informazioni",
+    aboutContent: [
+      "La nostra piattaforma consente alle persone di connettersi, condividere contenuti e scoprire comunità. Creiamo strumenti per aiutare gli utenti a esprimersi e trovare altri con interessi simili."
+    ],
+    copyright: "© 2026 Transcendence"
+  }
+};
+
+const TOSes = {
+  legal: {
+    terms: "Términos del Servicio",
+    termsContent: [
+      "1. Introducción: Bienvenido a nuestra red social. Al usar nuestros servicios, aceptas cumplir con estos Términos de Servicio y todas las leyes aplicables. Estas reglas tienen como objetivo garantizar una experiencia segura, respetuosa y agradable para todos los usuarios.",
+      "2. Registro: Para crear una cuenta, debes proporcionar información precisa, completa y actualizada. Eres responsable de la confidencialidad de tus credenciales y de todas las actividades realizadas con tu cuenta. Cualquier uso no autorizado debe ser reportado inmediatamente.",
+      "3. Contenido del usuario: Conservas la propiedad de tu contenido, pero al publicarlo en nuestra plataforma, nos otorgas una licencia no exclusiva, transferible y mundial para usarlo, modificarlo, publicarlo y distribuirlo dentro del servicio.",
+      "4. Conducta del usuario: Está prohibido publicar contenido difamatorio, ilegal, ofensivo o violento. El acoso, el spam o la suplantación de identidad están estrictamente prohibidos. Las infracciones pueden resultar en la suspensión o eliminación de la cuenta.",
+      "5. Privacidad y datos personales: Recopilamos y usamos cierta información personal de acuerdo con nuestra política de privacidad. Aceptas que tus datos puedan ser procesados para mejorar el servicio y para publicidad dirigida, si has dado tu consentimiento.",
+      "6. Publicidad y promociones: Comprendes que podemos mostrar anuncios y contenido promocional. No debes interferir ni manipular estos anuncios. La plataforma no garantiza una exposición específica para tu contenido.",
+      "7. Limitación de responsabilidad: Hacemos todo lo posible para garantizar la disponibilidad del servicio, pero no somos responsables de interrupciones, pérdida de datos o daños resultantes del uso de la plataforma. Usas nuestros servicios bajo tu propio riesgo.",
+      "8. Suspensión y terminación: Nos reservamos el derecho de suspender o terminar tu cuenta si violas los Términos de Servicio o cualquier ley aplicable. La eliminación de la cuenta no te libera de obligaciones pasadas, incluidas las relacionadas con el contenido publicado.",
+      "9. Cambios en los Términos: Podemos actualizar estos términos en cualquier momento. Las modificaciones se publicarán en nuestro sitio y entrarán en vigor inmediatamente. El uso continuo del servicio constituye aceptación de los Términos actualizados.",
+      "10. Ley aplicable y jurisdicción: Estos Términos se rigen por las leyes de nuestro país de constitución. Cualquier disputa relacionada con la interpretación o aplicación estará sujeta a los tribunales competentes.",
+      "11. Disposiciones varias: Si alguna parte de estos Términos se considera inválida o inaplicable, las disposiciones restantes permanecerán en vigor. La falta de ejercicio de un derecho no constituye renuncia al mismo.",
+      "12. Aceptación: Al marcar la casilla 'Acepto los Términos de Servicio' y crear una cuenta, confirmas que has leído, comprendido y aceptado estos Términos en su totalidad."
+    ],
+    privacy: "Política de privacidad",
+    privacyContent: [
+      "Recopilamos y usamos datos personales según lo descrito en nuestra Política de Privacidad. Consulta la sección correspondiente para detalles sobre los tipos de datos, su uso y tus derechos."
+    ],
+    about: "Acerca de",
+    aboutContent: [
+      "Nuestra plataforma permite a las personas conectarse, compartir contenido y descubrir comunidades. Construimos herramientas para ayudar a los usuarios a expresarse y encontrar a otros con intereses compartidos."
+    ],
+    copyright: "© 2026 Transcendence"
+  }
+};
 
 const resources = {
   EN: {
     translation: {
       welcome: "Connect, share, and discover with our community",
-      shareContent: "✨ Share the content you watch",
-      followInterest: "🌐 Follow other's interests",
-      discover: "🧭 Discover!",
+      shareContent: "Share the content you watch",
+      followInterest: "Follow other's interests",
+      discover: "Discover!",
       signIn: "Sign in",
       createAccount: "Create account",
       signUp: "Sign up",
@@ -220,9 +332,9 @@ const resources = {
   FR: {
     translation: {
       welcome: "Connectez, partagez et découvrez avec notre communauté",
-      shareContent: "✨ Partagez le contenu que vous regardez",
-      followInterest: "🌐 Suivez les intérêts des autres",
-      discover: "🧭 Découvrez !",
+      shareContent: "Partagez le contenu que vous regardez",
+      followInterest: "Suivez les intérêts des autres",
+      discover: "Découvrez !",
       signIn: "Se connecter",
       createAccount: "Créer un compte",
       signUp: "S'inscrire",
@@ -439,9 +551,9 @@ const resources = {
   IT: {
     translation: {
       welcome: "Connettiti, condividi e scopri con la nostra comunità",
-      shareContent: "✨ Condividi il contenuto che guardi",
-      followInterest: "🌐 Segui gli interessi degli altri",
-      discover: "🧭 Scopri!",
+      shareContent: "Condividi il contenuto che guardi",
+      followInterest: "Segui gli interessi degli altri",
+      discover: "Scopri!",
       signIn: "Accedi",
       createAccount: "Crea account",
       signUp: "Iscriviti",
@@ -656,9 +768,9 @@ const resources = {
   ES: {
     translation: {
       welcome: "Conéctate, comparte y descubre con nuestra comunidad",
-      shareContent: "✨ Comparte el contenido que ves",
-      followInterest: "🌐 Sigue los intereses de otros",
-      discover: "🧭 ¡Descubre!",
+      shareContent: "Comparte el contenido que ves",
+      followInterest: "Sigue los intereses de otros",
+      discover: "¡Descubre!",
       signIn: "Iniciar sesión",
       createAccount: "Crear cuenta",
       signUp: "Registrarse",
