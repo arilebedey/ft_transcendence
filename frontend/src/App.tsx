@@ -89,6 +89,7 @@ function AppContentWithNav() {
             </ProtectedRoute>
           }
         />
+        <Route path="/legal" element={<Legal />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {location.pathname !== "/" && <BottomNav />}
