@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ListCard } from "@/components/ui/list-card";
 import { ListItem } from "@/components/ui/list-item";
+import { UserAvatar } from "@/components/profile/UserAvatar";
 import { getProfileByName, profileByNameQueryKey } from "@/lib/profile-api";
 import { useQuery, useQueries } from "@tanstack/react-query";
 
@@ -168,21 +169,11 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
                   onClick={() => goToProfile(name)}
                   className="w-full justify-start rounded-none px-4 py-2 hover:bg-accent flex items-center gap-3"
                 >
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-
-                    {avatar ? (
-                      <img
-                        src={"/storage/" + avatar}
-                        alt={name}
-                        className="w-8 h-8 object-cover"
-                      />
-                    ) : (
-                      <span className="text-primary-foreground font-bold">
-                        {name.charAt(0)}
-                      </span>
-                    )}
-
-                  </div>
+                  <UserAvatar
+                    name={name}
+                    avatarUrl={avatar}
+                    className="w-8 h-8 overflow-hidden"
+                  />
 
                   <span>{name}</span>
                 </Button>
