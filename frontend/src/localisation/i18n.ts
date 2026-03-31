@@ -20,7 +20,13 @@ const TOSen = {
     ],
     privacy: "Privacy Policy",
     privacyContent: [
-      "We collect and use personal data as described in our Privacy Policy. Please consult the dedicated Privacy section for details about the types of data we collect, how it is used, and your rights regarding that data."
+      "Collected data: When you register, we collect your username, email address, and generate a unique identifier for your account. You may also provide a bio and a profile picture (avatar).",
+      "Session data: We store session information (token, IP address, user agent).",
+      "User preferences: We record your display preferences, including theme and language.",
+      "Messaging: Messages exchanged via our chat service are stored in our database and associated with your account.",
+      "Files and avatars: Profile pictures you upload are stored via our internal storage service. These files are linked to your account.",
+      "Data use: Your data is used only to operate the platform. We do not sell it or share it with third parties.",
+      "Security: Passwords are never stored in plain text."
     ],
     about: "About",
     aboutContent: [
@@ -49,7 +55,13 @@ const TOSfr = {
     ],
     privacy: "Politique de confidentialité",
     privacyContent: [
-      "Nous collectons et utilisons des données personnelles comme décrit dans notre politique de confidentialité. Consultez la section dédiée pour connaître les types de données collectées, leur utilisation et vos droits."
+      "Données collectées : Lors de votre inscription, nous collectons votre nom d'utilisateur, votre adresse e-mail, et nous générons un identifiant unique pour votre compte. Vous pouvez également renseigner une biographie et une photo de profil (avatar).",
+      "Données de session : Nous stockons des informations de session (token, adresse IP, user agent).",
+      "Préférences utilisateur : Nous enregistrons vos préférences d'affichage, notamment votre thème et votre langue.",
+      "Messagerie : Les messages échangés via notre service de chat sont stockés dans notre base de données et associés à votre compte.",
+      "Fichiers et avatars : Les photos de profil que vous téléversez sont stockées via notre service de stockage interne. Ces fichiers sont liés à votre compte.",
+      "Utilisation des données : Vos données sont utilisées uniquement pour le fonctionnement de la plateforme. Nous ne les vendons pas et ne les partageons pas avec des tiers.",
+      "Sécurité : Les mots de passe ne sont jamais stockés en clair."
     ],
     about: "À propos",
     aboutContent: [
@@ -78,7 +90,13 @@ const TOSit = {
     ],
     privacy: "Informativa sulla Privacy",
     privacyContent: [
-      "Raccogliamo e utilizziamo i dati personali come descritto nella nostra Informativa sulla Privacy. Consulta la sezione dedicata per dettagli sui tipi di dati raccolti, sul loro utilizzo e sui tuoi diritti."
+      "Dati raccolti: Quando ti registri, raccogliamo il tuo nome utente, l'indirizzo email e generiamo un identificativo univoco per il tuo account. Puoi anche fornire una biografia e una foto del profilo (avatar).",
+      "Dati di sessione: Conserviamo informazioni di sessione (token, indirizzo IP, user agent).",
+      "Preferenze utente: Registriamo le tue preferenze di visualizzazione, incluso tema e lingua.",
+      "Messaggistica: I messaggi scambiati tramite il nostro servizio di chat sono archiviati nel nostro database e associati al tuo account.",
+      "File e avatar: Le foto del profilo che carichi sono memorizzate tramite il nostro servizio di storage interno. Questi file sono collegati al tuo account.",
+      "Utilizzo dei dati: I tuoi dati sono utilizzati solo per il funzionamento della piattaforma. Non li vendiamo né li condividiamo con terzi.",
+      "Sicurezza: Le password non vengono mai memorizzate in chiaro."
     ],
     about: "Informazioni",
     aboutContent: [
@@ -107,7 +125,13 @@ const TOSes = {
     ],
     privacy: "Política de privacidad",
     privacyContent: [
-      "Recopilamos y usamos datos personales según lo descrito en nuestra Política de Privacidad. Consulta la sección correspondiente para detalles sobre los tipos de datos, su uso y tus derechos."
+      "Datos recogidos: Al registrarte, recopilamos tu nombre de usuario, dirección de correo electrónico y generamos un identificador único para tu cuenta. También puedes proporcionar una biografía y una foto de perfil (avatar).",
+      "Datos de sesión: Almacenamos información de sesión (token, dirección IP, user agent).",
+      "Preferencias de usuario: Registramos tus preferencias de visualización, incluyendo tema e idioma.",
+      "Mensajería: Los mensajes intercambiados a través de nuestro servicio de chat se almacenan en nuestra base de datos y están asociados a tu cuenta.",
+      "Archivos y avatares: Las fotos de perfil que subes se almacenan mediante nuestro servicio de almacenamiento interno. Estos archivos están vinculados a tu cuenta.",
+      "Uso de los datos: Tus datos se utilizan únicamente para el funcionamiento de la plataforma. No los vendemos ni los compartimos con terceros.",
+      "Seguridad: Las contraseñas nunca se almacenan en texto plano."
     ],
     about: "Acerca de",
     aboutContent: [
