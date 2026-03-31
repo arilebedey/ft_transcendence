@@ -54,6 +54,19 @@ export interface PublicProfileData {
   createdAt: string;
 }
 
+export interface FollowStats {
+  followers: number;
+  following: number;
+}
+
+export interface FollowListUser {
+  id: string;
+  name: string;
+  bio: string | null;
+  avatarUrl: string | null;
+  followedAt: string;
+}
+
 export const profileByNameQueryKey = (name: string) =>
   ["profile", "user", name] as const;
 
@@ -118,6 +131,54 @@ export async function updateProfileMe(
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
     throw new Error(errorBody.message || "Failed to update profile");
+  }
+
+  return response.json();
+}
+
+export async function getFollowStats(userId: string): Promise<FollowStats> {
+  const response = await fetch(`/api/follows/${encodeURIComponent(userId)}/stats`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.message || "Failed to fetch follow stats");
+  }
+
+  return response.json();
+}
+
+export async function getFollowers(userId: string): Promise<FollowListUser[]> {
+  const response = await fetch(
+    `/api/follows/${encodeURIComponent(userId)}/followers`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.message || "Failed to fetch followers");
+  }
+
+  return response.json();
+}
+
+export async function getFollowing(userId: string): Promise<FollowListUser[]> {
+  const response = await fetch(
+    `/api/follows/${encodeURIComponent(userId)}/following`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.message || "Failed to fetch following");
   }
 
   return response.json();

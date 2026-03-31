@@ -33,6 +33,16 @@ export class FollowController {
     return { followers, following };
   }
 
+  @Get(':id/followers')
+  getFollowers(@Param('id') userId: string) {
+    return this.followService.listFollowers(userId);
+  }
+
+  @Get(':id/following')
+  getFollowing(@Param('id') userId: string) {
+    return this.followService.listFollowing(userId);
+  }
+
   @Post()
   create(@Body() createFollowDto: CreateFollowDto, @GetUser() user: AuthUser) {
     return this.followService.create(user.id, createFollowDto.followingId);
