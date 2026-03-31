@@ -6,9 +6,11 @@ import { UserInfo } from "@/components/profile/UserInfo";
 import { UserStats } from "@/components/profile/UserStats";
 import { UserActionButton } from "@/components/profile/UserActionButton";
 import { EditPreferencesPopup } from "@/components/profile/EditPreferencesPopup";
+import { FollowListModal } from "@/components/profile/FollowListModal";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
+  getFollowStats,
   profileMeQueryKey,
   profileByNameQueryKey,
   type ProfileUserData,
@@ -37,6 +39,9 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showEditPreferencesPopup, setShowEditPreferencesPopup] =
     useState(false);
+  const [openFollowList, setOpenFollowList] = useState<
+    "followers" | "following" | null
+  >(null);
   
   useEffect(() => {
     if (!isOwnProfile) {
@@ -54,12 +59,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   
     const fetchStats = async () => {
       try {
-        const res = await fetch(`/api/follows/${profile.id}/stats`);
-        if (!res.ok) {
-          console.error('Erreur fetch stats:', res.statusText);
-          return;
-        }
-        const data = await res.json();
+        const data = await getFollowStats(profile.id);
         setStats({ followers: data.followers, following: data.following });
       } catch (err) {
         console.error('Erreur fetch stats (exception):', err);
@@ -150,7 +150,20 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
           onToggleFollow={onToggleFollow}
         />
       </div>
-      <UserStats followers={stats.followers} following={stats.following} />
+      <UserStats
+        followers={stats.followers}
+        following={stats.following}
+        onOpenFollowers={() => setOpenFollowList("followers")}
+        onOpenFollowing={() => setOpenFollowList("following")}
+      />
+
+      {openFollowList ? (
+        <FollowListModal
+          userId={profile.id}
+          type={openFollowList}
+          onClose={() => setOpenFollowList(null)}
+        />
+      ) : null}
 
       {isOwnProfile && showEditPopup && "avatarUrl" in profile && (
         <EditProfilePopup

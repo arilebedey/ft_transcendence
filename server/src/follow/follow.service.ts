@@ -1,15 +1,16 @@
 import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
-import { eq, and, count } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { eq, and, desc } from 'drizzle-orm';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import * as schema from './follow.schema';
+import { userData } from '../users/user-data.schema';
+import type { AppDatabase } from '../database/database.types';
 
 @Injectable()
 export class FollowService {
   constructor(
     @Inject(DATABASE_CONNECTION)
-    private readonly db: NodePgDatabase<typeof schema>,
+    private readonly db: AppDatabase,
   ) {}
 
   findAll() {
@@ -56,6 +57,36 @@ export class FollowService {
       columns: { followingId: true },
     });
     return following.length;
+  }
+
+  async listFollowers(userId: string) {
+    return this.db
+      .select({
+        id: userData.id,
+        name: userData.name,
+        bio: userData.bio,
+        avatarUrl: userData.avatarUrl,
+        followedAt: schema.follow.createdAt,
+      })
+      .from(schema.follow)
+      .innerJoin(userData, eq(schema.follow.followerId, userData.id))
+      .where(eq(schema.follow.followingId, userId))
+      .orderBy(desc(schema.follow.createdAt));
+  }
+
+  async listFollowing(userId: string) {
+    return this.db
+      .select({
+        id: userData.id,
+        name: userData.name,
+        bio: userData.bio,
+        avatarUrl: userData.avatarUrl,
+        followedAt: schema.follow.createdAt,
+      })
+      .from(schema.follow)
+      .innerJoin(userData, eq(schema.follow.followingId, userData.id))
+      .where(eq(schema.follow.followerId, userId))
+      .orderBy(desc(schema.follow.createdAt));
   }
 
   async create(followerId: string, followingId: string) {
