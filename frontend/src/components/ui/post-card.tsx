@@ -2,7 +2,7 @@
  * @component PostCard
  * Composant pour afficher un post social (utilisé par HomePage).
  * Affiche auteur, contenu, actions (like, comment, share).
- * 
+ *
  * @props
  * - author: string - Nom de l'auteur
  * - username: string - @username de l'auteur
@@ -20,7 +20,17 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LikeToggle } from "@/components/LikeToggle";
 import { DropDownList } from "@/components/dropdown-list";
-import { getProfileById, profileByIdQueryKey, PublicProfileData } from "@/lib/profile-api";
+import {
+  getProfileById,
+  profileByIdQueryKey,
+  PublicProfileData,
+} from "@/lib/profile-api";
+import { UserAvatar } from "@/components/profile/UserAvatar";
+import {
+  getProfileByName,
+  profileByNameQueryKey,
+  PublicProfileData,
+} from "@/lib/profile-api";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -79,26 +89,20 @@ export function PostCard({
             className="shrink-0"
             onClick={() => navigate(`/profile/${userName}`)}
           >
-            {userAvatar ? (
-              <img
-                src={"/storage/" + userAvatar}
-                alt={userName}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">
-                  {userName.charAt(0)}
-                </span>
-              </div>
-            )}
+            <UserAvatar
+              name={userName}
+              avatarUrl={userAvatar}
+              className="w-8 h-8"
+            />
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold"
+              <span
+                className="font-semibold"
                 onClick={() => navigate(`/profile/${userName}`)}
-              >{userName}
+              >
+                {userName}
               </span>
               <span className="text-muted-foreground text-sm">
                 • {formattedTime}
@@ -111,11 +115,11 @@ export function PostCard({
               >
                 <button
                   onClick={() => {
-                  navigator.clipboard.writeText(post.link);
+                    navigator.clipboard.writeText(post.link);
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
                 >
-                {t("CopyLink")}
+                  {t("CopyLink")}
                 </button>
               </DropDownList>
             </div>
@@ -142,7 +146,6 @@ export function PostCard({
                 onToggle={() => onLike && onLike()}
               />
             </div>
-
           </div>
         </div>
       </CardContent>
