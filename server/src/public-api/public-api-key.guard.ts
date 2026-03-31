@@ -35,7 +35,7 @@ export class PublicApiKeyGuard implements CanActivate {
       throw new UnauthorizedException('Missing API key');
     }
 
-    const result = await this.authService.api.verifyApiKey({
+    const result = await (this.authService.api).verifyApiKey({
       body: { key },
     });
 
