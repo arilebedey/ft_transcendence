@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import { apiKey } from '@better-auth/api-key';
 import { betterAuth } from 'better-auth';
+import { password } from 'better-auth/plugins/password';
+import argon2 from 'argon2';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { eq } from 'drizzle-orm';
@@ -69,6 +71,19 @@ export const auth = betterAuth({
         enabled: true,
         timeWindow: 60_000,
         maxRequests: 5,
+      },
+    }),
+    password({
+      hash: async (password: string) => {
+        return await argon2.hash(password, {
+          type: argon2.argon2id,
+          memoryCost: 1 << 16, // 64 MiB
+          timeCost: 3,
+          parallelism: 1,
+        });
+      },
+      verify: async (password: string, hash: string) => {
+        return await argon2.verify(hash, password);
       },
     }),
   ],
