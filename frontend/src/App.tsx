@@ -12,7 +12,6 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Messages } from "@/pages/Messages";
 import { PublicApi } from "@/pages/PublicApi";
 import { Legal } from "@/pages/Legal";
-import { PublicApi } from "@/pages/PublicApi";
 
 const queryClient = new QueryClient();
 
