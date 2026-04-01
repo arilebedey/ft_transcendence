@@ -202,7 +202,7 @@ export class UserDataService {
     });
   }
 
-  async generateTwoFactorSecret(userId: string) {
+  /*async generateTwoFactorSecret(userId: string) {
     const user = await this.db
       .select()
       .from(userData)
@@ -277,5 +277,5 @@ export class UserDataService {
     if (result.length === 0) throw new NotFoundException('User not found');
 
     return result[0];
-  }
+  }*/
 }

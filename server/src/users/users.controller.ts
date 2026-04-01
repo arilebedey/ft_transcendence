@@ -82,7 +82,7 @@ export class UsersController {
     return { available };
   }
 
-  @Post('me/2fa/generate')
+  /*@Post('me/2fa/generate')
   async generateTwoFactor(@GetUser() user: AuthUser) {
     const { qrCode } = await this.userDataService.generateTwoFactorSecret(user.id);
     return { qrCode };
@@ -102,7 +102,7 @@ export class UsersController {
     const result = await this.userDataService.disableTwoFactor(user.id);
 
     return { twoFactorEnabled: result.twoFactorEnabled };
-  }
+  }*/
 
   @Get('session')
   getSession() {
