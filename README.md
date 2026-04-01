@@ -68,12 +68,31 @@ Relationships: `post.user_id -> user.id`, `post_like.post_id -> post.id`, `post_
 - File uploads / avatars (MinIO) — Backend — `tbabou`
 
 **Modules and Points**
-- Major modules (2 pts each):
-  - Authentication (Major) — Reason: core functionality and security.
-  - Realtime Chat (Major) — Reason: websocket architecture and state sync.
-  - Posts & Feed (Major) — Reason: core UX and DB interactions.
-- Minor modules (1 pt each):
-  - Likes, Follows, Profile pages, Dashboard charts.
+
+## Points Summary
+
+### Chosen modules
+
+| Module                                    | Type  | Points |
+| ----------------------------------------- | ----- | ------ |
+| Framework (Frontend)                      | Minor | 1      |
+| Framework (Backend)                       | Minor | 1      |
+| Real-time Features (WebSockets)           | Major | 2      |
+| User Interaction (chat, profile, friends) | Major | 2      |
+| Standard user management                  | Major | 2      |
+| Public API                                | Major | 2      |
+| Custom Design System                      | Minor | 1      |
+| ORM                                       | Minor | 1      |
+| Standard user management                  | Major | 2      |
+| OAuth                                     | Minor | 1      |
+| Multiple Languages                        | Minor | 1      |
+| Activity analytics dashboard              | Minor | 1      |
+| Additional Browsers (3)                   | Minor | 1      |
+| Advanced Search                           | Minor | 1      |
+| 2FA                                       | Minor | 1      |
+| Infrastructure for log management (ELK)   | Major | 2      |
+
+**Total: 22 points**
 
 For each module include implementation notes and which team members worked on them.
 
@@ -81,6 +100,7 @@ For each module include implementation notes and which team members worked on th
 - `alebedev`: backend API endpoints, Drizzle schemas, dashboard analytics.
 - `chrleroy`: frontend components, theming, responsive layout, chat UI.
 - `tbabou`: CI, Dockerfiles, deployment scripts, storage integration.
+- `pgrataco`: Follows, OAuth, 2FA, Advanced Search.
 
 **Database Schema (detailed)**
 - See `server/drizzle/0000_init_tables.sql` and `server/src/*/*.schema.ts` for Drizzle table definitions.
