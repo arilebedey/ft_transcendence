@@ -4,6 +4,7 @@ import { initReactI18next } from "react-i18next";
 const TOSen = {
   legal: {
     terms: "Terms of Service",
+    modalTitle: "Terms of Service and Privacy Policy",
     termsContent: [
       "1. Introduction: Welcome to our social network. By using our services, you agree to comply with these Terms of Service and all applicable laws. These rules aim to ensure a safe, respectful, and enjoyable experience for all users.",
       "2. Registration: To create an account, you must provide accurate, complete, and up-to-date information. You are responsible for the confidentiality of your credentials and all activities performed with your account. Any unauthorized use must be reported immediately.",
@@ -39,6 +40,7 @@ const TOSen = {
 const TOSfr = {
   legal: {
     terms: "Conditions générales d'utilisation",
+    modalTitle: "Conditions générales d'utilisation et politique de confidentialité",
     termsContent: [
       "1. Introduction : Bienvenue sur notre réseau social. En utilisant nos services, vous acceptez de respecter ces conditions générales d'utilisation (CGU) ainsi que toutes les lois applicables. Ces règles visent à garantir une expérience sûre, respectueuse et agréable pour tous les utilisateurs.",
       "2. Inscription : Pour créer un compte, vous devez fournir des informations exactes, complètes et à jour. Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités réalisées avec votre compte. Tout usage non autorisé doit être signalé immédiatement.",
@@ -74,6 +76,7 @@ const TOSfr = {
 const TOSit = {
   legal: {
     terms: "Termini di servizio",
+    modalTitle: "Termini di servizio e informativa sulla privacy",
     termsContent: [
       "1. Introduzione: Benvenuti nel nostro social network. Utilizzando i nostri servizi, accetti di rispettare questi Termini di servizio e tutte le leggi applicabili. Queste regole mirano a garantire un’esperienza sicura, rispettosa e piacevole per tutti gli utenti.",
       "2. Registrazione: Per creare un account, devi fornire informazioni accurate, complete e aggiornate. Sei responsabile della riservatezza delle tue credenziali e di tutte le attività effettuate con il tuo account. Qualsiasi uso non autorizzato deve essere segnalato immediatamente.",
@@ -109,6 +112,7 @@ const TOSit = {
 const TOSes = {
   legal: {
     terms: "Términos del Servicio",
+    modalTitle: "Términos del Servicio y Política de privacidad",
     termsContent: [
       "1. Introducción: Bienvenido a nuestra red social. Al usar nuestros servicios, aceptas cumplir con estos Términos de Servicio y todas las leyes aplicables. Estas reglas tienen como objetivo garantizar una experiencia segura, respetuosa y agradable para todos los usuarios.",
       "2. Registro: Para crear una cuenta, debes proporcionar información precisa, completa y actualizada. Eres responsable de la confidencialidad de tus credenciales y de todas las actividades realizadas con tu cuenta. Cualquier uso no autorizado debe ser reportado inmediatamente.",
@@ -157,7 +161,6 @@ const resources = {
       Name: "Name",
       Fullname: "Full name",
       iAccept: "I accept the",
-      TOS: "terms of service.",
       Close: "Close",
       Friends: "Friends",
       editProfile: "Edit profile",
@@ -373,7 +376,6 @@ const resources = {
       Name: "Nom",
       Fullname: "Nom complet",
       iAccept: "J’accepte les",
-      TOS: "Conditions générales d'utilisation.",
       Close: "Fermer",
       Friends: "Amis",
       createPost: "Créer un post",
@@ -597,7 +599,6 @@ const resources = {
       Name: "Nome",
       Fullname: "Nome completo",
       iAccept: "Accetto i",
-      TOS: "termini di servizio.",
       Close: "Chiudi",
       Friends: "Amici",
       createPost: "Crea post",
@@ -819,7 +820,6 @@ const resources = {
       Name: "Nombre",
       Fullname: "Nombre completo",
       iAccept: "Acepto los",
-      TOS: "términos del servicio.",
       Close: "Cerrar",
       Friends: "Amigos",
       createPost: "Crear publicación",
