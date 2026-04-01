@@ -341,6 +341,7 @@ const resources = {
           },
         },
       },
+      ContinueWithGoogle:"Continue with Google",
       NoUsersFound: "No users found.",
       NoResult: "No results for your search.",
       homeDefault:
@@ -561,6 +562,7 @@ const resources = {
           },
         },
       },
+      ContinueWithGoogle:"Continuer avec Google",
       NoUsersFound: "Aucun utilisateur trouvé",
       NoResult: "Aucun résultat pour votre recherche.",
       homeDefault:
@@ -779,6 +781,7 @@ const resources = {
           },
         },
       },
+      ContinueWithGoogle:"Continua con Google",
       NoUsersFound: "Nessun utente trovato",
       NoResult: "Nessun risultato per la tua ricerca.",
       homeDefault:
@@ -998,6 +1001,7 @@ const resources = {
           },
         },
       },
+      ContinueWithGoogle:"Continuar con Google", 
       NoUsersFound: "No se encontraron usuarios",
       NoResult:"No hay resultados para tu búsqueda.",
       homeDefault:"Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
