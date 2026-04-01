@@ -20,7 +20,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LikeToggle } from "@/components/LikeToggle";
 import { DropDownList } from "@/components/dropdown-list";
-import { getProfileByName, profileByNameQueryKey, PublicProfileData } from "@/lib/profile-api";
+import { getProfileById, profileByIdQueryKey, PublicProfileData } from "@/lib/profile-api";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -62,8 +62,8 @@ export function PostCard({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { data: authorProfile } = useQuery<PublicProfileData>({
-    queryKey: profileByNameQueryKey(post.author.name),
-    queryFn: () => getProfileByName(post.author.name),
+    queryKey: profileByIdQueryKey(post.author.id),
+    queryFn: () => getProfileById(post.author.id),
   });
   const userName = authorProfile?.name || post.author.name;
   const userAvatar = authorProfile?.avatarUrl;
@@ -98,7 +98,7 @@ export function PostCard({
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold"
                 onClick={() => navigate(`/profile/${userName}`)}
-              >{post.author.name}
+              >{userName}
               </span>
               <span className="text-muted-foreground text-sm">
                 • {formattedTime}

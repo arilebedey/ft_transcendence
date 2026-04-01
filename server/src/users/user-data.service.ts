@@ -10,6 +10,7 @@ import { userData } from './user-data.schema';
 import { and, asc, eq, ilike, ne, or, sql } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import type { AppDatabase } from 'src/database/database.types';
+import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class UserDataService {
@@ -133,6 +134,22 @@ export class UserDataService {
     return result[0];
   }
 
+  async getByEmail(email: string) {
+    const result = await this.db
+      .select()
+      .from(userData)
+      .where(eq(userData.email, email))
+      .limit(1);
+  
+    if (result.length === 0) {
+      const msg = `User not found for email: ${email}`;
+      this.logger.warn(msg);
+      throw new NotFoundException(msg);
+    }
+  
+    return result[0];
+  }
+
   async getPublicByName(name: string) {
     const result = await this.db
       .select({
@@ -153,6 +170,26 @@ export class UserDataService {
     return result[0];
   }
 
+  async getPublicById(id: string) {
+    const result = await this.db
+      .select({
+        id: userData.id,
+        name: userData.name,
+        bio: userData.bio,
+        avatarUrl: userData.avatarUrl,
+        createdAt: userData.createdAt,
+      })
+      .from(userData)
+      .where(eq(userData.id, id))
+      .limit(1);
+  
+    if (result.length === 0) {
+      throw new NotFoundException(`User not found with id: ${id}`);
+    }
+  
+    return result[0];
+  }
+
   async findByNames(names: string[]): Promise<{ id: string; name: string }[]> {
     if (!names.length) return [];
 
@@ -163,5 +200,82 @@ export class UserDataService {
       },
       where: or(...names.map((n) => ilike(userData.name, `%${n}%`))),
     });
+  }
+
+  async generateTwoFactorSecret(userId: string) {
+    const user = await this.db
+      .select()
+      .from(userData)
+      .where(eq(userData.id, userId))
+      .limit(1);
+
+    if (user.length === 0) throw new NotFoundException('User not found');
+
+    const secret = speakeasy.generateSecret({
+      length: 20,
+      name: `Seenit (${user[0].email})`,
+    });
+
+    await this.db
+      .update(userData)
+      .set({ twoFactorTempSecret: secret.base32, updatedAt: new Date() })
+      .where(eq(userData.id, userId));
+
+    return { qrCode: secret.otpauth_url };
+  }
+  
+  async disableTwoFactor(userId: string) {
+    const result = await this.db
+      .update(userData)
+      .set({
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(userData.id, userId))
+      .returning();
+  
+    if (result.length === 0) {
+      throw new NotFoundException('User not found');
+    }
+  
+    return result[0];
+  }
+
+  async enableTwoFactor(userId: string, token: string) {
+    const user = await this.db
+      .select()
+      .from(userData)
+      .where(eq(userData.id, userId))
+      .limit(1);
+
+    if (user.length === 0) throw new NotFoundException('User not found');
+
+    const tempSecret = user[0].twoFactorTempSecret;
+    if (!tempSecret)
+      throw new Error('2FA secret not generated yet');
+
+    const verified = speakeasy.totp.verify({
+      secret: tempSecret,
+      encoding: 'base32',
+      token,
+    });
+
+    if (!verified) throw new Error('Invalid 2FA code');
+
+    const result = await this.db
+      .update(userData)
+      .set({
+        twoFactorSecret: tempSecret,
+        twoFactorEnabled: true,
+        twoFactorTempSecret: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(userData.id, userId))
+      .returning();
+
+    if (result.length === 0) throw new NotFoundException('User not found');
+
+    return result[0];
   }
 }

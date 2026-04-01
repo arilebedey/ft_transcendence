@@ -21,6 +21,15 @@ const pool = new Pool({
 
 const database = drizzle(pool);
 
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+  throw new APIError('INTERNAL_SERVER_ERROR', {
+    message: 'Google OAuth environment variables are missing',
+  });
+}
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000/api/auth',
   database: drizzleAdapter(database, {
@@ -29,6 +38,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     autoSignIn: true,
     enabled: true,
+  },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
   },
   trustedOrigins: [process.env.CLIENT_URL ?? 'http://localhost:5173'],
   plugins: [
@@ -62,15 +77,25 @@ export const auth = betterAuth({
       }
     }),
     after: createAuthMiddleware(async (ctx) => {
-      if (!ctx.path.startsWith('/sign-up')) return;
-
       const newSession = ctx.context.newSession;
       if (!newSession) return;
 
       const { id, name, email } = newSession.user;
+      let username = name?.split(" ")[0]?.slice(0, 12) ?? email?.split("@")[0] ?? `user_${id}`;
+
+      const existing = await database
+        .select({ id: userData.id })
+        .from(userData)
+        .where(eq(userData.name, username))
+        .limit(1);
+    
+      if (existing.length > 0) {
+        username = `${username}_${id.toString().slice(0,6)}`;
+      }
+
       await database
         .insert(userData)
-        .values({ id, name, email })
+        .values({ id, name: username, email })
         .onConflictDoNothing();
     }),
   },

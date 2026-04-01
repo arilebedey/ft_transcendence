@@ -6,7 +6,13 @@ import { authClient } from "@/lib/auth-client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { TwoFactorForm } from "./TwoFactorForm";
 import { useTranslation } from "react-i18next";
+
+interface PreLoginResponse {
+  requiresTwoFactor: boolean;
+  token?: string;
+}
 
 const loginSchema = z.object({
   email: z.email("Invalid email address."),
@@ -36,6 +42,12 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState("");
   const [activeDevEmail, setActiveDevEmail] = useState<string | null>(null);
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [twoFactorUser, setTwoFactorUser] = useState<{
+    email: string;
+    password: string;
+    token: string;
+  } | null>(null);
   const isDev = import.meta.env.DEV;
 
   const form = useForm({
@@ -101,7 +113,6 @@ export default function LoginForm() {
 
       setSubmitError(signInResult.error.message || "Dev login failed");
     } catch (err) {
-      console.error("Dev auth failed:", err);
       setSubmitError("Dev login failed");
     } finally {
       setActiveDevEmail(null);
@@ -195,6 +206,32 @@ export default function LoginForm() {
       >
         {form.state.isSubmitting ? "Signing In..." : t("signIn")}
       </Button>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() =>
+          authClient.signIn.social({
+            provider: "google",
+            callbackURL: "http://localhost:5173/home",
+          })
+        }
+      >
+        Continue with Google
+      </Button>
+
+      {showTwoFactor && twoFactorUser && (
+        <TwoFactorForm
+          email={twoFactorUser.email}
+          password={twoFactorUser.password}
+          token={twoFactorUser.token}
+          onSuccess={() => {
+            setShowTwoFactor(false);
+            navigate("/home");
+          }}
+        />
+      )}
 
       {isDev && (
         <div className="space-y-2 pt-2">
