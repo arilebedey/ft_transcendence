@@ -6,7 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { TwoFactorForm } from "./TwoFactorForm";
+//import { TwoFactorForm } from "./TwoFactorForm";
 import { useTranslation } from "react-i18next";
 
 interface PreLoginResponse {
@@ -218,10 +218,10 @@ export default function LoginForm() {
           })
         }
       >
-        Continue with Google
+        {t("ContinueWithGoogle")}
       </Button>
 
-      {showTwoFactor && twoFactorUser && (
+      {/*{showTwoFactor && twoFactorUser && (
         <TwoFactorForm
           email={twoFactorUser.email}
           password={twoFactorUser.password}
@@ -231,7 +231,7 @@ export default function LoginForm() {
             navigate("/home");
           }}
         />
-      )}
+      )}*/}
 
       {isDev && (
         <div className="space-y-2 pt-2">
