@@ -20,6 +20,7 @@ export interface ProfileUserData {
   bio: string | null;
   theme: "light" | "dark-blue" | "forest";
   language: "en" | "fr" | "es" | "it";
+  twoFactorEnabled: boolean;
   avatarUrl: string | null;
   createdAt: string;
   updatedAt: string;
@@ -56,10 +57,29 @@ export interface PublicProfileData {
 export const profileByNameQueryKey = (name: string) =>
   ["profile", "user", name] as const;
 
+export const profileByIdQueryKey = (id: string) =>
+  ["profile", "user", id] as const;
+
 export async function getProfileByName(
   name: string,
 ): Promise<PublicProfileData> {
   const response = await fetch(`/api/users/${encodeURIComponent(name)}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.message || "User not found");
+  }
+
+  return response.json();
+}
+
+export async function getProfileById(
+  id: string,
+): Promise<PublicProfileData> {
+  const response = await fetch(`/api/users/id/${encodeURIComponent(id)}`, {
     method: "GET",
     credentials: "include",
   });

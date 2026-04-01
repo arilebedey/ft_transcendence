@@ -28,6 +28,12 @@ import { userData } from '../users/user-data.schema';
             autoSignIn: true,
             enabled: true,
           },
+          socialProviders: {
+            google: {
+              clientId: configService.getOrThrow('GOOGLE_CLIENT_ID'),
+              clientSecret: configService.getOrThrow('GOOGLE_CLIENT_SECRET'),
+            },
+          },
           trustedOrigins: [configService.getOrThrow('CLIENT_URL')],
           plugins: [
             apiKey({
@@ -42,33 +48,44 @@ import { userData } from '../users/user-data.schema';
           ],
           hooks: {
             before: createAuthMiddleware(async (ctx) => {
-              if (!ctx.path.startsWith('/sign-up')) return;
-
-              const body = ctx.body as { name?: string } | undefined;
-              if (!body?.name) return;
-
-              const existing = await database
-                .select({ id: userData.id })
-                .from(userData)
-                .where(eq(userData.name, body.name))
-                .limit(1);
-
-              if (existing.length > 0) {
-                throw new APIError('UNPROCESSABLE_ENTITY', {
-                  message: 'Username already taken',
-                });
+              // --- SIGN-UP ---
+              if (ctx.path.startsWith('/sign-up')) {
+                const body = ctx.body as { name?: string } | undefined;
+                if (!body?.name) return;
+          
+                const existing = await database
+                  .select({ id: userData.id })
+                  .from(userData)
+                  .where(eq(userData.name, body.name))
+                  .limit(1);
+          
+                if (existing.length > 0) {
+                  throw new APIError('UNPROCESSABLE_ENTITY', {
+                    message: 'Username already taken',
+                  });
+                }
+                return;
               }
             }),
             after: createAuthMiddleware(async (ctx) => {
-              if (!ctx.path.startsWith('/sign-up')) return;
-
               const newSession = ctx.context.newSession;
               if (!newSession) return;
 
               const { id, name, email } = newSession.user;
+              let username = name?.split(" ")[0]?.slice(0, 12) ?? email?.split("@")[0] ?? `user_${id}`;
+              
+              const existing = await database
+                .select({ id: userData.id })
+                .from(userData)
+                .where(eq(userData.name, username))
+                .limit(1);
+                  
+              if (existing.length > 0) {
+                username = `${username}_${id.toString().slice(0,6)}`;
+              }
               await database
                 .insert(userData)
-                .values({ id, name, email })
+                .values({ id, name: username, email })
                 .onConflictDoNothing();
             }),
           },

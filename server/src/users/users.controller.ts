@@ -82,6 +82,28 @@ export class UsersController {
     return { available };
   }
 
+  @Post('me/2fa/generate')
+  async generateTwoFactor(@GetUser() user: AuthUser) {
+    const { qrCode } = await this.userDataService.generateTwoFactorSecret(user.id);
+    return { qrCode };
+  }
+
+  @Post('me/2fa/enable')
+  async enableTwoFactor(
+    @GetUser() user: AuthUser,
+    @Body('code') code: string,
+  ) {
+    const result = await this.userDataService.enableTwoFactor(user.id, code);
+    return { twoFactorEnabled: result.twoFactorEnabled };
+  }
+
+  @Post('me/2fa/disable')
+  async disableTwoFactor(@GetUser() user: AuthUser) {
+    const result = await this.userDataService.disableTwoFactor(user.id);
+
+    return { twoFactorEnabled: result.twoFactorEnabled };
+  }
+
   @Get('session')
   getSession() {
     return { message: 'Called /users/session endpoint!' };
@@ -90,5 +112,10 @@ export class UsersController {
   @Get(':name')
   async getPublicProfile(@Param('name') name: string) {
     return this.userDataService.getPublicByName(name);
+  }
+
+  @Get('id/:id')
+  async getPublicProfileById(@Param('id') id: string) {
+    return this.userDataService.getPublicById(id);
   }
 }
