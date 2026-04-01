@@ -22,6 +22,7 @@ export interface ProfileUserData {
   language: "en" | "fr" | "es" | "it";
   twoFactorEnabled: boolean;
   avatarUrl: string | null;
+  online: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +52,7 @@ export interface PublicProfileData {
   name: string;
   bio: string | null;
   avatarUrl: string | null;
+  online: boolean;
   createdAt: string;
 }
 

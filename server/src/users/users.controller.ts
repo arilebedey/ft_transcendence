@@ -18,17 +18,32 @@ import { UserDataService } from './user-data.service';
 import { StorageService } from 'src/storage/storage.service';
 import type { AuthUser } from 'src/auth/auth.types';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
+import { PresenceService } from 'src/chat/presence.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly userDataService: UserDataService,
     private readonly storageService: StorageService,
+    private readonly presenceService: PresenceService,
   ) {}
 
   @Get('me')
   async getMe(@GetUser() user: AuthUser) {
-    return this.userDataService.get(user.id);
+    const profile = await this.userDataService.get(user.id);
+    return {
+      ...profile,
+      online: this.presenceService.isOnline(profile.id),
+    };
+  }
+
+  @Get('search')
+  async search(@GetUser() user: AuthUser, @Query('q') query?: string) {
+    const results = await this.userDataService.search(user.id, query);
+    return results.map((result) => ({
+      ...result,
+      online: this.presenceService.isOnline(result.id),
+    }));
   }
 
   @Patch('me')
@@ -104,14 +119,13 @@ export class UsersController {
     return { message: 'Called /users/session endpoint!' };
   }
 
-  @Get('search')
-  async searchUsers(@GetUser() user: AuthUser, @Query('q') q?: string) {
-    return this.userDataService.search(user.id, q);
-  }
-
   @Get(':name')
   async getPublicProfile(@Param('name') name: string) {
-    return this.userDataService.getPublicByName(name);
+    const profile = await this.userDataService.getPublicByName(name);
+    return {
+      ...profile,
+      online: this.presenceService.isOnline(profile.id),
+    };
   }
 
   @Get('id/:id')

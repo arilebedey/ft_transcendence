@@ -5,6 +5,7 @@ import { useUserSearch, type SearchUser } from "@/hooks/useUserSearch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { PresenceDot } from "@/components/PresenceDot";
 
 interface NewChatSearchProps {
   onSelectUser: (user: SearchUser) => void;
@@ -88,9 +89,12 @@ export function NewChatSearch({ onSelectUser, onClose }: NewChatSearchProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-foreground">
-                    {user.name}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-sm font-semibold text-foreground">
+                      {user.name}
+                    </p>
+                    <PresenceDot online={user.online} className="shrink-0" />
+                  </div>
                 </div>
               </button>
             ))}

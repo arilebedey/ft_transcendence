@@ -58,9 +58,10 @@ export function PublicApi() {
   const selectedEndpoint = publicApiEndpoints.find(
     (endpoint) => endpoint.id === selectedSection,
   );
-  const selectedSectionLabel =
-    sections.find((section) => section.id === selectedSection)?.label ??
-    t("publicApi.sidebar.title");
+
+  const selectedSectionLabel = sections.find(
+    (section) => section.id === selectedSection,
+  )!.label;
 
   const handleCopy = async (value: string) => {
     await navigator.clipboard.writeText(value);

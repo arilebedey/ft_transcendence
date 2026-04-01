@@ -6,13 +6,10 @@ import { EmptyConversation } from "@/components/chat/EmptyConversation";
 import { NewChatSearch } from "@/components/chat/NewChatSearch";
 import { authClient } from "@/lib/auth-client";
 import { useChats } from "@/hooks/useChats";
-import { useSocket } from "@/hooks/useSocket";
 import type { Chat, Participant } from "@/lib/chat.types";
 import type { SearchUser } from "@/hooks/useUserSearch";
 
 export function Messages() {
-  useSocket();
-
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id ?? "";
 

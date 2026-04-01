@@ -8,7 +8,7 @@ type Props = {
   label?: string;
 };
 
-export function UserSessionButton({ label = "Ada Lovelace" }: Props) {
+export function UserSessionButton({ label = "" }: Props) {
   const navigate = useNavigate();
   const { data: profile } = useQuery({
     queryKey: profileMeQueryKey,
@@ -28,13 +28,8 @@ export function UserSessionButton({ label = "Ada Lovelace" }: Props) {
       href="#"
       onClick={handleClick}
       className="flex items-center gap-2 shrink-0"
-      aria-label="Home"
     >
-      <UserAvatar
-        name={userName}
-        avatarUrl={userAvatar}
-        className="w-8 h-8"
-      />
+      <UserAvatar name={userName} avatarUrl={userAvatar} className="w-8 h-8" />
       <span className="font-bold text-lg hidden sm:block">{userName}</span>
     </a>
   );

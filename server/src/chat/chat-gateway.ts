@@ -13,8 +13,12 @@ import type { AppDatabase } from 'src/database/database.types';
 import { chatMessage, conversationParticipant } from './chat.schema';
 import { eq, InferSelectModel } from 'drizzle-orm';
 import { NewChatPayload } from './chat.types';
+import { PresenceService } from './presence.service';
 
 type ChatMessage = InferSelectModel<typeof chatMessage>;
+type ChatSocketData = {
+  presenceCleanupRegistered?: boolean;
+};
 
 @UseGuards(AuthGuard)
 @WebSocketGateway({
@@ -25,8 +29,6 @@ type ChatMessage = InferSelectModel<typeof chatMessage>;
 })
 export class ChatGateway {
   private readonly logger = new Logger(ChatGateway.name);
-  private readonly userSockets = new Map<string, Set<string>>(); // Map client's chats
-  private readonly socketUsers = new Map<string, string>(); // To detect duplicate joinRooms calls
 
   @WebSocketServer()
   server: Server;
@@ -34,6 +36,7 @@ export class ChatGateway {
   constructor(
     @Inject(DATABASE_CONNECTION)
     private readonly db: AppDatabase,
+    private readonly presenceService: PresenceService,
   ) {}
 
   @OptionalAuth()
@@ -43,6 +46,7 @@ export class ChatGateway {
     @Session() session: UserSession,
   ) {
     const userId = session.user.id;
+    const socketData = client.data as ChatSocketData;
 
     if (!userId) {
       this.logger.error('joinRooms called but session is missing');
@@ -51,29 +55,27 @@ export class ChatGateway {
       return;
     }
 
-    // Register a cleanup handler that fires
-    // once when the socket disconnects to free memory
-    const existingUserId = this.socketUsers.get(client.id);
-    if (!existingUserId) {
+    // Register the disconnect cleanup only once per socket so we
+    // unregister presence exactly once, even if joinRooms is called again.
+    if (!socketData.presenceCleanupRegistered) {
       client.once('disconnect', () => {
-        const disconnectedUserId = this.socketUsers.get(client.id);
-        this.socketUsers.delete(client.id);
-        if (!disconnectedUserId) return;
+        const { userId: disconnectedUserId, becameOffline } =
+          this.presenceService.unregisterSocket(client.id);
 
-        const sockets = this.userSockets.get(disconnectedUserId);
-        sockets?.delete(client.id);
-        if (sockets?.size === 0) this.userSockets.delete(disconnectedUserId);
+        if (disconnectedUserId && becameOffline) {
+          this.server.emit('presence:update', {
+            userId: disconnectedUserId,
+            online: false,
+          });
+        }
       });
+      socketData.presenceCleanupRegistered = true;
     }
 
-    this.socketUsers.set(client.id, userId);
-
-    let sockets = this.userSockets.get(userId);
-    if (!sockets) {
-      sockets = new Set();
-      this.userSockets.set(userId, sockets);
-    }
-    sockets.add(client.id); // add current connection to user's sockets Set in userSockets
+    const { becameOnline } = this.presenceService.registerSocket(
+      userId,
+      client.id,
+    );
 
     const sharedRooms = await this.db
       .select()
@@ -83,6 +85,10 @@ export class ChatGateway {
     await client.join(`user:${userId}`);
 
     for (const sr of sharedRooms) await client.join(sr.conversationId);
+
+    if (becameOnline) {
+      this.server.emit('presence:update', { userId, online: true });
+    }
   }
 
   broadcastMessage(
@@ -98,7 +104,7 @@ export class ChatGateway {
 
   // Add user to created conversation
   joinConversationRoom(userId: string, conversationId: string) {
-    const socketIds = this.userSockets.get(userId);
+    const socketIds = this.server.sockets.adapter.rooms.get(`user:${userId}`);
     if (!socketIds || socketIds.size === 0) {
       return;
     }
