@@ -61,6 +61,29 @@ export function useChats() {
     };
   }, []);
 
+  useEffect(() => {
+    function handlePresenceUpdate(data: { userId: string; online: boolean }) {
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.participant?.id === data.userId
+            ? {
+                ...chat,
+                participant: {
+                  ...chat.participant,
+                  online: data.online,
+                },
+              }
+            : chat,
+        ),
+      );
+    }
+
+    socket.on("presence:update", handlePresenceUpdate);
+    return () => {
+      socket.off("presence:update", handlePresenceUpdate);
+    };
+  }, []);
+
   // Updates the lastMessage for specific conversation and updates chats: Chat[] order
   const updateLastMessage = useCallback(
     // Typing `lastMessage` with TypeScript's indexed access type syntax ;)

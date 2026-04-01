@@ -17,6 +17,7 @@ import {
   type PublicProfileData,
   updateProfileMe,
 } from "@/lib/profile-api";
+import { usePresenceStatus } from "@/hooks/usePresenceStatus";
 
 interface UserCardProps {
   profile: ProfileUserData | PublicProfileData;
@@ -42,6 +43,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const [openFollowList, setOpenFollowList] = useState<
     "followers" | "following" | null
   >(null);
+  const online = usePresenceStatus(profile.id, profile.online);
   
   useEffect(() => {
     if (!isOwnProfile) {
@@ -139,7 +141,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
       <div className="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
         <div className="flex min-w-0 flex-1 items-center space-x-4">
           <UserAvatar name={profile.name} avatarUrl={profile.avatarUrl} />
-          <UserInfo name={profile.name} bio={bio} />
+          <UserInfo name={profile.name} bio={bio} online={online} />
         </div>
         <UserActionButton
           isOwnProfile={isOwnProfile}

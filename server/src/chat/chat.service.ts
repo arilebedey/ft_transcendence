@@ -28,6 +28,7 @@ import type { AppDatabase } from 'src/database/database.types';
 import { SendMessageDto } from './dto/send-message.dto';
 import { userData } from 'src/users/user-data.schema';
 import { NewChatPayload } from './chat.types';
+import { PresenceService } from './presence.service';
 
 @Injectable()
 export class ChatService {
@@ -37,6 +38,7 @@ export class ChatService {
     @Inject(DATABASE_CONNECTION)
     private readonly db: AppDatabase,
     private readonly chatGateway: ChatGateway,
+    private readonly presenceService: PresenceService,
   ) {}
 
   async createChat(creatorId: string, dto: CreateChatDto) {
@@ -103,7 +105,11 @@ export class ChatService {
           createdAt: convo.createdAt,
           updatedAt: convo.updatedAt,
           participant: otherName
-            ? { id: otherName.id, name: otherName.name }
+            ? {
+                id: otherName.id,
+                name: otherName.name,
+                online: this.presenceService.isOnline(otherName.id),
+              }
             : null,
           lastMessage: lastMsg ?? null,
         };
@@ -155,6 +161,7 @@ export class ChatService {
         id: dto.participantId,
         name: nameMap.get(dto.participantId)?.name ?? '',
         avatarUrl: nameMap.get(dto.participantId)?.avatarUrl ?? null,
+        online: this.presenceService.isOnline(dto.participantId),
       },
     };
 
@@ -164,6 +171,7 @@ export class ChatService {
         id: creatorId,
         name: nameMap.get(creatorId)?.name ?? '',
         avatarUrl: nameMap.get(creatorId)?.avatarUrl ?? null,
+        online: this.presenceService.isOnline(creatorId),
       },
     };
 
@@ -340,6 +348,9 @@ export class ChatService {
     const othersMap = new Map(
       otherParticipants.map((op) => [op.conversationId, op]),
     );
+    const onlineUserIds = this.presenceService.getOnlineUsers(
+      otherParticipants.map((participant) => participant.userId),
+    );
 
     const messageMap = new Map(
       lastMessages.map((lm) => [lm.conversationId, lm]),
@@ -354,7 +365,14 @@ export class ChatService {
           id: conv.id,
           createdAt: conv.createdAt,
           updatedAt: conv.updatedAt,
-          participant: other ? { id: other.userId, name: other.name, avatarUrl: other.avatarUrl ?? null } : null,
+          participant: other
+            ? {
+                id: other.userId,
+                name: other.name,
+                avatarUrl: other.avatarUrl ?? null,
+                online: onlineUserIds.has(other.userId),
+              }
+            : null,
           lastMessage: lastMessage
             ? {
                 content: lastMessage.content,

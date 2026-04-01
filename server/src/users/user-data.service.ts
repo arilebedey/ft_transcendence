@@ -12,6 +12,11 @@ import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import type { AppDatabase } from 'src/database/database.types';
 //import * as speakeasy from 'speakeasy';
 
+export interface UserSearchResult {
+  id: string;
+  name: string;
+}
+
 @Injectable()
 export class UserDataService {
   private readonly logger = new Logger(UserDataService.name);
@@ -53,7 +58,7 @@ export class UserDataService {
     return result.length === 0;
   }
 
-  async search(userId: string, query?: string) {
+  async search(userId: string, query?: string): Promise<UserSearchResult[]> {
     const sanitized = query?.trim().slice(0, 50) ?? '';
     const lowerSanitized = sanitized.toLowerCase();
 

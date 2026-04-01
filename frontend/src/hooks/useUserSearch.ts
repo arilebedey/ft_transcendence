@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 export interface SearchUser {
   id: string;
   name: string;
+  online: boolean;
 }
 
 export function useUserSearch(query: string) {

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import type { Chat } from "@/lib/chat.types";
 import { UserAvatar } from "@/components/profile/UserAvatar";
+import { PresenceDot } from "@/components/PresenceDot";
 
 interface ChatListItemProps {
   chat: Chat;
@@ -53,9 +54,12 @@ export function ChatListItem({
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-semibold text-foreground">
-            {chat.participant?.name ?? t("chat.list.unknownUser")}
-          </p>
+          <div className="flex min-w-0 items-center gap-2">
+            <p className="truncate text-sm font-semibold text-foreground">
+              {chat.participant?.name ?? t("chat.list.unknownUser")}
+            </p>
+            <PresenceDot online={chat.participant?.online} className="shrink-0" />
+          </div>
           {timestamp ? (
             <span className="shrink-0 text-xs text-muted-foreground">
               {timestamp}

@@ -5,6 +5,7 @@ import { useMessages } from "@/hooks/useMessages";
 import { Button } from "@/components/ui/button";
 import { MessageBubble } from "./MessageBubble";
 import { Chat, Participant } from "@/lib/chat.types";
+import { PresenceDot } from "@/components/PresenceDot";
 
 interface ConversationPanelProps {
   conversationId: string | null;
@@ -157,9 +158,12 @@ export function ConversationPanel({
         ) : null}
 
         <div className="min-w-0">
-          <h2 className="truncate text-base font-semibold text-foreground">
-            {activeParticipant?.name ?? t("chat.conversation.titleFallback")}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="truncate text-base font-semibold text-foreground">
+              {activeParticipant?.name ?? t("chat.conversation.titleFallback")}
+            </h2>
+            <PresenceDot online={activeParticipant?.online} className="shrink-0" />
+          </div>
           <p className="text-sm text-muted-foreground">
             {conversationId
               ? t("chat.conversation.live")

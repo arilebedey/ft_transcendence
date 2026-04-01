@@ -2,6 +2,7 @@ export interface Participant {
   id: string;
   name: string;
   avatarUrl?: string | null;
+  online?: boolean;
 }
 
 export interface LastMessage {
