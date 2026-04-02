@@ -1,12 +1,12 @@
-import { Heart, Home, MessageCircle } from "lucide-react";
+import { Home, MessageCircle, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 const navItems = [
   { icon: Home, labelKey: "nav.home", path: "/home" },
-  { icon: Heart, labelKey: "nav.liked", path: "/liked" },
   { icon: MessageCircle, labelKey: "nav.messages", path: "/messages" },
+  { icon: User, labelKey: "nav.profile", path: "/profile" },
 ];
 
 export function BottomNav() {
@@ -17,7 +17,10 @@ export function BottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive =
+            item.path === "/profile"
+              ? location.pathname.startsWith("/profile")
+              : location.pathname === item.path;
           return (
             <Link
               key={item.path}
