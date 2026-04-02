@@ -25,7 +25,7 @@ export function DropDownList({ currentUserId, authorId, onDelete, children }: Dr
   }, []);
 
   return (
-    <div className="relative ml-auto" ref={menuRef}>
+    <div className="relative ml-auto shrink-0 self-start" ref={menuRef}>
       <Button
         variant="ghost"
         size="icon"
