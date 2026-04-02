@@ -9,10 +9,12 @@ export function PostCreationButton({ onClick }: PostCreationButtonProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="px-6">
-      <Button type="button" onClick={onClick}>
+      <Button
+        type="button"
+        onClick={onClick}
+        className="h-10 rounded-full px-4 sm:px-5"
+      >
         {t("createPost")}
       </Button>
-    </div>
   );
 }

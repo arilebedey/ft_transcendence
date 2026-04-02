@@ -27,7 +27,9 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<"recent" | "oldest" | "most_liked">("recent");
+  const [filter, setFilter] = useState<"recent" | "oldest" | "most_liked">(
+    "recent",
+  );
   const [showDropdown, setShowDropdown] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
 
@@ -47,7 +49,9 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
     queryKey: ["search-users", searchQuery],
     enabled: searchQuery.length > 0,
     queryFn: async () => {
-      const res = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+      const res = await fetch(
+        `/api/users/search?q=${encodeURIComponent(searchQuery)}`,
+      );
       if (!res.ok) return [];
       const data: UserResult[] = await res.json();
       return data.slice(0, 5);
@@ -55,16 +59,15 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
     staleTime: 1000 * 60,
   });
 
-
   const updateDropdownVisibility = () => {
     const el = inputRef.current;
     if (!el) return setShowDropdown(false);
-  
+
     const pos = el.selectionStart ?? 0;
     const textBeforeCursor = el.value.slice(0, pos);
     const words = textBeforeCursor.split(/\s+/);
     const currentWord = words[words.length - 1];
-  
+
     setShowDropdown(currentWord.startsWith("@"));
   };
 
@@ -97,7 +100,7 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
       setQuery("");
       setShowDropdown(false);
     }
-  
+
     if (e.key === "Enter") {
       setShowDropdown(false);
       onSearch?.(query.trim());
@@ -107,17 +110,17 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
   function rankUser(name: string, query: string) {
     const n = name.toLowerCase();
     const q = query.toLowerCase();
-  
+
     if (!n.includes(q)) return Infinity;
-  
+
     if (n.startsWith(q)) return 0;
-  
+
     const separatorMatch = n.match(/[_\-\s.]/);
     if (separatorMatch) {
       const index = separatorMatch.index ?? -1;
       if (n.slice(index + 1).startsWith(q)) return 1;
     }
-  
+
     return n.indexOf(q) + 2;
   }
 
@@ -126,17 +129,18 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
     .filter((user) => user.rank !== Infinity)
     .sort((a, b) => a.rank - b.rank);
 
-
   return (
-    <div ref={containerRef} className="flex items-center gap-2 w-[400px] md:w-[600px] relative">
-
+    <div
+      ref={containerRef}
+      className="relative flex w-full items-center gap-2 sm:w-[300px] md:w-[400px] lg:w-[600px]"
+    >
       <div className="relative flex-1">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
 
         <Input
           ref={inputRef}
           type="search"
-          placeholder={t("SearchUsers")}
+          placeholder={t("SearchPlaceholder")}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -149,15 +153,14 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
 
         {showDropdown && (
           <div className="absolute left-0 mt-2 w-[calc(100%-11rem)] bg-card border rounded-xl shadow-lg overflow-hidden z-40">
-
-            {!isLoading && sortedUsers.length=== 0 && (
+            {!isLoading && sortedUsers.length === 0 && (
               <div className="px-4 py-3 text-sm text-muted-foreground">
                 {t("NoUsersFound")}
               </div>
             )}
 
             {sortedUsers.map((user: UserResult & { rank: number }, idx) => {
-              const originalIndex = users.findIndex(u => u.id === user.id);
+              const originalIndex = users.findIndex((u) => u.id === user.id);
               const profile = profileQueries[originalIndex]?.data;
               const name = profile?.name || user.name;
               const avatar = profile?.avatarUrl;
@@ -184,18 +187,20 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
       </div>
 
       <div className="relative">
-        <button
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
           onClick={() => setShowFilterDropdown((v) => !v)}
-          className="h-12 px-3 rounded-full border bg-background hover:bg-accent/10"
+          aria-label={t("SortBy")}
+          className="h-12 w-12 rounded-full border-border/70 bg-card/90 shadow-sm backdrop-blur-sm transition-all hover:border-primary/40 hover:bg-accent/20"
         >
           <Sliders className="h-4 w-4" />
-        </button>
+        </Button>
 
         {showFilterDropdown && (
           <div className="absolute right-0 mt-2 w-54 z-50">
-
             <ListCard title={t("SortBy")}>
-
               <ListItem
                 primary={t("MostRecent")}
                 action={filter === "recent" ? "✓" : undefined}
@@ -228,9 +233,7 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
                   onFilterChange?.("most_liked");
                 }}
               />
-
             </ListCard>
-
           </div>
         )}
       </div>

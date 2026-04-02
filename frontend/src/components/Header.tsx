@@ -33,8 +33,8 @@ export function Header({
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
-      <div className="relative h-16 px-4">
-        <div className="flex items-center justify-between h-full max-w-6xl mx-auto">
+      <div className="px-4">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between">
           {showUserSessionButton ? (
             <UserSessionButton showNameOnMobile={showNameOnMobile} />
           ) : (
@@ -49,9 +49,11 @@ export function Header({
           </div>
         </div>
 
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          {showSearchBar ? <SearchBar onSearch={onSearch} onFilterChange={onFilterChange}/> : <div />}
-        </div>
+        {showSearchBar ? (
+          <div className="mx-auto flex max-w-6xl justify-center pb-3 sm:absolute sm:left-1/2 sm:top-1/2 sm:w-full sm:-translate-x-1/2 sm:-translate-y-1/2 sm:px-4 sm:pb-0">
+            <SearchBar onSearch={onSearch} onFilterChange={onFilterChange} />
+          </div>
+        ) : null}
       </div>
     </header>
   );

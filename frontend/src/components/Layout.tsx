@@ -28,7 +28,7 @@ interface LayoutProps {
 
 export function Layout({
   children,
-  showSearchBar,
+  showSearchBar = true,
   showUserSessionButton,
   showLanguageToggle,
   showThemeToggle,
@@ -36,6 +36,8 @@ export function Layout({
   onSearch,
   onFilterChange,
   onPostCreationClick, }: LayoutProps) {
+  const mainTopPadding = showSearchBar ? "pt-32 sm:pt-16" : "pt-16";
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header
@@ -49,7 +51,7 @@ export function Layout({
         onPostCreationClick={onPostCreationClick}
       />
 
-      <main className="flex min-h-0 flex-1 flex-col pb-20 pt-16">
+      <main className={`flex min-h-0 flex-1 flex-col pb-20 ${mainTopPadding}`}>
         {children}
       </main>
     </div>
