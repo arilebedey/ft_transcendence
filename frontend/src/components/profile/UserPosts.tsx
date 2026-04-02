@@ -28,7 +28,9 @@ export function UserPosts({ profileId }: UserPostsProps) {
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"recent" | "oldest" | "most_liked">("recent");
+  const [filter, setFilter] = useState<"recent" | "oldest" | "most_liked">(
+    "recent",
+  );
 
   useEffect(() => {
     if (!profileId) return;
@@ -40,17 +42,19 @@ export function UserPosts({ profileId }: UserPostsProps) {
         const params = new URLSearchParams();
         params.set("filter", filter);
 
-        const res = await fetch(`/api/posts/user/${profileId}?${params.toString()}`);
+        const res = await fetch(
+          `/api/posts/user/${profileId}?${params.toString()}`,
+        );
 
         if (!res.ok) {
-          console.error("Erreur fetch posts user:", res.statusText);
+          console.error(t("FetchUserPostsError"), res.statusText);
           return;
         }
 
         const data = await res.json();
         setPosts(data);
       } catch (err) {
-        console.error("Erreur fetch posts user (exception):", err);
+        console.error(t("FetchUserPostsError"), err);
       } finally {
         setLoading(false);
       }
@@ -70,7 +74,7 @@ export function UserPosts({ profileId }: UserPostsProps) {
       });
 
       if (!res.ok) {
-        console.error("Toggle like failed:", res.statusText);
+        console.error(t("ToggleLikeFailed"), res.statusText);
         return;
       }
 
@@ -80,11 +84,11 @@ export function UserPosts({ profileId }: UserPostsProps) {
         prevPosts.map((post) =>
           post.id === postId
             ? { ...post, likes: data.likes, liked: data.liked }
-            : post
-        )
+            : post,
+        ),
       );
     } catch (err) {
-      console.error("Error toggling like:", err);
+      console.error(t("ToggleLikeError"), err);
     }
   };
 
@@ -95,40 +99,42 @@ export function UserPosts({ profileId }: UserPostsProps) {
       });
 
       if (res.status === 403) {
-        console.error("Vous ne pouvez pas supprimer ce post");
+        console.error(t("DeletePostForbidden"));
         return;
       }
 
       if (!res.ok) {
-        console.error("Erreur lors de la suppression du post", res.statusText);
+        console.error(t("DeletePostError"), res.statusText);
         return;
       }
 
       setPosts((prev) => prev.filter((post) => post.id !== postId));
     } catch (err) {
-      console.error("Erreur lors de la suppression du post", err);
+      console.error(t("DeletePostError"), err);
     }
   };
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <h2 className="text-lg font-semibold">{t("Posts")}</h2>
 
-        <select
-          value={filter}
-          onChange={(e) =>
-            setFilter(e.target.value as "recent" | "oldest" | "most_liked")
-          }
-          className="rounded-md border bg-background px-3 py-2 text-sm"
-        >
-          <option value="recent">{t("Recent")}</option>
-          <option value="oldest">{t("Oldest")}</option>
-          <option value="most_liked">{t("MostLiked")}</option>
-        </select>
+        {posts.length > 0 && (
+          <select
+            value={filter}
+            onChange={(e) =>
+              setFilter(e.target.value as "recent" | "oldest" | "most_liked")
+            }
+            className="rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option value="recent">{t("MostRecent")}</option>
+            <option value="oldest">{t("Oldest")}</option>
+            <option value="most_liked">{t("MostLiked")}</option>
+          </select>
+        )}
       </div>
 
-      <div className="max-h-[600px] overflow-y-auto space-y-4 pr-2">
+      <div className="mt-4 space-y-4">
         {loading ? (
           <div className="text-center text-muted-foreground py-6">
             {t("Loading")}...
