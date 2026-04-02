@@ -104,6 +104,11 @@ export class UsersController {
     return { message: 'Called /users/session endpoint!' };
   }
 
+  @Get('search')
+  async searchUsers(@GetUser() user: AuthUser, @Query('q') q?: string) {
+    return this.userDataService.search(user.id, q);
+  }
+
   @Get(':name')
   async getPublicProfile(@Param('name') name: string) {
     return this.userDataService.getPublicByName(name);
