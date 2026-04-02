@@ -89,7 +89,6 @@ Relationships: `post.user_id -> user.id`, `post_like.post_id -> post.id`, `post_
 | Activity analytics dashboard              | Minor | 1      |
 | Additional Browsers (3)                   | Minor | 1      |
 | Advanced Search                           | Minor | 1      |
-| 2FA                                       | Minor | 1      |
 | Infrastructure for log management (ELK)   | Major | 2      |
 
 **Total: 22 points**
@@ -100,7 +99,7 @@ For each module include implementation notes and which team members worked on th
 - `alebedev`: backend API endpoints, Drizzle schemas, dashboard analytics.
 - `chrleroy`: frontend components, theming, responsive layout, chat UI.
 - `tbabou`: CI, Dockerfiles, deployment scripts, storage integration.
-- `pgrataco`: Follows, OAuth, 2FA, Advanced Search.
+- `pgrataco`: Follows, OAuth, Advanced Search.
 
 **Database Schema (detailed)**
 - See `server/drizzle/0000_init_tables.sql` and `server/src/*/*.schema.ts` for Drizzle table definitions.
