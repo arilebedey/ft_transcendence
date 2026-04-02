@@ -195,6 +195,7 @@ const resources = {
         home: "Home",
         messages: "Messages",
         profile: "Profile",
+        apiDocs: "API docs",
       },
       liked: {
         empty: "You haven't liked any posts yet.",
@@ -405,6 +406,7 @@ const resources = {
         home: "Accueil",
         messages: "Messages",
         profile: "Profil",
+        apiDocs: "Docs API",
       },
       liked: {
         empty: "Vous n'avez encore aimé aucun post.",
@@ -636,6 +638,7 @@ const resources = {
         home: "Home",
         messages: "Messaggi",
         profile: "Profilo",
+        apiDocs: "API docs",
       },
       liked: {
         empty: "Non hai ancora messo like a nessun post.",
@@ -865,6 +868,7 @@ const resources = {
         home: "Inicio",
         messages: "Mensajes",
         profile: "Perfil",
+        apiDocs: "Docs API",
       },
       liked: {
         empty: "Todavía no te gusta ninguna publicación.",
