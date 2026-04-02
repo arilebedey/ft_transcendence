@@ -81,7 +81,9 @@ export const auth = betterAuth({
       if (!newSession) return;
 
       const { id, name, email } = newSession.user;
-      let username = name?.split(" ")[0]?.slice(0, 12) ?? email?.split("@")[0] ?? `user_${id}`;
+      let username = (name?.split(" ")[0] ?? email?.split("@")[0] ?? `user_${id}`)
+        .toLowerCase()
+        .slice(0, 12);
 
       const existing = await database
         .select({ id: userData.id })
@@ -90,7 +92,8 @@ export const auth = betterAuth({
         .limit(1);
     
       if (existing.length > 0) {
-        username = `${username}_${id.toString().slice(0,6)}`;
+        const base = username.slice(0, 12 - 7);
+        username = `${base}_${id.toString().slice(0, 6)}`;
       }
 
       await database

@@ -287,6 +287,20 @@ export default function SignUpForm() {
       >
         {form.state.isSubmitting ? "Creating account..." : t("signUp")}
       </Button>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() =>
+          authClient.signIn.social({
+            provider: "google",
+            callbackURL: "http://localhost:5173/home",
+          })
+        }
+      >
+        {t("ContinueWithGoogle")}
+      </Button>
     </form>
   );
 }
