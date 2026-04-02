@@ -14,6 +14,11 @@ import { userData } from '../users/user-data.schema';
 function normalizeUsername(name: string, fallbackId?: string | number): string {
   let username = name.toLowerCase().replace(/[^a-z0-9_]/g, "");
   if (username[0] === "_") username = username.slice(1);
+
+  if (!username) {
+    username = fallbackId ? `user_${fallbackId.toString().slice(0, 6)}` : "user";
+  }
+  
   username = username.slice(0, 12);
 
   if (fallbackId !== undefined) {
