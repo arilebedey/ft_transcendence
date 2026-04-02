@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 //import { TwoFactorForm } from "./TwoFactorForm";
 import { useTranslation } from "react-i18next";
+import { LegalAgreement } from "@/components/auth/LegalAgreement";
 
 interface PreLoginResponse {
   requiresTwoFactor: boolean;
@@ -196,6 +197,8 @@ export default function LoginForm() {
           {submitError}
         </div>
       )}
+
+      <LegalAgreement />
 
       <Button
         className="w-full mt-4"
