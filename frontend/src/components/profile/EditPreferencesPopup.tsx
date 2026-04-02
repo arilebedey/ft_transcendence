@@ -6,7 +6,7 @@ import { DesktopModal } from "@/components/ui/DesktopModal";
 import { MobileModal } from "@/components/ui/MobileModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 import { authClient } from "@/lib/auth-client";
@@ -145,6 +145,14 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="border-t pt-4 underline">
+          <Button asChild variant="ghost" className="px-0">
+            <Link to="/legal" onClick={handleCloseWithoutSaving}>
+              {t("legal.modalTitle")}
+            </Link>
+          </Button>
         </div>
       </CardContent>
 
