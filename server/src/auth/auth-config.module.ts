@@ -12,22 +12,19 @@ import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { AppDatabase } from '../database/database.types';
 import { userData } from '../users/user-data.schema';
 
-function normalizeUsername(name: string, fallbackId?: string | number): string {
+function normalizeUsername(name: string): string {
   let username = name.toLowerCase().replace(/[^a-z0-9_]/g, "");
+
   if (username[0] === "_") username = username.slice(1);
-  
-  username = username.slice(0, 12);
 
-  if (!username) {
-    username = fallbackId ? `user_${fallbackId.toString().slice(0, 6)}` : "user";
-  }
+  if (!username) username = "user";
 
-  if (fallbackId !== undefined) {
-    const base = username.slice(0, 12 - 7);
-    username = `${base}_${fallbackId.toString().slice(0, 6)}`;
-  }
+  return username.slice(0, 12);
+}
 
-  return username;
+function fallbackUsername(base: string, id: string | number): string {
+  const trimmed = base.slice(0, 12 - 7);
+  return `${trimmed}_${id.toString().slice(0, 6)}`;
 }
 
 @Module({
@@ -91,7 +88,7 @@ function normalizeUsername(name: string, fallbackId?: string | number): string {
               if (!newSession) return;
 
               const { id, name, email } = newSession.user;
-              let username = normalizeUsername(name ?? email ?? `user_${id}`, id);
+              let username = normalizeUsername(name ?? email ?? `user_${id}`);
               
               const existing = await database
                 .select({ id: userData.id })
@@ -100,7 +97,7 @@ function normalizeUsername(name: string, fallbackId?: string | number): string {
                 .limit(1);
                   
               if (existing.length > 0) {
-                username = normalizeUsername(username, id);
+                username = fallbackUsername(username, id);
               }
               await database
                 .insert(userData)
