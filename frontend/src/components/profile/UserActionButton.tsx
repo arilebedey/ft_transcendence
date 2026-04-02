@@ -8,7 +8,6 @@ interface UserActionButtonProps {
   isFollowing: boolean;
   onEdit: () => void;
   onEditPreferences: () => void;
-  onOpenApiDocs: () => void;
   onToggleFollow: () => void;
 }
 
@@ -17,7 +16,6 @@ export function UserActionButton({
   isFollowing,
   onEdit,
   onEditPreferences,
-  onOpenApiDocs,
   onToggleFollow,
 }: UserActionButtonProps) {
   const { t } = useTranslation();
@@ -26,18 +24,12 @@ export function UserActionButton({
   return (
     <div className="w-full shrink-0 sm:w-auto">
       {isOwnProfile ? (
-        <div className="flex h-auto w-full gap-2 sm:h-10 sm:w-auto">
-          <Button className="flex-1 px-5 text-base sm:text-lg" onClick={onEdit}>
+        <div className="flex w-full gap-2 sm:w-auto">
+          <Button className="min-w-0 flex-1 px-5 text-base sm:text-lg" onClick={onEdit}>
             {t("editProfile")}
           </Button>
           <Button
-            className="px-5 text-base sm:text-lg"
-            onClick={onOpenApiDocs}
-          >
-            {t("publicApi.sidebar.title")}
-          </Button>
-          <Button
-            className="h-10 w-10 p-2"
+            className="h-10 w-10 shrink-0 p-2"
             onClick={() => navigate("/dashboard")}
             title={t("dashboard.title")}
           >

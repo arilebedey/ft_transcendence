@@ -148,7 +148,6 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
           isFollowing={isFollowing}
           onEdit={() => setShowEditPopup(true)}
           onEditPreferences={() => setShowEditPreferencesPopup(true)}
-          onOpenApiDocs={() => navigate("/public-api")}
           onToggleFollow={onToggleFollow}
         />
       </div>

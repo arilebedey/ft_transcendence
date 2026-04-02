@@ -1,4 +1,4 @@
-import { Home, MessageCircle, User } from "lucide-react";
+import { BookOpen, Home, MessageCircle, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 const navItems = [
   { icon: Home, labelKey: "nav.home", path: "/home" },
   { icon: MessageCircle, labelKey: "nav.messages", path: "/messages" },
+  { icon: BookOpen, labelKey: "nav.apiDocs", path: "/public-api" },
   { icon: User, labelKey: "nav.profile", path: "/profile" },
 ];
 
@@ -15,7 +16,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
-      <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
+      <div className="flex h-16 items-center justify-around mx-auto max-w-xl">
         {navItems.map((item) => {
           const isActive =
             item.path === "/profile"
