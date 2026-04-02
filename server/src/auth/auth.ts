@@ -83,7 +83,10 @@ export const auth = betterAuth({
       const { id, name, email } = newSession.user;
       let username = (name?.split(" ")[0] ?? email?.split("@")[0] ?? `user_${id}`)
         .toLowerCase()
-        .slice(0, 12);
+        .replace(/[^a-z0-9_]/g, "");
+              
+      if (username[0] === "_") username = username.slice(1);
+      username = username.slice(0, 12);
 
       const existing = await database
         .select({ id: userData.id })
