@@ -8,6 +8,8 @@ import json
 import urllib.request
 import urllib.error
 import urllib.parse
+import re
+import unicodedata
 from typing import List, Tuple
 from psycopg2.extras import execute_values
 from names_dataset import NameDataset, NameWrapper
@@ -48,25 +50,51 @@ def _generate_valid_username(
     """Generate a username matching the validation schema: 3-12 chars, 
     lowercase, a-z0-9_, no leading underscore"""
 
+    def _sanitize_component(s: str) -> str:
+        # Normalize unicode characters (é -> e), drop non-ascii
+        s2 = unicodedata.normalize('NFKD', s)
+        s2 = s2.encode('ascii', 'ignore').decode('ascii')
+        s2 = s2.lower()
+        # Replace any character that's not a-z or 0-9 with underscore
+        s2 = re.sub('[^a-z0-9]', '_', s2)
+        # Collapse multiple underscores
+        s2 = re.sub('_+', '_', s2)
+        # Strip leading/trailing underscores
+        s2 = s2.strip('_')
+        return s2
+
     max_attempts = 100
     for attempt in range(max_attempts):
         first, last = _rand_name()
-        # Create a valid username: lowercase, max 12 chars
-        base = f"{first.lower()}{last.lower()}"[:12]
-        
-        # If base is too short, pad with numbers
+        f = _sanitize_component(first)
+        l = _sanitize_component(last)
+
+        # Combine components with optional underscore if both present
+        if f and l:
+            base = f + ('_' if len(f) + 1 + len(l) <= 12 else '') + l
+        else:
+            base = f or l or ''
+
+        # Truncate to max 12 chars
+        base = base[:12]
+
+        # If base is too short, pad with digits from uid
+        if len(base) < 1:
+            base = uid.replace('-', '')[:8]
         if len(base) < 3:
-            base = f"{base}{random.randint(10, 99)}"[:12]
-        
-        # Ensure it doesn't start with underscore and is 3-12 chars
-        if base.startswith("_"):
-            base = base[1:]
-        
-        if 3 <= len(base) <= 12 and base not in used_names:
-            # Validate it matches the regex pattern /^[a-z0-9][a-z0-9_]*$/
-            if base and base[0].isalnum() and all(c.isalnum() or c == "_" for c in base):
-                return base
-    
+            pad = uid.replace('-', '')[: (3 - len(base))]
+            base = (base + pad)[:12]
+
+        # Ensure first character is a-z or 0-9 (not underscore)
+        base = re.sub('^[^a-z0-9]+', '', base)
+        if not base:
+            base = 'user' + uid.replace('-', '')[:8]
+        base = base[:12]
+
+        # Final validation against /^[a-z0-9][a-z0-9_]*$/
+        if re.fullmatch(r'[a-z0-9][a-z0-9_]*', base) and base not in used_names:
+            return base
+
     # Fallback: use uid-based username if generation fails
     fallback = f"user{uid[:8]}".lower()[:12]
     return fallback
