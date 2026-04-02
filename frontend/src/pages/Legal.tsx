@@ -68,7 +68,12 @@ export function LegalContent({ className = "" }: { className?: string }) {
 
 export const Legal = () => {
   return (
-    <Layout showFooter={false}>
+    <Layout
+      showFooter={false}
+      showSearchBar={false}
+      showLanguageToggle={false}
+      showThemeToggle={false}
+    >
       <LegalContent />
     </Layout>
   );
