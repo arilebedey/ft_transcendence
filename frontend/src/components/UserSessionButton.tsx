@@ -35,10 +35,7 @@ export function UserSessionButton({
     >
       <UserAvatar name={userName} avatarUrl={userAvatar} className="w-8 h-8" />
       <span
-        className={[
-          "min-w-0 truncate font-bold text-lg",
-          showNameOnMobile ? "block max-w-[40vw] sm:max-w-none" : "hidden sm:block",
-        ].join(" ")}
+        className="block min-w-0 max-w-[28vw] truncate text-lg font-bold xs:max-w-[44vw] sm:max-w-none"
       >
         {userName}
       </span>

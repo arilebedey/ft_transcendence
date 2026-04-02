@@ -361,6 +361,7 @@ const resources = {
       NoResult: "No results for your search.",
       homeDefault:
         "Here you’ll see your posts and those of the users you follow, share your ideas!",
+      SearchPlaceholder: "@user content",
       SearchUsers: "Search users",
       SortBy:"Sort by",
       MostRecent:"Most recent",
@@ -593,6 +594,7 @@ const resources = {
       NoResult: "Aucun résultat pour votre recherche.",
       homeDefault:
         "Ici s'afficheront vos posts et ceux des utilisateurs que vous suivez, partagez vos idées !",
+      SearchPlaceholder: "@utilisateur contenu",
       SearchUsers: "Rechercher des utilisateurs",
       SortBy:"Trier par",
       MostRecent:"Les plus récents",
@@ -823,6 +825,7 @@ const resources = {
       NoResult: "Nessun risultato per la tua ricerca.",
       homeDefault:
         "Qui vedrai i tuoi post e quelli degli utenti che segui, condividi le tue idee!",
+      SearchPlaceholder: "@utente contenuto",
       SearchUsers: "Cerca utenti",
       SortBy:"Ordina per",
       MostRecent:"Più recenti",
@@ -1053,6 +1056,7 @@ const resources = {
       NoUsersFound: "No se encontraron usuarios",
       NoResult:"No hay resultados para tu búsqueda.",
       homeDefault:"Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
+      SearchPlaceholder:"@usuario contenido",
       SearchUsers:"Buscar usuarios",
       SortBy:"Ordenar por",
       MostRecent:"Más recientes",
