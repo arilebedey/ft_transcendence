@@ -10,7 +10,7 @@ import { userData } from './user-data.schema';
 import { and, asc, eq, ilike, ne, or, sql } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
 import type { AppDatabase } from 'src/database/database.types';
-import * as speakeasy from 'speakeasy';
+//import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class UserDataService {
