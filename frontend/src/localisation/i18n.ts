@@ -185,8 +185,8 @@ const resources = {
       CopyLink: "Copy link",
       nav: {
         home: "Home",
-        liked: "Liked",
         messages: "Messages",
+        profile: "Profile",
       },
       liked: {
         empty: "You haven't liked any posts yet.",
@@ -387,8 +387,8 @@ const resources = {
       CopyLink: "Copier le lien",
       nav: {
         home: "Accueil",
-        liked: "Aimés",
         messages: "Messages",
+        profile: "Profil",
       },
       liked: {
         empty: "Vous n'avez encore aimé aucun post.",
@@ -610,8 +610,8 @@ const resources = {
       CopyLink: "Copia il link",
       nav: {
         home: "Home",
-        liked: "Piaciuti",
         messages: "Messaggi",
+        profile: "Profilo",
       },
       liked: {
         empty: "Non hai ancora messo like a nessun post.",
@@ -831,8 +831,8 @@ const resources = {
       CopyLink: "Copiar enlace",
       nav: {
         home: "Inicio",
-        liked: "Me gusta",
         messages: "Mensajes",
+        profile: "Perfil",
       },
       liked: {
         empty: "Todavía no te gusta ninguna publicación.",

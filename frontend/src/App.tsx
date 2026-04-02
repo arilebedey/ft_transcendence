@@ -1,7 +1,6 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { Liked } from "@/pages/Liked";
 import { NotFound } from "@/pages/NotFound";
 import { BottomNav } from "@/components/BottomNav";
 import { Profile } from "@/pages/Profile";
@@ -36,14 +35,6 @@ function AppContentWithNav() {
           element={
             <ProtectedRoute>
               <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/liked"
-          element={
-            <ProtectedRoute>
-              <Liked />
             </ProtectedRoute>
           }
         />
