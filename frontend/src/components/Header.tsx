@@ -25,11 +25,21 @@ export function Header({
   onFilterChange,
   onPostCreationClick,
 }: HeaderProps) {
+  const showNameOnMobile =
+    !showSearchBar &&
+    !showLanguageToggle &&
+    !showThemeToggle &&
+    !showPostCreationButton;
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
       <div className="relative h-16 px-4">
         <div className="flex items-center justify-between h-full max-w-6xl mx-auto">
-          {showUserSessionButton ? <UserSessionButton /> : <div />}
+          {showUserSessionButton ? (
+            <UserSessionButton showNameOnMobile={showNameOnMobile} />
+          ) : (
+            <div />
+          )}
           <div className="flex items-center gap-2">
             {showLanguageToggle && <LanguageToggle />}
             {showThemeToggle && <ThemeToggle />}

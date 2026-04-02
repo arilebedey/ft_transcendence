@@ -45,7 +45,10 @@ export function MobileModal({
         )}
       >
         <div
-          className={cn("flex items-center gap-3 border-b px-4 py-4", headerClassName)}
+          className={cn(
+            "flex items-center gap-3 border-b px-4 py-4",
+            headerClassName,
+          )}
         >
           <Button type="button" variant="ghost" size="icon" onClick={onClose}>
             <ArrowLeft className="h-5 w-5" />
@@ -67,7 +70,7 @@ export function MobileModal({
           {action ? (
             <div className="shrink-0">{action}</div>
           ) : title || subtitle ? (
-            <div className="w-10 shrink-0" aria-hidden="true" />
+            <div className="w-10 shrink-0" />
           ) : null}
         </div>
 

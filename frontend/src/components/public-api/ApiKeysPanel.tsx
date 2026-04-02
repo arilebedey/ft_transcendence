@@ -110,7 +110,6 @@ export function ApiKeysPanel({
                           field.handleChange(event.target.value)
                         }
                         placeholder={t("publicApi.keys.namePlaceholder")}
-                        aria-invalid={isInvalid}
                       />
                       {isInvalid ? (
                         <p className="text-sm text-destructive">
@@ -151,7 +150,9 @@ export function ApiKeysPanel({
                 </Button>
               </CardHeader>
               <CardContent>
-                <pre className="overflow-x-auto text-xs">{latestCreatedKey}</pre>
+                <pre className="overflow-x-auto text-xs">
+                  {latestCreatedKey}
+                </pre>
               </CardContent>
             </Card>
           ) : null}
@@ -163,14 +164,16 @@ export function ApiKeysPanel({
           {t("publicApi.keys.yourKeysDescription")}
         </p>
 
-        {error ? (
-          <p className="text-sm text-destructive">{error}</p>
-        ) : null}
+        {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
         {isPending ? (
-          <p className="text-sm text-muted-foreground">{t("publicApi.keys.loading")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("publicApi.keys.loading")}
+          </p>
         ) : keys.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("publicApi.keys.empty")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("publicApi.keys.empty")}
+          </p>
         ) : (
           <div className="space-y-2">
             {keys.map((key) => (

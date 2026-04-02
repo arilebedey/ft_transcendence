@@ -135,7 +135,7 @@ export default function LoginForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>Email</Label>
+              <Label>Email</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -146,7 +146,6 @@ export default function LoginForm() {
                   field.handleChange(e.target.value);
                 }}
                 placeholder={t("emailPlaceholder")}
-                aria-invalid={isInvalid}
               />
               {isInvalid && (
                 <p className="text-sm text-destructive">
@@ -168,7 +167,7 @@ export default function LoginForm() {
 
           return (
             <div className="space-y-2">
-              <Label htmlFor={field.name}>{t("Password")}</Label>
+              <Label>{t("Password")}</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -179,7 +178,6 @@ export default function LoginForm() {
                   field.handleChange(e.target.value);
                 }}
                 placeholder="••••••••"
-                aria-invalid={isInvalid}
               />
               {isInvalid && (
                 <p className="text-sm text-destructive">
