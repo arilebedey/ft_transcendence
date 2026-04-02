@@ -7,10 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { checkUsernameAvailable } from "@/lib/profile-api";
-import { DesktopModal } from "@/components/ui/DesktopModal";
-import { MobileModal } from "@/components/ui/MobileModal";
-import { useIsMobileViewport } from "@/hooks/useIsMobileViewport";
-import { LegalContent } from "@/pages/Legal";
+import { LegalAgreement } from "@/components/auth/LegalAgreement";
 
 const signUpSchema = z
   .object({
@@ -35,9 +32,6 @@ const signUpSchema = z
       .regex(/[0-9]/, "Must contain one number")
       .regex(/[^a-zA-Z0-9]/, "Must contain one special character"),
     password_verification: z.string(),
-    termsAccepted: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms.",
-    }),
   })
   .refine((data) => data.password === data.password_verification, {
     message: "Password doesn't match",
@@ -46,15 +40,10 @@ const signUpSchema = z
 
 export default function SignUpForm() {
   const { t } = useTranslation();
-  const isMobile = useIsMobileViewport(700);
   const [submitError, setSubmitError] = useState("");
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [usernameChecking, setUsernameChecking] = useState(false);
-  const [showLegalModal, setShowLegalModal] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeLegalModal = () => setShowLegalModal(false);
-  const ignoreDesktopOverlayClose = () => undefined;
-  const openLegalModal = () => setShowLegalModal(true);
 
   const form = useForm({
     defaultValues: {
@@ -62,7 +51,6 @@ export default function SignUpForm() {
       email: "",
       password: "",
       password_verification: "",
-      termsAccepted: false,
     },
     validators: {
       onChange: signUpSchema,
@@ -263,41 +251,7 @@ export default function SignUpForm() {
           </div>
         )}
 
-        <form.Field
-          name="termsAccepted"
-          children={(field) => {
-            const errors = field.state.meta.errors;
-            return (
-              <div className="space-y-2">
-                <div className="mt-2 flex items-start space-x-2">
-                  <input
-                    type="checkbox"
-                    id={field.name}
-                    checked={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0"
-                  />
-                  <div className="text-sm">
-                    <label>{t("iAccept")} </label>
-                    <span
-                      onClick={openLegalModal}
-                      className="inline cursor-pointer underline text-blue-600"
-                    >
-                      {t("legal.modalTitle")}
-                    </span>
-                  </div>
-                </div>
-                {errors.length > 0 && (
-                  <p className="text-sm text-destructive">
-                    {typeof errors[0] === "string"
-                      ? errors[0]
-                      : errors[0]?.message}
-                  </p>
-                )}
-              </div>
-            );
-          }}
-        />
+        <LegalAgreement />
 
         <Button
           className="w-full mt-4"
@@ -324,41 +278,6 @@ export default function SignUpForm() {
         </Button>
       </form>
 
-      {showLegalModal ? (
-        isMobile ? (
-          <MobileModal
-            onClose={closeLegalModal}
-            title={t("legal.modalTitle")}
-            body={
-              <div className="min-h-0 flex-1 overflow-y-auto">
-                <LegalContent />
-              </div>
-            }
-          />
-        ) : (
-          <DesktopModal
-            onClose={ignoreDesktopOverlayClose}
-            overlayClassName="bg-black/20"
-            panelClassName="max-h-[min(42rem,calc(100vh-2rem))] w-[min(48rem,calc(100vw-2rem))]"
-            body={
-              <div className="flex min-h-0 h-full flex-col bg-card">
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                  <LegalContent />
-                </div>
-                <div className="border-t px-6 py-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={closeLegalModal}
-                  >
-                    {t("back")}
-                  </Button>
-                </div>
-              </div>
-            }
-          />
-        )
-      ) : null}
     </>
   );
 }
