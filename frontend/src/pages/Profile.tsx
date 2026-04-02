@@ -108,10 +108,17 @@ export function Profile() {
       showThemeToggle={false}
     >
       <div className="flex justify-center px-4 py-4 sm:px-6 sm:py-6">
-        <div className="w-full max-w-5xl rounded-2xl bg-card shadow-sm sm:rounded-3xl">
-          <div className="w-full px-4 py-6 sm:px-8 sm:py-8 md:px-10">
-            <UserCard profile={displayProfile} isOwnProfile={isOwnProfile} />
-            <UserPosts profileId={displayProfile.id} />
+        <div className="w-full max-w-5xl space-y-4">
+          <div className="rounded-2xl bg-card shadow-sm sm:rounded-3xl">
+            <div className="w-full px-4 py-6 sm:px-8 sm:py-8 md:px-10">
+              <UserCard profile={displayProfile} isOwnProfile={isOwnProfile} />
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-card shadow-sm sm:rounded-3xl">
+            <div className="w-full px-4 py-6 sm:px-8 sm:py-8 md:px-10">
+              <UserPosts profileId={displayProfile.id} />
+            </div>
           </div>
         </div>
       </div>
