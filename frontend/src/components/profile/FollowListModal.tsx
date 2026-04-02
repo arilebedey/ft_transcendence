@@ -29,12 +29,8 @@ function FollowListRow({
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn("w-full rounded-xl text-left")}
-    >
-      <Card className="border-border/70 bg-background/80 shadow-sm transition hover:border-primary/40 hover:shadow-md">
+    <button onClick={onClick} className={cn("w-full rounded-xl text-left")}>
+      <Card className="border-border/70 bg-background/80 transition hover:border-primary/40">
         <CardContent className="flex items-center gap-3 p-4">
           <UserAvatar
             name={user.name}

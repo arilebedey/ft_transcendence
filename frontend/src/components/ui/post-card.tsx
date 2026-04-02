@@ -23,14 +23,9 @@ import { DropDownList } from "@/components/dropdown-list";
 import {
   getProfileById,
   profileByIdQueryKey,
-  PublicProfileData,
 } from "@/lib/profile-api";
+import { type PublicProfileData } from "@/lib/profile-api";
 import { UserAvatar } from "@/components/profile/UserAvatar";
-import {
-  getProfileByName,
-  profileByNameQueryKey,
-  PublicProfileData,
-} from "@/lib/profile-api";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";

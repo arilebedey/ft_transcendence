@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,9 +104,7 @@ export function EditProfilePopup({
   const body = (
     <Card
       className={`relative flex h-full w-full flex-col rounded-none border-0 shadow-none ${
-        isMobile
-          ? "pt-0"
-          : "max-h-[min(37.5rem,calc(100vh-2rem))] pt-6"
+        isMobile ? "pt-0" : "max-h-[min(37.5rem,calc(100vh-2rem))] pt-6"
       }`}
     >
       <CardContent
@@ -124,7 +122,7 @@ export function EditProfilePopup({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="edit-name">{t("Name")}</Label>
+          <Label>{t("Name")}</Label>
           <Input
             id="edit-name"
             value={name}
@@ -150,7 +148,7 @@ export function EditProfilePopup({
         </div>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <Label htmlFor="edit-bio">{t("Bio")}</Label>
+            <Label>{t("Bio")}</Label>
             <span className="text-sm text-muted-foreground">
               {bio.length}/160
             </span>
@@ -198,7 +196,9 @@ export function EditProfilePopup({
     <Modal
       onClose={onClose}
       overlayClassName="bg-black/20"
-      panelClassName={isMobile ? undefined : "max-h-[min(37.5rem,calc(100vh-2rem))]"}
+      panelClassName={
+        isMobile ? undefined : "max-h-[min(37.5rem,calc(100vh-2rem))]"
+      }
       title={isMobile ? t("editProfile") : undefined}
       action={
         isMobile ? (

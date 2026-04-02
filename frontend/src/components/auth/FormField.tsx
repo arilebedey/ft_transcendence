@@ -27,7 +27,7 @@ export default function FormField({
 
   return (
     <div>
-      <label className="mt-3 block text-sm font-medium" htmlFor={fieldId}>
+      <label className="mt-3 block text-sm font-medium">
         {label}
         <input
           className={`mt-2 p-2 text-base w-full border border-amber-600 rounded-md outline-none ${className}`}

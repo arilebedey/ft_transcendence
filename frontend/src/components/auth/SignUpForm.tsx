@@ -54,6 +54,7 @@ export default function SignUpForm() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeLegalModal = () => setShowLegalModal(false);
   const ignoreDesktopOverlayClose = () => undefined;
+  const openLegalModal = () => setShowLegalModal(true);
 
   const form = useForm({
     defaultValues: {
@@ -131,7 +132,7 @@ export default function SignUpForm() {
 
             return (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>{t("Name")}</Label>
+                <Label>{t("Name")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -140,7 +141,6 @@ export default function SignUpForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => handleNameChange(e.target.value)}
                   placeholder={t("Fullname")}
-                  aria-invalid={isInvalid}
                 />
                 {usernameChecking && (
                   <p className="text-sm text-muted-foreground">
@@ -172,7 +172,7 @@ export default function SignUpForm() {
 
             return (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>Email</Label>
+                <Label>Email</Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -181,7 +181,6 @@ export default function SignUpForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder={t("emailPlaceholder")}
-                  aria-invalid={isInvalid}
                 />
                 {isInvalid && (
                   <p className="text-sm text-destructive">
@@ -203,7 +202,7 @@ export default function SignUpForm() {
 
             return (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>{t("Password")}</Label>
+                <Label>{t("Password")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -212,7 +211,6 @@ export default function SignUpForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="••••••••"
-                  aria-invalid={isInvalid}
                 />
                 {isInvalid && (
                   <p className="text-sm text-destructive">
@@ -234,7 +232,7 @@ export default function SignUpForm() {
 
             return (
               <div className="space-y-2">
-                <Label htmlFor={field.name}>{t("Confirm password")}</Label>
+                <Label>{t("Confirm password")}</Label>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -246,7 +244,6 @@ export default function SignUpForm() {
                     e.preventDefault();
                   }}
                   placeholder="••••••••"
-                  aria-invalid={isInvalid}
                 />
                 {isInvalid && (
                   <p className="text-sm text-destructive">
@@ -281,14 +278,13 @@ export default function SignUpForm() {
                     className="mt-0.5 h-4 w-4 shrink-0"
                   />
                   <div className="text-sm">
-                    <label htmlFor={field.name}>{t("iAccept")} </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowLegalModal(true)}
-                      className="underline text-blue-600 hover:text-blue-800"
+                    <label>{t("iAccept")} </label>
+                    <span
+                      onClick={openLegalModal}
+                      className="inline cursor-pointer underline text-blue-600"
                     >
                       {t("legal.modalTitle")}
-                    </button>
+                    </span>
                   </div>
                 </div>
                 {errors.length > 0 && (

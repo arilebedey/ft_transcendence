@@ -58,7 +58,6 @@ export function useMessages({
   const [hasMore, setHasMore] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
 
-  // Why use refs here?
   // useRef doesn't trigger re-renders when you update it
   // Values only needed for logic, not to display anything
   const cursorRef = useRef<number | null>(null);

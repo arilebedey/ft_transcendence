@@ -143,7 +143,7 @@ export function ConversationPanel({
   };
 
   return (
-    <section className="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden bg-card md:rounded-2xl md:border">
+    <section className="flex h-full w-full flex-col bg-card md:rounded-2xl md:border overflow-hidden">
       <div className="sticky top-0 z-10 flex items-center gap-3 border-b px-4 py-4">
         {onBack ? (
           <Button
@@ -157,12 +157,15 @@ export function ConversationPanel({
           </Button>
         ) : null}
 
-        <div className="min-w-0">
+        <div>
           <div className="flex items-center gap-2">
-            <h2 className="truncate text-base font-semibold text-foreground">
+            <h2 className="text-base font-semibold text-foreground">
               {activeParticipant?.name ?? t("chat.conversation.titleFallback")}
             </h2>
-            <PresenceDot online={activeParticipant?.online} className="shrink-0" />
+            <PresenceDot
+              online={activeParticipant?.online}
+              className="shrink-0"
+            />
           </div>
           <p className="text-sm text-muted-foreground">
             {conversationId
@@ -225,7 +228,7 @@ export function ConversationPanel({
         </div>
       </div>
 
-      <div className="sticky bottom-0 z-10 border-t bg-card/95 px-4 py-4 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      <div className="sticky bottom-0 z-10 border-t bg-card/95 px-4 py-4">
         {sendError ? (
           <div className="mb-3 rounded-xl border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
             {sendError}
@@ -246,7 +249,7 @@ export function ConversationPanel({
             }}
             autoFocus={true}
             placeholder={t("chat.conversation.inputPlaceholder")}
-            className="max-h-40 min-h-12 min-w-0 flex-1 resize-none rounded-xl border border-input bg-background px-3 py-3 text-sm outline-none transition focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 lg:resize-y"
+            className="max-h-40 min-h-12 min-w-0 flex-1 resize-none rounded-xl border border-input bg-background px-3 py-3 text-sm outline-none transition focus-visible:outline-none focus-visible:ring-0 md:resize-y"
           />
           <Button
             type="button"
