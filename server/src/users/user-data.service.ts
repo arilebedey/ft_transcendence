@@ -15,6 +15,7 @@ import type { AppDatabase } from 'src/database/database.types';
 export interface UserSearchResult {
   id: string;
   name: string;
+  avatarUrl: string | null;
 }
 
 @Injectable()
@@ -82,6 +83,7 @@ export class UserDataService {
       .select({
         id: userData.id,
         name: userData.name,
+        avatarUrl: userData.avatarUrl,
       })
       .from(userData)
       .where(
