@@ -11,6 +11,19 @@ import { userData } from '../users/user-data.schema';
 // auth.ts is for Better Auth CLI loading, it is used when generating better-auth schema
 // npx auth@latest generate --config src/auth/auth.ts --output src/auth/better-auth.schema.ts --yes
 
+function normalizeUsername(name: string, fallbackId?: string | number): string {
+  let username = name.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  if (username[0] === "_") username = username.slice(1);
+  username = username.slice(0, 12);
+
+  if (fallbackId !== undefined) {
+    const base = username.slice(0, 12 - 7);
+    username = `${base}_${fallbackId.toString().slice(0, 6)}`;
+  }
+
+  return username;
+}
+
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
@@ -64,10 +77,12 @@ export const auth = betterAuth({
       const body = ctx.body as { name?: string } | undefined;
       if (!body?.name) return;
 
+      const username = normalizeUsername(body.name);
+
       const existing = await database
         .select({ id: userData.id })
         .from(userData)
-        .where(eq(userData.name, body.name))
+        .where(eq(userData.name, username))
         .limit(1);
 
       if (existing.length > 0) {
@@ -81,12 +96,7 @@ export const auth = betterAuth({
       if (!newSession) return;
 
       const { id, name, email } = newSession.user;
-      let username = (name?.split(" ")[0] ?? email?.split("@")[0] ?? `user_${id}`)
-        .toLowerCase()
-        .replace(/[^a-z0-9_]/g, "");
-              
-      if (username[0] === "_") username = username.slice(1);
-      username = username.slice(0, 12);
+      let username = normalizeUsername(name ?? email ?? `user_${id}`, id);
 
       const existing = await database
         .select({ id: userData.id })
@@ -95,8 +105,7 @@ export const auth = betterAuth({
         .limit(1);
     
       if (existing.length > 0) {
-        const base = username.slice(0, 12 - 7);
-        username = `${base}_${id.toString().slice(0, 6)}`;
+        username = normalizeUsername(username, id);
       }
 
       await database
