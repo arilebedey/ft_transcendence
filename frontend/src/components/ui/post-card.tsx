@@ -75,11 +75,14 @@ export function PostCard({
 
   return (
     <Card
-      className={cn("animate-fade-in card-hover", className)}
+      className={cn(
+        "animate-fade-in card-hover w-full max-w-full min-w-0 overflow-hidden",
+        className,
+      )}
       style={{ animationDelay: `${index * 100}ms` }}
     >
-      <CardContent className="pt-4">
-        <div className="flex gap-3">
+      <CardContent className="px-4 pt-4 sm:px-6">
+        <div className="flex min-w-0 gap-3">
           <div
             className="shrink-0"
             onClick={() => navigate(`/profile/${userName}`)}
@@ -92,14 +95,14 @@ export function PostCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               <span
-                className="font-semibold"
+                className="min-w-0 max-w-full break-words font-semibold"
                 onClick={() => navigate(`/profile/${userName}`)}
               >
                 {userName}
               </span>
-              <span className="text-muted-foreground text-sm">
+              <span className="break-words text-sm text-muted-foreground">
                 • {formattedTime}
               </span>
 
@@ -128,13 +131,13 @@ export function PostCard({
                 href={post.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary text-sm mt-2 block"
+                className="mt-2 block max-w-full break-all text-sm text-primary"
               >
                 {post.link}
               </a>
             )}
 
-            <div className="flex items-center gap-6 mt-4">
+            <div className="mt-4 flex min-w-0 items-center gap-6">
               <LikeToggle
                 likes={post.likes}
                 liked={post.liked}
