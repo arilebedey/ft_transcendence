@@ -363,7 +363,8 @@ def execute_batches(
                 ) for u in users]
                 for i in range(0, len(user_data_vals), batch_size):
                     batch = user_data_vals[i:i+batch_size]
-                    execute_values(cur, "INSERT INTO user_data (id, name, email, theme, language, avatar_url, bio, created_at, updated_at) VALUES %s ON CONFLICT (id) DO NOTHING", batch)
+                    # Use ON CONFLICT DO NOTHING to avoid failures on any unique constraint (id or name)
+                    execute_values(cur, "INSERT INTO user_data (id, name, email, theme, language, avatar_url, bio, created_at, updated_at) VALUES %s ON CONFLICT DO NOTHING", batch)
 
                 # insert posts in batches
                 post_vals = [(
