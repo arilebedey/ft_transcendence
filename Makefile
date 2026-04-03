@@ -30,6 +30,7 @@ help:
 	@echo "    make down             Stop dev stack"
 	@echo "    make down-prod        Stop prod stack"
 	@echo "    make clean            Stop dev stack + remove volumes"
+	@echo "    make clean-prod       Stop prod stack + remove volumes"
 	@echo "    make fclean           Stop dev stack + remove volumes + images"
 	@echo ""
 	@echo "  ── Logs & Debug ────────────────────────────────────────────────"
@@ -126,6 +127,10 @@ clean:
 	$(DEV_COMPOSE) down -v --remove-orphans
 	@echo "✅ Dev stack stopped and volumes removed."
 
+clean-prod:
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) down -v --remove-orphans
+	@echo "✅ Prod stack stopped and volumes removed."
+
 fclean:
 	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
 	@echo "✅ Dev full cleanup done (containers, volumes, images)."
@@ -166,6 +171,6 @@ populate:
         dev infra regenerate migrate restart-backend restart-frontend \
         build build-prod clean-images \
         prod populate fix-docker  \
-        down down-prod clean fclean re \
+        down down-prod clean clean-prod fclean re \
         logs logs-backend logs-frontend \
         shell-backend shell-frontend ps
