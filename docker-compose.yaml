@@ -7,13 +7,11 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - dev-db-data:/var/lib/postgresql/data
-    secrets:
-      - db_password
     healthcheck:
       test:
         ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
@@ -32,11 +30,9 @@ services:
     container_name: dev_ftt_pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "8085:80"
-    secrets:
-      - pgadmin_password
     depends_on:
       db:
         condition: service_healthy
@@ -48,14 +44,12 @@ services:
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
       - minio-data:/data
-    secrets:
-      - minio_password
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -75,10 +69,8 @@ services:
     depends_on:
       minio:
         condition: service_healthy
-    secrets:
-      - minio_password
     entrypoint: >
-      /bin/sh -c " MINIO_PASSWORD=$$(cat /run/secrets/minio_password); mc alias set myminio http://minio:9000 ${MINIO_ACCESS_KEY} $$MINIO_PASSWORD; mc mb --ignore-existing myminio/profile-pictures; mc anonymous set download myminio/profile-pictures; echo 'Bucket profile-pictures created and set to public-read'; "
+      /bin/sh -c " mc alias set myminio http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}; mc mb --ignore-existing myminio/profile-pictures; mc anonymous set download myminio/profile-pictures; echo 'Bucket profile-pictures created and set to public-read'; "
     restart: "no"
 
   # ── One-shot migration ──────────────────────────────────────────────────────
@@ -92,19 +84,17 @@ services:
     image: ft_transcendence-backend:migrate
     working_dir: /app
     command: >
-      /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); npx drizzle-kit migrate "
+      /bin/sh -c " npx drizzle-kit migrate "
     environment:
       NODE_ENV: ${NODE_ENV}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
-    secrets:
-      - db_password
-      - better_auth_secret
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
     volumes:
       - ./server:/app
-      # Named volume prevents the bind-mount from shadowing the image's node_modules
       - backend-node-modules:/app/node_modules
     depends_on:
       db:
@@ -120,16 +110,19 @@ services:
     image: ft_transcendence-backend:dev
     working_dir: /app
     command: >
-      /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); export MINIO_SECRET_KEY=$$(cat /run/secrets/minio_password); npm run dev "
+      /bin/sh -c " npm run dev "
     environment:
       NODE_ENV: ${NODE_ENV}
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       MINIO_ENDPOINT: ${MINIO_ENDPOINT}
       MINIO_PORT: ${MINIO_PORT}
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL}
       CLIENT_URL: ${CLIENT_URL}
       CHOKIDAR_USEPOLLING: "true"
@@ -140,10 +133,6 @@ services:
     volumes:
       - ./server:/app
       - backend-node-modules:/app/node_modules
-    secrets:
-      - better_auth_secret
-      - db_password
-      - minio_password
     depends_on:
       db:
         condition: service_healthy
@@ -195,17 +184,9 @@ services:
 
 volumes:
   dev-db-data:
-  minio-data: # Named volumes preserve image-installed node_modules under the source bind-mounts
-
+  minio-data:
   backend-node-modules:
   frontend-node-modules:
 
-secrets:
-  better_auth_secret:
-    file: ./secrets/better_auth_secret.txt
-  db_password:
-    file: ./secrets/db_password.txt
-  pgadmin_password:
-    file: ./secrets/pgadmin_password.txt
-  minio_password:
-    file: ./secrets/minio_password.txt
+
+
