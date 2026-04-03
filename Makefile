@@ -86,11 +86,7 @@ dev-elk: setup
 	@bash scripts/elk-setup.sh import &
 	@echo "✅ Dev + ELK stack is up."
 	@echo "   Frontend      → http://localhost:5173"
-	@echo "   Backend       → http://localhost:3000"
-	@echo "   pgAdmin       → http://localhost:8085"
-	@echo "   MinIO UI      → http://localhost:9001"
-	@echo "   Kibana        → http://localhost:5601"
-	@echo "   Elasticsearch → http://localhost:9200"
+	@echo "   Kibana        → https://localhost:5601"
 
 infra: setup
 	@echo "▶  Starting infrastructure only…"
