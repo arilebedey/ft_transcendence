@@ -1,6 +1,7 @@
 SECRETS_DIR  = ./secrets
 DEV_COMPOSE  = docker compose -f docker-compose.yaml
 PROD_COMPOSE = docker compose -f docker-compose.prod.yaml
+PROD_HOST    ?= localhost
 
 .DEFAULT_GOAL := help
 
@@ -93,7 +94,7 @@ build: setup
 	@echo "✅ Dev images built."
 
 build-prod: setup
-	$(PROD_COMPOSE) build backend frontend
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) build backend frontend
 	@echo "✅ Prod images built."
 
 clean-images:
@@ -105,11 +106,11 @@ clean-images:
 prod: setup
 	@echo "▶  Starting prod stack…"
 	-$(DEV_COMPOSE) rm -fs frontend backend
-	$(PROD_COMPOSE) up -d --build --remove-orphans
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) up -d --build --remove-orphans
 	@echo "▶  Running migrations…"
-	$(PROD_COMPOSE) run --rm migrate
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) run --rm migrate
 	@echo "✅ Prod stack is up."
-	@echo "   Frontend  → https://localhost"
+	@echo "   Frontend  → https://$(PROD_HOST)"
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 
@@ -118,7 +119,7 @@ down:
 	@echo "✅ Dev stack stopped."
 
 down-prod:
-	$(PROD_COMPOSE) down --remove-orphans
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) down --remove-orphans
 	@echo "✅ Prod stack stopped."
 
 clean:
