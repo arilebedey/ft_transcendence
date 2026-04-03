@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-KIBANA_URL="${KIBANA_URL:-http://localhost:5601}"
+KIBANA_URL="${KIBANA_URL:-https://localhost:5601}"
 ELASTIC_USER="${ELASTIC_USER:-elastic}"
 ELASTIC_PASSWORD="${ELASTIC_PASSWORD:-changeme}"
 NDJSON_FILE="docker/elk/kibana-saved-objects.ndjson"
@@ -22,7 +22,7 @@ wait_for_kibana() {
   echo "⏳ Waiting for Kibana to be ready (max ${MAX_WAIT}s)…"
   local elapsed=0
   while [ $elapsed -lt $MAX_WAIT ]; do
-    if curl -sf $AUTH "${KIBANA_URL}/api/status" | grep -q '"level":"available"' 2>/dev/null; then
+    if curl -sfk $AUTH "${KIBANA_URL}/api/status" | grep -q '"level":"available"' 2>/dev/null; then
       echo "✅ Kibana is ready."
       return 0
     fi
@@ -43,7 +43,7 @@ do_import() {
 
   echo "📦 Importing saved objects from ${NDJSON_FILE}…"
   local response
-  response=$(curl -s -w "\n%{http_code}" \
+  response=$(curl -sk -w "\n%{http_code}" \
     $AUTH \
     -X POST "${KIBANA_URL}/api/saved_objects/_import?overwrite=true" \
     -H "kbn-xsrf: true" \
@@ -69,7 +69,7 @@ do_export() {
   wait_for_kibana
 
   echo "📤 Exporting all saved objects from Kibana…"
-  curl -s $AUTH \
+  curl -sk $AUTH \
     -X POST "${KIBANA_URL}/api/saved_objects/_export" \
     -H "kbn-xsrf: true" \
     -H "Content-Type: application/json" \
