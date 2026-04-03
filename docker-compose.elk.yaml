@@ -4,14 +4,35 @@
 #   make prod-elk       (start prod stack + ELK)
 #   make down-elk       (stop ELK only)
 #
-# Backend environment variables (LOGSTASH_HOST / LOGSTASH_PORT)
-# are injected by the corresponding make targets.
-#
-# Security: xpack is enabled. Default credentials: elastic / changeme
-# Override with ELASTIC_PASSWORD env var.
+# Security: xpack enabled + Kibana HTTPS (self-signed cert).
+# Kibana login → https://localhost:5601 (user: elastic / $ELASTIC_PASSWORD)
 # ─────────────────────────────────────────────────────────────────────────────
 
 services:
+
+  # ── One-shot: generate self-signed TLS cert for Kibana ─────────────────────
+  generate-certs:
+    image: alpine:3.19
+    container_name: ftt_elk_certs
+    command:
+      - /bin/sh
+      - -c
+      - |
+        if [ ! -f /certs/kibana.crt ]; then
+          apk add --no-cache openssl > /dev/null 2>&1
+          openssl req -x509 -nodes -newkey rsa:2048 \
+            -keyout /certs/kibana.key \
+            -out /certs/kibana.crt \
+            -days 3650 \
+            -subj '/CN=localhost/O=ft_transcendence'
+          chmod 644 /certs/kibana.crt /certs/kibana.key
+          echo 'TLS certificates generated.'
+        else
+          echo 'TLS certificates already exist.'
+        fi
+    volumes:
+      - kibana-certs:/certs
+    restart: "no"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
@@ -29,7 +50,7 @@ services:
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     healthcheck:
-      test: [ "CMD-SHELL", "curl -sf -u elastic:${ELASTIC_PASSWORD:-changeme} http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'" ]
+      test: [ "CMD-SHELL", "curl -sf -u elastic:$$ELASTIC_PASSWORD http://localhost:9200/_cluster/health | grep -q 'green\\|yellow'" ]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -40,6 +61,28 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  # ── One-shot: set kibana_system password so Kibana can connect to ES ───────
+  setup-elk-users:
+    image: curlimages/curl:8.7.1
+    container_name: ftt_elk_setup_users
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-changeme}
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "Setting kibana_system password..."
+        curl -sf -u "elastic:$$ELASTIC_PASSWORD" \
+          -X POST "http://elasticsearch:9200/_security/user/kibana_system/_password" \
+          -H "Content-Type: application/json" \
+          -d "{\"password\": \"$$ELASTIC_PASSWORD\"}"
+        echo ""
+        echo "kibana_system password configured."
+    restart: "no"
 
   logstash:
     image: docker.elastic.co/logstash/logstash:8.13.4
@@ -56,7 +99,7 @@ services:
       elasticsearch:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "curl -s http://localhost:9600/_node/stats | grep -q '\"status\":\"green\"'" ]
+      test: [ "CMD-SHELL", "curl -s http://localhost:9600/_node/stats | grep -q 'green'" ]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -73,16 +116,23 @@ services:
     container_name: ftt_kibana
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD:-changeme}
       - SERVER_NAME=ft_transcendence_kibana
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_CERTIFICATE=/etc/kibana/certs/kibana.crt
+      - SERVER_SSL_KEY=/etc/kibana/certs/kibana.key
     ports:
       - "127.0.0.1:5601:5601"
+    volumes:
+      - kibana-certs:/etc/kibana/certs:ro
     depends_on:
-      elasticsearch:
-        condition: service_healthy
+      setup-elk-users:
+        condition: service_completed_successfully
+      generate-certs:
+        condition: service_completed_successfully
     healthcheck:
-      test: [ "CMD-SHELL", "curl -sf -u elastic:${ELASTIC_PASSWORD:-changeme} http://localhost:5601/api/status | grep -q '\"level\":\"available\"'" ]
+      test: [ "CMD-SHELL", "curl -sf -k https://localhost:5601/api/status | grep -q 'available'" ]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -96,3 +146,4 @@ services:
 
 volumes:
   elasticsearch-data:
+  kibana-certs:
