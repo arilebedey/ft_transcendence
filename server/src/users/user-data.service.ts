@@ -6,6 +6,8 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { DATABASE_CONNECTION } from 'src/database/database-connection';
+import { user } from 'src/auth/better-auth.schema';
+import { fallbackUsername, normalizeUsername } from 'src/auth/username.utils';
 import { userData } from './user-data.schema';
 import { and, asc, eq, ilike, ne, or, sql } from 'drizzle-orm';
 import { UpdateUserDataDto } from './dto/update-user-data.dto';
@@ -27,20 +29,79 @@ export class UserDataService {
     private readonly db: AppDatabase,
   ) {}
 
-  async get(userId: string) {
+  private async ensureUserDataExists(userId: string) {
     const existing = await this.db
       .select()
       .from(userData)
       .where(eq(userData.id, userId))
       .limit(1);
 
-    if (existing.length === 0) {
+    if (existing.length > 0) {
+      return existing[0];
+    }
+
+    const authUsers = await this.db
+      .select({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      })
+      .from(user)
+      .where(eq(user.id, userId))
+      .limit(1);
+
+    if (authUsers.length === 0) {
+      return null;
+    }
+
+    const authUser = authUsers[0];
+    let username = normalizeUsername(
+      authUser.name ?? authUser.email ?? `user_${authUser.id}`,
+    );
+
+    const conflictingUsernames = await this.db
+      .select({ id: userData.id })
+      .from(userData)
+      .where(eq(userData.name, username))
+      .limit(1);
+
+    if (conflictingUsernames.length > 0) {
+      username = fallbackUsername(username, authUser.id);
+    }
+
+    await this.db
+      .insert(userData)
+      .values({
+        id: authUser.id,
+        name: username,
+        email: authUser.email,
+      })
+      .onConflictDoNothing();
+
+    const repaired = await this.db
+      .select()
+      .from(userData)
+      .where(eq(userData.id, userId))
+      .limit(1);
+
+    if (repaired.length > 0) {
+      this.logger.log(`Recreated missing user_data row for userId: ${userId}`);
+      return repaired[0];
+    }
+
+    return null;
+  }
+
+  async get(userId: string) {
+    const existing = await this.ensureUserDataExists(userId);
+
+    if (!existing) {
       const msg = `User data not found for userId: ${userId}`;
       this.logger.warn(msg);
       throw new NotFoundException(msg);
     }
 
-    return existing[0];
+    return existing;
   }
 
   async isUsernameAvailable(
@@ -102,8 +163,9 @@ export class UserDataService {
     return results;
   }
 
-
   async update(userId: string, dto: UpdateUserDataDto) {
+    await this.ensureUserDataExists(userId);
+
     if (dto.name) {
       const available = await this.isUsernameAvailable(dto.name, userId);
       if (!available) {
@@ -128,6 +190,8 @@ export class UserDataService {
   }
 
   async updateAvatarUrl(userId: string, avatarUrl: string | null) {
+    await this.ensureUserDataExists(userId);
+
     const result = await this.db
       .update(userData)
       .set({ avatarUrl, updatedAt: new Date() })

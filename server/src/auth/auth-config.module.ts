@@ -13,6 +13,7 @@ import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { AppDatabase } from '../database/database.types';
 import { userData } from '../users/user-data.schema';
 import { CustomLogger } from '../utils/custom-logger';
+import { fallbackUsername, normalizeUsername } from './username.utils';
 
 // Instantiated directly (outside DI) because better-auth hooks are
 // plain functions that have no access to the NestJS injector.
@@ -32,21 +33,6 @@ function getIp(ctx: any): string {
 function getUA(ctx: any): string {
   const req = ctx.request?.raw ?? ctx.request;
   return req?.headers?.['user-agent'] ?? 'unknown';
-}
-
-function normalizeUsername(name: string): string {
-  let username = name.toLowerCase().replace(/[^a-z0-9_]/g, '');
-
-  if (username[0] === '_') username = username.slice(1);
-
-  if (!username) username = 'user';
-
-  return username.slice(0, 12);
-}
-
-function fallbackUsername(base: string, id: string | number): string {
-  const trimmed = base.slice(0, 12 - 7);
-  return `${trimmed}_${id.toString().slice(0, 6)}`;
 }
 
 @Module({
