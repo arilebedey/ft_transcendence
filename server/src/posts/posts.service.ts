@@ -1,4 +1,5 @@
-import { ForbiddenException, Inject, Logger, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { CustomLogger } from '../utils/custom-logger';
 import { eq, ilike, inArray, or, and} from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DATABASE_CONNECTION } from '../database/database-connection';
@@ -14,7 +15,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
-  private readonly logger = new Logger(PostsService.name);
+  private readonly logger = new CustomLogger(PostsService.name);
 
   constructor(
     @Inject(DATABASE_CONNECTION)
@@ -22,8 +23,20 @@ export class PostsService {
     private readonly followService: FollowService,
     private readonly likesService: LikesService,
     private readonly UserDataService: UserDataService,
-
   ) {}
+
+  /** Résout userId → name sans jamais lever d'exception (logging only) */
+  private async resolveUser(userId: string): Promise<{ name: string; profileUrl: string }> {
+    try {
+      const user = await this.UserDataService.get(userId);
+      return {
+        name: user.name ?? userId,
+        profileUrl: `http://localhost:5173/profile/${user.name}`,
+      };
+    } catch {
+      return { name: userId, profileUrl: '' };
+    }
+  }
 
   findAll() {
     return this.db.query.post.findMany({
@@ -93,12 +106,7 @@ export class PostsService {
       .insert(schema.post)
       .values({ ...createPostDto, userId })
       .returning();
-<<<<<<< HEAD
-
-    return this.db.query.post.findFirst({
-=======
     const post = await this.db.query.post.findFirst({
->>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
       where: eq(schema.post.id, created.id),
       with: {
         author: {
@@ -109,8 +117,6 @@ export class PostsService {
         },
       },
     });
-<<<<<<< HEAD
-=======
 
     if (!post) {
       this.logger.warn(
@@ -119,9 +125,16 @@ export class PostsService {
       return null;
     }
 
-    this.logger.log(`Created post #${created.id} by user ${userId}`);
+    const authorName = (post.author as { name: string }).name;
+    this.logger.log(`${authorName} created post #${created.id}`);
+    this.logger.event('post.created', {
+      userId,
+      userName: authorName,
+      userProfileUrl: `http://localhost:5173/profile/${authorName}`,
+      postId: created.id,
+      postUrl: `http://localhost:5173/posts/${created.id}`,
+    });
     return post;
->>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
   }
 
   async update(id: number, updatePostDto: UpdatePostDto, userId: string) {
@@ -139,11 +152,15 @@ export class PostsService {
       .set(updatePostDto)
       .where(eq(schema.post.id, id))
       .returning();
-<<<<<<< HEAD
-
-=======
-    this.logger.log(`Updated post #${id} by user ${userId}`);
->>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
+    const u = await this.resolveUser(userId);
+    this.logger.log(`${u.name} updated post #${id}`);
+    this.logger.event('post.updated', {
+      userId,
+      userName: u.name,
+      userProfileUrl: u.profileUrl,
+      postId: id,
+      postUrl: `http://localhost:5173/posts/${id}`,
+    });
     return updated;
   }
 
@@ -161,11 +178,15 @@ export class PostsService {
       .delete(schema.post)
       .where(eq(schema.post.id, id))
       .returning();
-<<<<<<< HEAD
-
-=======
-    this.logger.log(`Deleted post #${id} by user ${userId}`);
->>>>>>> b80e326 (feat(logging): added aditional logs for the posts management)
+    const u = await this.resolveUser(userId);
+    this.logger.log(`${u.name} deleted post #${id}`);
+    this.logger.event('post.deleted', {
+      userId,
+      userName: u.name,
+      userProfileUrl: u.profileUrl,
+      postId: id,
+      postUrl: `http://localhost:5173/posts/${id}`,
+    });
     return deleted;
   }
 

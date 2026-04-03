@@ -11,6 +11,27 @@ import { DatabaseModule } from '../database/database.module';
 import { DATABASE_CONNECTION } from '../database/database-connection';
 import type { AppDatabase } from '../database/database.types';
 import { userData } from '../users/user-data.schema';
+import { CustomLogger } from '../utils/custom-logger';
+
+// Instantiated directly (outside DI) because better-auth hooks are
+// plain functions that have no access to the NestJS injector.
+const authLogger = new CustomLogger('AuthHook');
+
+/** Extrait l'IP réelle même derrière un proxy */
+function getIp(ctx: any): string {
+  const req = ctx.request?.raw ?? ctx.request;
+  return (
+    req?.headers?.['x-forwarded-for']?.split(',')[0]?.trim() ??
+    req?.socket?.remoteAddress ??
+    'unknown'
+  );
+}
+
+/** Extrait le User-Agent */
+function getUA(ctx: any): string {
+  const req = ctx.request?.raw ?? ctx.request;
+  return req?.headers?.['user-agent'] ?? 'unknown';
+}
 
 @Module({
   imports: [
@@ -42,34 +63,111 @@ import { userData } from '../users/user-data.schema';
           ],
           hooks: {
             before: createAuthMiddleware(async (ctx) => {
-              if (!ctx.path.startsWith('/sign-up')) return;
+              const ip = getIp(ctx);
+              const ua = getUA(ctx);
 
-              const body = ctx.body as { name?: string } | undefined;
-              if (!body?.name) return;
+              // Sign-up validation before insertion
+              if (ctx.path.startsWith('/sign-up')) {
+                const body = ctx.body as { name?: string; email?: string } | undefined;
 
-              const existing = await database
-                .select({ id: userData.id })
-                .from(userData)
-                .where(eq(userData.name, body.name))
-                .limit(1);
+                // Missing required fields
+                if (!body?.name || !body?.email) {
+                  const missingFields = [
+                    !body?.name && 'username',
+                    !body?.email && 'email',
+                  ].filter(Boolean).join(', ');
 
-              if (existing.length > 0) {
-                throw new APIError('UNPROCESSABLE_ENTITY', {
-                  message: 'Username already taken',
-                });
+                  authLogger.warn(`[SECURITY] Sign-up rejected: missing fields (${missingFields}) from ${ip}`);
+                  authLogger.event('auth.signup_failed', {
+                    reason: 'missing_required_fields',
+                    missingFields,
+                    ip,
+                    userAgent: ua,
+                  });
+                  return;
+                }
+
+                // Username already taken
+                const existing = await database
+                  .select({ id: userData.id })
+                  .from(userData)
+                  .where(eq(userData.name, body.name))
+                  .limit(1);
+
+                if (existing.length > 0) {
+                  authLogger.warn(`[SECURITY] Sign-up rejected: username "${body.name}" already taken from ${ip}`);
+                  authLogger.event('auth.signup_failed', {
+                    reason: 'username_already_taken',
+                    attemptedUsername: body.name,
+                    ip,
+                    userAgent: ua,
+                  });
+                  throw new APIError('UNPROCESSABLE_ENTITY', {
+                    message: 'Username already taken',
+                  });
+                }
+              }
+
+              // Log sign-in attempt before processing
+              if (ctx.path.startsWith('/sign-in')) {
+                const body = ctx.body as { email?: string } | undefined;
+                authLogger.log(`[AUTH] Sign-in attempt for "${body?.email ?? 'unknown'}" from ${ip}`);
               }
             }),
-            after: createAuthMiddleware(async (ctx) => {
-              if (!ctx.path.startsWith('/sign-up')) return;
 
+            after: createAuthMiddleware(async (ctx) => {
+              const ip = getIp(ctx);
+              const ua = getUA(ctx);
               const newSession = ctx.context.newSession;
+
+              // Failed sign-in (no session created)
+              if (ctx.path.startsWith('/sign-in') && !newSession) {
+                const body = ctx.body as { email?: string } | undefined;
+                authLogger.warn(`[SECURITY] Failed sign-in for "${body?.email ?? 'unknown'}" from ${ip}`);
+                authLogger.event('auth.signin_failed', {
+                  reason: 'invalid_credentials',
+                  attemptedEmail: body?.email ?? 'unknown',
+                  ip,
+                  userAgent: ua,
+                  severity: 'high',
+                });
+                return;
+              }
+
               if (!newSession) return;
 
               const { id, name, email } = newSession.user;
-              await database
-                .insert(userData)
-                .values({ id, name, email })
-                .onConflictDoNothing();
+
+              // Successful sign-up
+              if (ctx.path.startsWith('/sign-up')) {
+                await database
+                  .insert(userData)
+                  .values({ id, name, email })
+                  .onConflictDoNothing();
+
+                authLogger.log(`[AUTH] New account: ${name} (${email}) from ${ip}`);
+                authLogger.event('auth.signup', {
+                  userId: id,
+                  userName: name,
+                  email,
+                  userProfileUrl: `http://localhost:5173/profile/${name}`,
+                  ip,
+                  userAgent: ua,
+                });
+              }
+
+              // Successful sign-in
+              if (ctx.path.startsWith('/sign-in')) {
+                authLogger.log(`[AUTH] Signed in: ${name} (${email}) from ${ip}`);
+                authLogger.event('auth.signin', {
+                  userId: id,
+                  userName: name,
+                  email,
+                  userProfileUrl: `http://localhost:5173/profile/${name}`,
+                  ip,
+                  userAgent: ua,
+                });
+              }
             }),
           },
         }),
