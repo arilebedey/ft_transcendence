@@ -55,28 +55,39 @@ export class CustomLogger extends ConsoleLogger {
     });
   }
 
-  log(message: any, context?: string) {
-    super.log(message, context);
-    this.sendToLogstash('log', message, context);
+  private extractContext(optionalParams: any[]): string | undefined {
+    // The context is typically the last string argument passed by NestJS's Logger
+    if (optionalParams.length > 0 && typeof optionalParams[optionalParams.length - 1] === 'string') {
+      return optionalParams[optionalParams.length - 1];
+    }
+    return undefined;
   }
 
-  error(message: any, trace?: string, context?: string) {
-    super.error(message, trace, context);
+  log(message: any, ...optionalParams: any[]) {
+    super.log(message, ...optionalParams);
+    this.sendToLogstash('log', message, this.extractContext(optionalParams));
+  }
+
+  error(message: any, ...optionalParams: any[]) {
+    super.error(message, ...optionalParams);
+    // Error trace is sometimes passed before context
+    let context = this.extractContext(optionalParams);
+    let trace = optionalParams.length > 1 && typeof optionalParams[0] === 'string' ? optionalParams[0] : undefined;
     this.sendToLogstash('error', message, context, trace);
   }
 
-  warn(message: any, context?: string) {
-    super.warn(message, context);
-    this.sendToLogstash('warn', message, context);
+  warn(message: any, ...optionalParams: any[]) {
+    super.warn(message, ...optionalParams);
+    this.sendToLogstash('warn', message, this.extractContext(optionalParams));
   }
 
-  debug(message: any, context?: string) {
-    super.debug(message, context);
-    this.sendToLogstash('debug', message, context);
+  debug(message: any, ...optionalParams: any[]) {
+    super.debug(message, ...optionalParams);
+    this.sendToLogstash('debug', message, this.extractContext(optionalParams));
   }
 
-  verbose(message: any, context?: string) {
-    super.verbose(message, context);
-    this.sendToLogstash('verbose', message, context);
+  verbose(message: any, ...optionalParams: any[]) {
+    super.verbose(message, ...optionalParams);
+    this.sendToLogstash('verbose', message, this.extractContext(optionalParams));
   }
 }
