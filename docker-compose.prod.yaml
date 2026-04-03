@@ -129,8 +129,8 @@ services:
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ACCESS_KEY: minioadmin
-      BETTER_AUTH_URL: http://localhost:3000
-      CLIENT_URL: http://localhost:5173
+      BETTER_AUTH_URL: https://${PROD_HOST:-localhost}/api/auth
+      CLIENT_URL: https://${PROD_HOST:-localhost}
     ports:
       - "3000:3000"
     secrets:
@@ -159,8 +159,11 @@ services:
       context: .
       dockerfile: docker/frontend/Dockerfile.prod
     image: ft_transcendence-frontend:prod
+    environment:
+      SERVER_NAME: ${PROD_HOST:-localhost}
     ports:
-      - "5173:80"
+      - "80:80"
+      - "443:443"
     depends_on:
       backend:
         condition: service_healthy

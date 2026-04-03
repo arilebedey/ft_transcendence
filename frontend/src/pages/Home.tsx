@@ -18,6 +18,7 @@
   import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
   import { PostCard } from "@/components/ui/post-card";
   import { Button } from "@/components/ui/button";
+  import { authClient } from "@/lib/auth-client";
   import { useTranslation } from "react-i18next";
 
   interface Post {
@@ -40,6 +41,9 @@
     const [newPostContent, setNewPostContent] = useState("");
     const [filter, setFilter] = useState<'recent' | 'oldest' | 'most_liked'>('recent');
     const { t } = useTranslation();
+    const sessionResult = authClient.useSession();
+    const session = sessionResult?.data;
+    const currentUserId = session?.user?.id;
     const [searchQuery, setSearchQuery] = useState("");
     const [posts, setPosts] = useState<Post[]>([]);
 

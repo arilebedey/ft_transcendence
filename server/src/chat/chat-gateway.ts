@@ -23,7 +23,7 @@ type ChatSocketData = {
 @UseGuards(AuthGuard)
 @WebSocketGateway({
   cors: {
-    origin: true, // WARN: Set to client URL in prod!
+    origin: process.env.CLIENT_URL ?? true,
     credentials: true,
   },
 })

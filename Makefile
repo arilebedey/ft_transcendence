@@ -109,6 +109,7 @@ prod: setup
 	@echo "▶  Running migrations…"
 	$(PROD_COMPOSE) run --rm migrate
 	@echo "✅ Prod stack is up."
+	@echo "   Frontend  → https://localhost"
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 
@@ -167,4 +168,3 @@ populate:
         down down-prod clean fclean re \
         logs logs-backend logs-frontend \
         shell-backend shell-frontend ps
-
