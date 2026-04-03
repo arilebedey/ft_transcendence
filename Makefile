@@ -1,6 +1,9 @@
 SECRETS_DIR  = ./secrets
 DEV_COMPOSE  = docker compose -f docker-compose.yaml
 PROD_COMPOSE = docker compose -f docker-compose.prod.yaml
+ELK_COMPOSE  = docker compose -f docker-compose.elk.yaml
+DEV_ELK      = docker compose -f docker-compose.yaml -f docker-compose.elk.yaml
+PROD_ELK     = docker compose -f docker-compose.prod.yaml -f docker-compose.elk.yaml
 
 .DEFAULT_GOAL := help
 
@@ -12,6 +15,7 @@ help:
 	@echo ""
 	@echo "  ── Dev ─────────────────────────────────────────────────────────"
 	@echo "    make dev              Setup secrets + start full dev stack"
+	@echo "    make dev-elk          Start dev stack + ELK (Elastic/Logstash/Kibana)"
 	@echo "    make infra            Start only db, minio, pgadmin"
 	@echo "    make migrate          Run DB migrations inside Docker"
 	@echo "    make restart-backend  Restart only the backend container"
@@ -19,6 +23,7 @@ help:
 	@echo ""
 	@echo "  ── Prod ────────────────────────────────────────────────────────"
 	@echo "    make prod             Setup secrets + build + start prod stack"
+	@echo "    make prod-elk         Start prod stack + ELK (Elastic/Logstash/Kibana)"
 	@echo ""
 	@echo "  ── Build ───────────────────────────────────────────────────────"
 	@echo "    make build            Rebuild dev application images"
@@ -28,6 +33,9 @@ help:
 	@echo "  ── Teardown ────────────────────────────────────────────────────"
 	@echo "    make down             Stop dev stack"
 	@echo "    make down-prod        Stop prod stack"
+	@echo "    make down-elk         Stop ELK stack only"
+	@echo "    make export-elk       Export current Kibana dashboards to repo"
+	@echo "    make import-elk       Manually re-import Kibana dashboards"
 	@echo "    make clean            Stop dev stack + remove volumes"
 	@echo "    make fclean           Stop dev stack + remove volumes + images"
 	@echo ""
@@ -35,6 +43,7 @@ help:
 	@echo "    make logs             Tail all dev service logs"
 	@echo "    make logs-backend     Tail backend logs only"
 	@echo "    make logs-frontend    Tail frontend logs only"
+	@echo "    make logs-elk         Tail ELK service logs"
 	@echo "    make shell-backend    Open a shell in the backend container"
 	@echo "    make shell-frontend   Open a shell in the frontend container"
 	@echo "    make ps               Show running dev containers"
@@ -67,6 +76,21 @@ dev: setup
 	@echo "   Backend   → http://localhost:3000"
 	@echo "   pgAdmin   → http://localhost:8085"
 	@echo "   MinIO UI  → http://localhost:9001"
+
+dev-elk: setup
+	@echo "▶  Starting dev + ELK stack…"
+	$(DEV_ELK) up -d --build --remove-orphans
+	@echo "▶  Running migrations…"
+	$(DEV_ELK) run --rm migrate
+	@echo "▶  Importing Kibana dashboards (background)…"
+	@bash scripts/elk-setup.sh import &
+	@echo "✅ Dev + ELK stack is up."
+	@echo "   Frontend      → http://localhost:5173"
+	@echo "   Backend       → http://localhost:3000"
+	@echo "   pgAdmin       → http://localhost:8085"
+	@echo "   MinIO UI      → http://localhost:9001"
+	@echo "   Kibana        → http://localhost:5601"
+	@echo "   Elasticsearch → http://localhost:9200"
 
 infra: setup
 	@echo "▶  Starting infrastructure only…"
@@ -110,6 +134,18 @@ prod: setup
 	$(PROD_COMPOSE) run --rm migrate
 	@echo "✅ Prod stack is up."
 
+prod-elk: setup
+	@echo "▶  Starting prod + ELK stack…"
+	-$(DEV_COMPOSE) rm -fs frontend backend
+	$(PROD_ELK) up -d --build --remove-orphans
+	@echo "▶  Running migrations…"
+	$(PROD_ELK) run --rm migrate
+	@echo "▶  Importing Kibana dashboards (background)…"
+	@bash scripts/elk-setup.sh import &
+	@echo "✅ Prod + ELK stack is up."
+	@echo "   Kibana        → http://localhost:5601"
+	@echo "   Elasticsearch → http://localhost:9200"
+
 # ── Teardown ─────────────────────────────────────────────────────────────────
 
 down:
@@ -119,6 +155,10 @@ down:
 down-prod:
 	$(PROD_COMPOSE) down --remove-orphans
 	@echo "✅ Prod stack stopped."
+
+down-elk:
+	$(ELK_COMPOSE) down --remove-orphans
+	@echo "✅ ELK stack stopped."
 
 clean:
 	$(DEV_COMPOSE) down -v --remove-orphans
@@ -141,6 +181,9 @@ logs-backend:
 logs-frontend:
 	$(DEV_COMPOSE) logs -f frontend
 
+logs-elk:
+	$(ELK_COMPOSE) logs -f
+
 # ── Shell access ──────────────────────────────────────────────────────────────
 
 shell-backend:
@@ -160,11 +203,20 @@ fix-docker:
 populate:
 	scripts/populateDbs/apply.sh
 
+# ── ELK Dashboard Management ────────────────────────────────────────────────
+
+export-elk:
+	@bash scripts/elk-setup.sh export
+
+import-elk:
+	@bash scripts/elk-setup.sh import
+
 .PHONY: help setup \
-        dev infra regenerate migrate restart-backend restart-frontend \
+        dev dev-elk infra regenerate migrate restart-backend restart-frontend \
         build build-prod clean-images \
-        prod populate fix-docker  \
-        down down-prod clean fclean re \
-        logs logs-backend logs-frontend \
-        shell-backend shell-frontend ps
+        prod prod-elk populate fix-docker  \
+        down down-prod down-elk clean fclean re \
+        logs logs-backend logs-frontend logs-elk \
+        shell-backend shell-frontend ps \
+        export-elk import-elk
 
