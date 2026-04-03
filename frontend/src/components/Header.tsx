@@ -50,7 +50,7 @@ export function Header({
         </div>
 
         {showSearchBar ? (
-          <div className="mx-auto flex max-w-6xl justify-center pb-3 sm:absolute sm:left-1/2 sm:top-1/2 sm:w-full sm:-translate-x-1/2 sm:-translate-y-1/2 sm:px-4 sm:pb-0">
+          <div className="mx-auto flex max-w-6xl justify-center pb-3 sm:pointer-events-none sm:absolute sm:left-1/2 sm:top-1/2 sm:w-full sm:-translate-x-1/2 sm:-translate-y-1/2 sm:px-4 sm:pb-0">
             <SearchBar onSearch={onSearch} onFilterChange={onFilterChange} />
           </div>
         ) : null}
