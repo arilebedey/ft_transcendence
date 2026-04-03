@@ -5,8 +5,8 @@ services:
     image: postgres:15-alpine
     container_name: ftt_prod_postgres
     environment:
-      POSTGRES_DB: prod_db
-      POSTGRES_USER: prod_user
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
     ports:
       - "5432:5432"
@@ -15,7 +15,7 @@ services:
     secrets:
       - db_password
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "prod_user", "-d", "prod_db" ]
+      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -31,7 +31,7 @@ services:
     container_name: ftt_prod_minio
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
     ports:
       - "9000:9000"
@@ -61,14 +61,14 @@ services:
     secrets:
       - minio_password
     entrypoint: >
-      /bin/sh -c " MINIO_PASSWORD=$$(cat /run/secrets/minio_password); mc alias set local http://minio:9000 minioadmin $$MINIO_PASSWORD; mc mb --ignore-existing local/profile-pictures; mc anonymous set download local/profile-pictures; echo 'MinIO bucket ready.'; "
+      /bin/sh -c " MINIO_PASSWORD=$$(cat /run/secrets/minio_password); mc alias set local http://minio:9000 ${MINIO_ACCESS_KEY} $$MINIO_PASSWORD; mc mb --ignore-existing local/profile-pictures; mc anonymous set download local/profile-pictures; mc mb --ignore-existing local/logs-archive; echo 'MinIO buckets ready.'; "
     restart: "no"
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: ftt_prod_pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local.com
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD_FILE: /run/secrets/pgadmin_password
     ports:
       - "8085:80"
@@ -93,11 +93,11 @@ services:
     command: >
       /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); npx drizzle-kit migrate "
     environment:
-      NODE_ENV: production
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: prod_user
-      POSTGRES_DB: prod_db
+      NODE_ENV: ${NODE_ENV}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
     secrets:
       - db_password
       - better_auth_secret
@@ -121,16 +121,18 @@ services:
     command: >
       /bin/sh -c " export BETTER_AUTH_SECRET=$$(cat /run/secrets/better_auth_secret); export POSTGRES_PASSWORD=$$(cat /run/secrets/db_password); export MINIO_SECRET_KEY=$$(cat /run/secrets/minio_password); npm run start:prod "
     environment:
-      NODE_ENV: production
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: prod_user
-      POSTGRES_DB: prod_db
-      MINIO_ENDPOINT: minio
-      MINIO_PORT: 9000
-      MINIO_ACCESS_KEY: minioadmin
+      NODE_ENV: ${NODE_ENV}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_PORT: ${MINIO_PORT}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       BETTER_AUTH_URL: https://${PROD_HOST}/api/auth
       CLIENT_URL: https://${PROD_HOST}
+      LOGSTASH_HOST: ${LOGSTASH_HOST:-}
+      LOGSTASH_PORT: ${LOGSTASH_PORT}
     ports:
       - "3000:3000"
     secrets:
@@ -162,8 +164,9 @@ services:
     environment:
       SERVER_NAME: ${PROD_HOST}
     ports:
-      - "80:80"
-      - "443:443"
+      - "5173:80"
+    environment:
+      - VITE_IS_DEV=${VITE_IS_DEV}
     depends_on:
       backend:
         condition: service_healthy
