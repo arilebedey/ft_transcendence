@@ -1,13 +1,3 @@
-# ── ELK Stack ────────────────────────────────────────────────────────────────
-# Usage:
-#   make dev-elk        (start dev stack + ELK)
-#   make prod-elk       (start prod stack + ELK)
-#   make down-elk       (stop ELK only)
-#
-# Security: xpack enabled + Kibana HTTPS (self-signed cert).
-# Kibana login → https://localhost:5601 (user: elastic / $ELASTIC_PASSWORD)
-# ─────────────────────────────────────────────────────────────────────────────
-
 services:
 
   # ── One-shot: generate self-signed TLS cert for Kibana ─────────────────────
@@ -34,6 +24,21 @@ services:
       - kibana-certs:/certs
     restart: "no"
 
+  # ── One-shot: create MinIO bucket for snapshot archive ─────────────────────
+  minio-init-elk:
+    image: minio/mc
+    container_name: ftt_minio_init_elk
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set myminio http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY};
+        mc mb --ignore-existing myminio/elk-snapshots;
+        echo 'ELK snapshot bucket ready.';
+      "
+    restart: "no"
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: ftt_elasticsearch
@@ -45,10 +50,12 @@ services:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-changeme}
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - "cluster.name=ft_transcendence"
+      - "path.repo=/snapshots"
     ports:
       - "127.0.0.1:9200:9200"
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
+      - elk-snapshots-fs:/snapshots
     healthcheck:
       test: [ "CMD-SHELL", "curl -sf -u elastic:$$ELASTIC_PASSWORD http://localhost:9200/_cluster/health | grep -q 'green\\|yellow'" ]
       interval: 15s
@@ -62,26 +69,18 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ── One-shot: set kibana_system password so Kibana can connect to ES ───────
-  setup-elk-users:
+  # ── One-shot: configure kibana_system + ILM + SLM ──────────────────────────
+  setup-elk:
     image: curlimages/curl:8.7.1
-    container_name: ftt_elk_setup_users
+    container_name: ftt_elk_setup
     depends_on:
       elasticsearch:
         condition: service_healthy
     environment:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-changeme}
-    command:
-      - /bin/sh
-      - -c
-      - |
-        echo "Setting kibana_system password..."
-        curl -sf -u "elastic:$$ELASTIC_PASSWORD" \
-          -X POST "http://elasticsearch:9200/_security/user/kibana_system/_password" \
-          -H "Content-Type: application/json" \
-          -d "{\"password\": \"$$ELASTIC_PASSWORD\"}"
-        echo ""
-        echo "kibana_system password configured."
+    volumes:
+      - ./docker/elk/setup-es.sh:/setup-es.sh:ro
+    command: [ "/bin/sh", "/setup-es.sh" ]
     restart: "no"
 
   logstash:
@@ -127,7 +126,7 @@ services:
     volumes:
       - kibana-certs:/etc/kibana/certs:ro
     depends_on:
-      setup-elk-users:
+      setup-elk:
         condition: service_completed_successfully
       generate-certs:
         condition: service_completed_successfully
@@ -144,6 +143,37 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ── Daily archiver: sync ES snapshots volume → MinIO ───────────────────────
+  elk-archiver:
+    image: minio/mc
+    container_name: ftt_elk_archiver
+    depends_on:
+      setup-elk:
+        condition: service_completed_successfully
+      minio-init-elk:
+        condition: service_completed_successfully
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        mc alias set myminio http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}
+        echo "Archiver started. Syncing every 24h."
+        while true; do
+          echo "[archiver] $(date) - syncing snapshots to MinIO..."
+          mc mirror --overwrite /snapshots myminio/elk-snapshots
+          echo "[archiver] Sync complete. Sleeping 24h."
+          sleep 86400
+        done
+    volumes:
+      - elk-snapshots-fs:/snapshots:ro
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
 volumes:
   elasticsearch-data:
   kibana-certs:
+  elk-snapshots-fs:
