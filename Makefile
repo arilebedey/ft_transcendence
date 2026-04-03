@@ -1,10 +1,7 @@
 SECRETS_DIR  = ./secrets
 DEV_COMPOSE  = docker compose -f docker-compose.yaml
-PROD_COMPOSE = docker compose -f docker-compose.prod.yaml
-PROD_HOST    ?= localhost
 ELK_COMPOSE  = docker compose -f docker-compose.elk.yaml
 DEV_ELK      = docker compose -f docker-compose.yaml -f docker-compose.elk.yaml
-PROD_ELK     = docker compose -f docker-compose.prod.yaml -f docker-compose.elk.yaml
 
 .DEFAULT_GOAL := help
 
@@ -22,23 +19,16 @@ help:
 	@echo "    make restart-backend  Restart only the backend container"
 	@echo "    make restart-frontend Restart only the frontend container"
 	@echo ""
-	@echo "  ── Prod ────────────────────────────────────────────────────────"
-	@echo "    make prod             Setup secrets + build + start prod stack"
-	@echo "    make prod-elk         Start prod stack + ELK (Elastic/Logstash/Kibana)"
-	@echo ""
 	@echo "  ── Build ───────────────────────────────────────────────────────"
 	@echo "    make build            Rebuild dev application images"
-	@echo "    make build-prod       Rebuild prod application images"
 	@echo "    make clean-images     Remove local dev images"
 	@echo ""
 	@echo "  ── Teardown ────────────────────────────────────────────────────"
 	@echo "    make down             Stop dev stack"
-	@echo "    make down-prod        Stop prod stack"
 	@echo "    make down-elk         Stop ELK stack only"
 	@echo "    make export-elk       Export current Kibana dashboards to repo"
 	@echo "    make import-elk       Manually re-import Kibana dashboards"
 	@echo "    make clean            Stop dev stack + remove volumes"
-	@echo "    make clean-prod       Stop prod stack + remove volumes"
 	@echo "    make fclean           Stop dev stack + remove volumes + images"
 	@echo ""
 	@echo "  ── Logs & Debug ────────────────────────────────────────────────"
@@ -114,46 +104,15 @@ build: setup
 	$(DEV_COMPOSE) build backend frontend
 	@echo "✅ Dev images built."
 
-build-prod: setup
-	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) build backend frontend
-	@echo "✅ Prod images built."
-
 clean-images:
 	docker image rm -f ft_transcendence-backend:dev ft_transcendence-frontend:dev 2>/dev/null || true
 	@echo "✅ Dev images removed."
-
-# ── Prod ─────────────────────────────────────────────────────────────────────
-
-prod: setup
-	@echo "▶  Starting prod stack…"
-	-$(DEV_COMPOSE) rm -fs frontend backend
-	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) up -d --build --remove-orphans
-	@echo "▶  Running migrations…"
-	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) run --rm migrate
-	@echo "✅ Prod stack is up."
-	@echo "   Frontend  → https://$(PROD_HOST)"
-
-prod-elk: setup
-	@echo "▶  Starting prod + ELK stack…"
-	-$(DEV_COMPOSE) rm -fs frontend backend
-	$(PROD_ELK) up -d --build --remove-orphans
-	@echo "▶  Running migrations…"
-	$(PROD_ELK) run --rm migrate
-	@echo "▶  Importing Kibana dashboards (background)…"
-	@bash scripts/elk-setup.sh import &
-	@echo "✅ Prod + ELK stack is up."
-	@echo "   Kibana        → http://localhost:5601"
-	@echo "   Elasticsearch → http://localhost:9200"
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 
 down:
 	$(DEV_COMPOSE) down --remove-orphans
 	@echo "✅ Dev stack stopped."
-
-down-prod:
-	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) down --remove-orphans
-	@echo "✅ Prod stack stopped."
 
 down-elk:
 	$(ELK_COMPOSE) down --remove-orphans
@@ -162,10 +121,6 @@ down-elk:
 clean:
 	$(DEV_COMPOSE) down -v --remove-orphans
 	@echo "✅ Dev stack stopped and volumes removed."
-
-clean-prod:
-	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) down -v --remove-orphans
-	@echo "✅ Prod stack stopped and volumes removed."
 
 fclean:
 	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
@@ -216,13 +171,13 @@ import-elk:
 
 .PHONY: help setup \
         dev dev-elk infra regenerate migrate restart-backend restart-frontend \
-        build build-prod clean-images \
-        prod populate fix-docker  \
-        down down-prod clean clean-prod fclean re \
+        build clean-images \
+        populate fix-docker  \
+        down clean fclean re \
         logs logs-backend logs-frontend \
         shell-backend shell-frontend ps \
-        prod prod-elk populate fix-docker  \
-        down down-prod down-elk clean fclean re \
+         populate fix-docker  \
+        down down-elk clean fclean re \
         logs logs-backend logs-frontend logs-elk \
         shell-backend shell-frontend ps \
         export-elk import-elk
