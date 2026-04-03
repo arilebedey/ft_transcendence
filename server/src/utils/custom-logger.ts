@@ -8,11 +8,8 @@ export class CustomLogger extends ConsoleLogger {
   private static ensureClient() {
     if (!this.client) {
       this.client = new net.Socket();
-      const port = Number(process.env.LOGSTASH_PORT || 5000);
+      const port = Number(process.env.LOGSTASH_PORT || 5101);
       const host = process.env.LOGSTASH_HOST || 'logstash';
-      // temporairement en dur pour les tests locaux
-      // const port = 5050;
-      // const host = 'host.docker.internal';
 
       this.client.connect(port, host, () => {
         this.isConnected = true;
@@ -29,23 +26,33 @@ export class CustomLogger extends ConsoleLogger {
     }
   }
 
-  private sendToLogstash(level: string, message: any, context?: string, trace?: string) {
+  private sendToLogstash(level: string, message: any, context?: string, trace?: string, extra?: Record<string, any>) {
+    if (!process.env.LOGSTASH_HOST) return;
+    
     CustomLogger.ensureClient();
-    if (!CustomLogger.client || !CustomLogger.isConnected) return;
+    if (!CustomLogger.client) return;
 
     const payload = JSON.stringify({
       level,
       message,
       context,
       trace,
+      ...extra,
       timestamp: new Date().toISOString(),
     });
 
     try {
       CustomLogger.client.write(payload + '\n');
     } catch {
-      // on ignore pour ne pas casser l'app
+      // silently ignore to avoid crashing the app
     }
+  }
+
+  event(eventType: string, data: Record<string, any>, context?: string) {
+    this.sendToLogstash('event', 'Business Event', context, undefined, {
+      event_type: eventType,
+      ...data,
+    });
   }
 
   log(message: any, context?: string) {

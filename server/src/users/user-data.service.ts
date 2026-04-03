@@ -101,13 +101,8 @@ export class UserDataService {
 
     return results;
   }
-/*
-TODO: 
- Edit logging so it can log how much user has updated (which fields)
- without logging the actual values (for privacy).
- Just the language can be logged as is since it's not personally identifiable information,
- but for doing stats on user behavior.
-*/
+
+
   async update(userId: string, dto: UpdateUserDataDto) {
     if (dto.name) {
       const available = await this.isUsernameAvailable(dto.name, userId);
