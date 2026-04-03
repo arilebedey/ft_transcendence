@@ -8,24 +8,10 @@ import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { userData } from '../users/user-data.schema';
+import { fallbackUsername, normalizeUsername } from './username.utils';
 
 // auth.ts is for Better Auth CLI loading, it is used when generating better-auth schema
 // npx auth@latest generate --config src/auth/auth.ts --output src/auth/better-auth.schema.ts --yes
-
-function normalizeUsername(name: string): string {
-  let username = name.toLowerCase().replace(/[^a-z0-9_]/g, "");
-
-  if (username[0] === "_") username = username.slice(1);
-
-  if (!username) username = "user";
-
-  return username.slice(0, 12);
-}
-
-function fallbackUsername(base: string, id: string | number): string {
-  const trimmed = base.slice(0, 12 - 7);
-  return `${trimmed}_${id.toString().slice(0, 6)}`;
-}
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
