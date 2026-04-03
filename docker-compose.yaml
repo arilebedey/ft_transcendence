@@ -129,8 +129,8 @@ services:
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_ACCESS_KEY: minioadmin
-      BETTER_AUTH_URL: http://localhost:3000
-      CLIENT_URL: http://localhost:5173
+      BETTER_AUTH_URL: https://localhost:5173/api/auth
+      CLIENT_URL: https://localhost:5173
       CHOKIDAR_USEPOLLING: "true"
     ports:
       - "3000:3000"
@@ -169,12 +169,17 @@ services:
       NODE_ENV: development
       VITE_API_PROXY_TARGET: http://backend:3000
       VITE_STORAGE_PROXY_TARGET: http://minio:9000
+      VITE_DEV_HTTPS: "true"
+      VITE_DEV_HTTPS_CERT: /run/secrets/dev-cert.pem
+      VITE_DEV_HTTPS_KEY: /run/secrets/dev-key.pem
       CHOKIDAR_USEPOLLING: "true"
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
       - frontend-node-modules:/app/node_modules
+      - ./secrets/dev-cert.pem:/run/secrets/dev-cert.pem:ro
+      - ./secrets/dev-key.pem:/run/secrets/dev-key.pem:ro
     depends_on:
       backend:
         condition: service_healthy

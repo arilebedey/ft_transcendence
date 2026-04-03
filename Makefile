@@ -65,7 +65,7 @@ dev: setup
 	@echo "▶  Running migrations…"
 	$(DEV_COMPOSE) run --rm migrate
 	@echo "✅ Dev stack is up."
-	@echo "   Frontend  → http://localhost:5173"
+	@echo "   Frontend  → https://localhost:5173"
 	@echo "   Backend   → http://localhost:3000"
 	@echo "   pgAdmin   → http://localhost:8085"
 	@echo "   MinIO UI  → http://localhost:9001"
