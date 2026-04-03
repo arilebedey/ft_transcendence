@@ -80,6 +80,8 @@ services:
       dockerfile: docker/backend/Dockerfile.dev
     image: ft_transcendence-backend:migrate
     working_dir: /app
+    env_file:
+      - ./server/.env
     command: >
       /bin/sh -c " npx drizzle-kit migrate "
     environment:
@@ -105,6 +107,8 @@ services:
       context: .
       dockerfile: docker/backend/Dockerfile.prod
     image: ft_transcendence-backend:prod
+    env_file:
+      - ./server/.env
     command: >
       /bin/sh -c " npm run start:prod "
     environment:
@@ -119,8 +123,8 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
-      CLIENT_URL: ${CLIENT_URL}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-https://${PROD_HOST}/api/auth}
+      CLIENT_URL: ${CLIENT_URL:-https://${PROD_HOST}}
       LOGSTASH_HOST: ${LOGSTASH_HOST:-}
       LOGSTASH_PORT: ${LOGSTASH_PORT}
     ports:
@@ -147,10 +151,11 @@ services:
       context: .
       dockerfile: docker/frontend/Dockerfile.prod
     image: ft_transcendence-frontend:prod
-    ports:
-      - "5173:80"
     environment:
-      - VITE_IS_DEV=${VITE_IS_DEV}
+      SERVER_NAME: ${PROD_HOST}
+    ports:
+      - "80:80"
+      - "443:443"
     depends_on:
       backend:
         condition: service_healthy

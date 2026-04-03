@@ -4,6 +4,7 @@ PROD_COMPOSE = docker compose -f docker-compose.prod.yaml
 ELK_COMPOSE  = docker compose -f docker-compose.elk.yaml
 DEV_ELK      = docker compose -f docker-compose.yaml -f docker-compose.elk.yaml
 PROD_ELK     = docker compose -f docker-compose.prod.yaml -f docker-compose.elk.yaml
+PROD_HOST    ?= localhost
 
 .DEFAULT_GOAL := help
 
@@ -37,6 +38,7 @@ help:
 	@echo "    make export-elk       Export current Kibana dashboards to repo"
 	@echo "    make import-elk       Manually re-import Kibana dashboards"
 	@echo "    make clean            Stop dev stack + remove volumes"
+	@echo "    make clean-prod       Stop prod stack + remove volumes"
 	@echo "    make fclean           Stop dev stack + remove volumes + images"
 	@echo ""
 	@echo "  ── Logs & Debug ────────────────────────────────────────────────"
@@ -113,7 +115,7 @@ build: setup
 	@echo "✅ Dev images built."
 
 build-prod: setup
-	$(PROD_COMPOSE) build backend frontend
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) build backend frontend
 	@echo "✅ Prod images built."
 
 clean-images:
@@ -125,10 +127,11 @@ clean-images:
 prod: setup
 	@echo "▶  Starting prod stack…"
 	-$(DEV_COMPOSE) rm -fs frontend backend
-	$(PROD_COMPOSE) up -d --build --remove-orphans
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) up -d --build --remove-orphans
 	@echo "▶  Running migrations…"
-	$(PROD_COMPOSE) run --rm migrate
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) run --rm migrate
 	@echo "✅ Prod stack is up."
+	@echo "   Frontend  → https://$(PROD_HOST)"
 
 prod-elk: setup
 	@echo "▶  Starting prod + ELK stack…"
@@ -149,7 +152,7 @@ down:
 	@echo "✅ Dev stack stopped."
 
 down-prod:
-	$(PROD_COMPOSE) down --remove-orphans
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) down --remove-orphans
 	@echo "✅ Prod stack stopped."
 
 down-elk:
@@ -159,6 +162,10 @@ down-elk:
 clean:
 	$(DEV_COMPOSE) down -v --remove-orphans
 	@echo "✅ Dev stack stopped and volumes removed."
+
+clean-prod:
+	PROD_HOST=$(PROD_HOST) $(PROD_COMPOSE) down -v --remove-orphans
+	@echo "✅ Prod stack stopped and volumes removed."
 
 fclean:
 	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
@@ -211,8 +218,7 @@ import-elk:
         dev dev-elk infra regenerate migrate restart-backend restart-frontend \
         build build-prod clean-images \
         prod prod-elk populate fix-docker  \
-        down down-prod down-elk clean fclean re \
+	down down-prod down-elk clean clean-prod fclean re \
         logs logs-backend logs-frontend logs-elk \
         shell-backend shell-frontend ps \
         export-elk import-elk
-

@@ -38,6 +38,10 @@ const DEV_USERS = [
   },
 ] as const;
 
+function getSocialCallbackUrl() {
+  return `${window.location.origin}/home`;
+}
+
 export default function LoginForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -215,7 +219,7 @@ export default function LoginForm() {
         onClick={() =>
           authClient.signIn.social({
             provider: "google",
-            callbackURL: "http://localhost:5173/home",
+            callbackURL: getSocialCallbackUrl(),
           })
         }
       >

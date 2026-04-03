@@ -38,6 +38,10 @@ const signUpSchema = z
     path: ["password_verification"],
   });
 
+function getSocialCallbackUrl() {
+  return `${window.location.origin}/home`;
+}
+
 export default function SignUpForm() {
   const { t } = useTranslation();
   const [submitError, setSubmitError] = useState("");
@@ -270,14 +274,13 @@ export default function SignUpForm() {
           onClick={() =>
             authClient.signIn.social({
               provider: "google",
-              callbackURL: "http://localhost:5173/home",
+              callbackURL: getSocialCallbackUrl(),
             })
           }
         >
           {t("ContinueWithGoogle")}
         </Button>
       </form>
-
     </>
   );
 }
