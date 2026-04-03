@@ -220,7 +220,7 @@ import-elk:
         prod populate fix-docker  \
         down down-prod clean clean-prod fclean re \
         logs logs-backend logs-frontend \
-        shell-backend shell-frontend ps
+        shell-backend shell-frontend ps \
         prod prod-elk populate fix-docker  \
         down down-prod down-elk clean fclean re \
         logs logs-backend logs-frontend logs-elk \
