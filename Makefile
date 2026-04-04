@@ -119,12 +119,14 @@ down-elk:
 	@echo "✅ ELK stack stopped."
 
 clean:
+	-$(ELK_COMPOSE) down -v --remove-orphans
 	$(DEV_COMPOSE) down -v --remove-orphans
-	@echo "✅ Dev stack stopped and volumes removed."
+	@echo "✅ Dev + ELK stacks stopped and volumes removed."
 
 fclean:
+	-$(ELK_COMPOSE) down -v --remove-orphans --rmi local
 	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
-	@echo "✅ Dev full cleanup done (containers, volumes, images)."
+	@echo "✅ Dev + ELK full cleanup done (containers, volumes, images)."
 
 re: clean regenerate dev
 
@@ -181,4 +183,3 @@ import-elk:
         logs logs-backend logs-frontend logs-elk \
         shell-backend shell-frontend ps \
         export-elk import-elk
-
