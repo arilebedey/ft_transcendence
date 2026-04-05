@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import * as z from "zod";
 import { authClient } from "@/lib/auth-client";
@@ -46,8 +46,6 @@ export default function SignUpForm() {
   const { t } = useTranslation();
   const [submitError, setSubmitError] = useState("");
   const [usernameTaken, setUsernameTaken] = useState(false);
-  const [usernameChecking, setUsernameChecking] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const form = useForm({
     defaultValues: {
@@ -57,7 +55,7 @@ export default function SignUpForm() {
       password_verification: "",
     },
     validators: {
-      onChange: signUpSchema,
+      onSubmit: signUpSchema,
     },
     listeners: {
       onChange: () => {
@@ -104,24 +102,6 @@ export default function SignUpForm() {
             const errors = field.state.meta.errors;
             const isInvalid = errors.length > 0 || usernameTaken;
 
-            const handleNameChange = (value: string) => {
-              field.handleChange(value);
-              setUsernameTaken(false);
-              setSubmitError("");
-              const trimmed = value.trim().toLowerCase();
-              if (trimmed.length < 3) {
-                setUsernameChecking(false);
-                return;
-              }
-              setUsernameChecking(true);
-              if (debounceRef.current) clearTimeout(debounceRef.current);
-              debounceRef.current = setTimeout(async () => {
-                const { available } = await checkUsernameAvailable(trimmed);
-                setUsernameTaken(!available);
-                setUsernameChecking(false);
-              }, 400);
-            };
-
             return (
               <div className="space-y-2">
                 <Label>{t("Name")}</Label>
@@ -131,15 +111,14 @@ export default function SignUpForm() {
                   type="text"
                   value={field.state.value}
                   onBlur={field.handleBlur}
-                  onChange={(e) => handleNameChange(e.target.value)}
+                  onChange={(e) => {
+                    field.handleChange(e.target.value);
+                    setUsernameTaken(false);
+                    setSubmitError("");
+                  }}
                   placeholder={t("Fullname")}
                 />
-                {usernameChecking && (
-                  <p className="text-sm text-muted-foreground">
-                    {t("checkingUsername")}
-                  </p>
-                )}
-                {!usernameChecking && usernameTaken && (
+                {usernameTaken && (
                   <p className="text-sm text-destructive">
                     {t("usernameTaken")}
                   </p>
@@ -260,9 +239,7 @@ export default function SignUpForm() {
         <Button
           className="w-full mt-4"
           type="submit"
-          disabled={
-            form.state.isSubmitting || usernameChecking || usernameTaken
-          }
+          disabled={form.state.isSubmitting}
         >
           {form.state.isSubmitting ? "Creating account..." : t("signUp")}
         </Button>
