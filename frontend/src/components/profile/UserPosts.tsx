@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PostCard } from "@/components/ui/post-card";
+import { PostCard } from "@/components/PostCard";
 import { authClient } from "@/lib/auth-client";
 import { useTranslation } from "react-i18next";
 
@@ -117,7 +117,7 @@ export function UserPosts({ profileId }: UserPostsProps) {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h2 className="text-lg font-semibold">{t("Posts")}</h2>
+        <h2 className="text-lg font-semibold">{t("ProfileSeens")}</h2>
 
         {posts.length > 0 && (
           <select
