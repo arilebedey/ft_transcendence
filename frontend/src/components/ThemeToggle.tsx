@@ -1,7 +1,8 @@
-import { Trees, Moon, Sun } from "lucide-react";
+import { Trees, Moon, Sun, Mountain } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 
 const themes: { value: Theme; label: string; icon: React.ReactNode }[] = [
+  { value: "earth", label: "Earth", icon: <Mountain className="h-4 w-4" /> },
   { value: "forest", label: "Forest", icon: <Trees className="h-4 w-4" /> },
   {
     value: "dark-blue",

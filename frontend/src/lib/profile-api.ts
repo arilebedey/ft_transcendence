@@ -18,7 +18,7 @@ export interface ProfileUserData {
   name: string;
   email: string;
   bio: string | null;
-  theme: "light" | "dark-blue" | "forest";
+  theme: "light" | "dark-blue" | "forest" | "earth";
   language: "en" | "fr" | "es" | "it";
   twoFactorEnabled: boolean;
   avatarUrl: string | null;

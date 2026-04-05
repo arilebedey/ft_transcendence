@@ -1,7 +1,19 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-export type Theme = "forest" | "dark-blue" | "light";
+export type Theme = "earth" | "forest" | "dark-blue" | "light";
+
+const themeBackgrounds: Record<Theme, string> = {
+  earth: "#2f241d",
+  forest: "#1a2e1a",
+  "dark-blue": "#0c1222",
+  light: "#f8f9fa",
+};
+
+function applyThemeToDocument(theme: Theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  document.documentElement.style.backgroundColor = themeBackgrounds[theme];
+}
 
 interface ThemeState {
   theme: Theme;
@@ -15,8 +27,7 @@ export const useThemeStore = create<ThemeState>()(
       // creates the store and default value
       theme: "light",
       setTheme: (theme) => {
-        // setter
-        document.documentElement.setAttribute("data-theme", theme); // sets the data-theme attribute of the html document for tailwind to read
+        applyThemeToDocument(theme);
         set({ theme });
       },
     }),
@@ -26,7 +37,7 @@ export const useThemeStore = create<ThemeState>()(
       onRehydrateStorage: () => (state) => {
         // runs before React renders
         if (state?.theme) {
-          document.documentElement.setAttribute("data-theme", state.theme);
+          applyThemeToDocument(state.theme);
         }
       },
       version: 0, // for migrations ;)

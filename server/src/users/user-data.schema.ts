@@ -12,7 +12,7 @@ export const userData = pgTable('user_data', {
     .references(() => user.id, { onDelete: 'cascade' }),
   name: text('name').notNull().unique(),
   email: text('email').notNull(),
-  theme: text('theme', { enum: ['light', 'dark-blue', 'forest'] })
+  theme: text('theme', { enum: ['light', 'dark-blue', 'forest', 'earth'] })
     .default('light')
     .notNull(),
   language: text('language', { enum: ['en', 'fr', 'it', 'es'] })
