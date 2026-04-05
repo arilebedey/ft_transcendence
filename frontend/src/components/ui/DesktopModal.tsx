@@ -21,7 +21,7 @@ export function DesktopModal({
       className={cn("fixed inset-0 z-50 flex items-center justify-center", rootClassName)}
     >
       <div
-        className={cn("absolute inset-0 bg-black/30", overlayClassName)}
+        className={cn("absolute inset-0 cursor-pointer bg-black/30", overlayClassName)}
         onClick={onClose}
       />
 

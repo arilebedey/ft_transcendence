@@ -31,7 +31,7 @@ export function LanguageToggle() {
   return (
     <button
       onClick={cycleLanguage}
-      className="inline-flex items-center h-10 gap-1.5 rounded-lg border bg-card p-1 text-sm font-medium transition-colors hover:bg-secondary"
+      className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-lg border bg-card p-1 text-sm font-medium transition-colors hover:bg-secondary"
       title={`Language: ${currentLanguage}`}
     >
       <span className="flex items-center justify-center rounded-md p-2 bg-secondary">

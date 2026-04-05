@@ -20,7 +20,7 @@ export function ThemeToggle() {
         <button
           key={t.value}
           onClick={() => setTheme(t.value)}
-          className={`inline-flex items-center justify-center rounded-md p-2 transition-colors ${
+          className={`inline-flex cursor-pointer items-center justify-center rounded-md p-2 transition-colors ${
             theme === t.value
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"

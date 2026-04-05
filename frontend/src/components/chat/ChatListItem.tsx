@@ -40,7 +40,7 @@ export function ChatListItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors",
+        "flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors",
         selected
           ? "border-primary/30 bg-primary/10"
           : "border-transparent bg-card hover:border-border hover:bg-accent/40",

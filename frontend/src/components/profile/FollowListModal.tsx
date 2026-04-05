@@ -29,7 +29,10 @@ function FollowListRow({
   onClick: () => void;
 }) {
   return (
-    <button onClick={onClick} className={cn("w-full rounded-xl text-left")}>
+    <button
+      onClick={onClick}
+      className={cn("w-full cursor-pointer rounded-xl text-left")}
+    >
       <Card className="border-border/70 bg-background/80 transition hover:border-primary/40">
         <CardContent className="flex items-center gap-3 p-4">
           <UserAvatar
