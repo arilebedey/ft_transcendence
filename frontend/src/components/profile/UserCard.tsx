@@ -18,6 +18,7 @@ import {
   updateProfileMe,
 } from "@/lib/profile-api";
 import { usePresenceStatus } from "@/hooks/usePresenceStatus";
+import { api } from "@/lib/api";
 
 interface UserCardProps {
   profile: ProfileUserData | PublicProfileData;
@@ -28,6 +29,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const fallbackActionError = "Something went wrong. Please try again.";
   const [stats, setStats] = useState({ followers: 0, following: 0 });
   const [bio, setBio] = useState(profile.bio ?? "");
 
@@ -40,21 +42,38 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showEditPreferencesPopup, setShowEditPreferencesPopup] =
     useState(false);
+  const [actionError, setActionError] = useState("");
   const [openFollowList, setOpenFollowList] = useState<
     "followers" | "following" | null
   >(null);
   const online = usePresenceStatus(profile.id, profile.online);
   
   useEffect(() => {
-    if (!isOwnProfile) {
-      setLoadingFollow(true);
-      fetch(`/api/follows/${profile.id}/is-following`)
-        .then(res => res.json())
-        .then(data => setIsFollowing(data.isFollowing))
-        .catch(console.error)
-        .finally(() => setLoadingFollow(false));
+    if (isOwnProfile) {
+      setLoadingFollow(false);
+      setActionError("");
+      return;
     }
-  }, [profile.id, isOwnProfile]);
+
+    const fetchFollowState = async () => {
+      setLoadingFollow(true);
+
+      try {
+        const data = await api.get<{ isFollowing: boolean }>(
+          `/follows/${profile.id}/is-following`,
+        );
+        setIsFollowing(data.isFollowing);
+        setActionError("");
+      } catch {
+        setIsFollowing(false);
+        setActionError(fallbackActionError);
+      } finally {
+        setLoadingFollow(false);
+      }
+    };
+
+    void fetchFollowState();
+  }, [fallbackActionError, profile.id, isOwnProfile]);
 
   useEffect(() => {
     if (!profile?.id) return;
@@ -63,37 +82,45 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
       try {
         const data = await getFollowStats(profile.id);
         setStats({ followers: data.followers, following: data.following });
-      } catch (err) {
-        console.error('Erreur fetch stats (exception):', err);
+      } catch {
+        setActionError(fallbackActionError);
       }
     };
   
-    fetchStats();
-  }, [profile?.id]);
+    void fetchStats();
+  }, [fallbackActionError, profile?.id]);
 
   const onToggleFollow = async () => {
     if (loadingFollow) return;
 
+    const nextIsFollowing = !isFollowing;
+    const followersDelta = nextIsFollowing ? 1 : -1;
+
+    setActionError("");
+    setIsFollowing(nextIsFollowing);
+    setStats((prev) => ({ ...prev, followers: prev.followers + followersDelta }));
+
     try {
-      if (isFollowing) {
-        setStats((prev) => ({ ...prev, followers: prev.followers - 1 }));
-        await fetch("/api/follows", {
+      if (nextIsFollowing) {
+        await api.post("/follows", { followingId: profile.id });
+      } else {
+        const response = await fetch("/api/follows", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ followingId: profile.id }),
         });
-        setIsFollowing(false);
-      } else {
-        setStats((prev) => ({ ...prev, followers: prev.followers + 1 }));
-        await fetch("/api/follows", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ followingId: profile.id }),
-        });
-        setIsFollowing(true);
+
+        if (!response.ok) {
+          throw new Error("Failed to unfollow user");
+        }
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setIsFollowing(!nextIsFollowing);
+      setStats((prev) => ({
+        ...prev,
+        followers: prev.followers - followersDelta,
+      }));
+      setActionError(fallbackActionError);
     }
   };
 
@@ -132,7 +159,11 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
       }
     },
     onError: (error) => {
-      console.error("Profile update failed:", error);
+      setActionError(
+        error instanceof Error
+          ? error.message
+          : fallbackActionError,
+      );
     },
   });
 
@@ -151,6 +182,11 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
           onToggleFollow={onToggleFollow}
         />
       </div>
+      {actionError ? (
+        <div className="rounded-md border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {actionError}
+        </div>
+      ) : null}
       <UserStats
         followers={stats.followers}
         following={stats.following}

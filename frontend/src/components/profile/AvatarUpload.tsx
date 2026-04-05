@@ -46,7 +46,6 @@ export function AvatarUpload({
       setLocalPreviewUrl(null);
     },
     onError: (error) => {
-      console.error("Avatar upload failed:", error);
       setLocalPreviewUrl(null);
     },
     onSettled: () => {

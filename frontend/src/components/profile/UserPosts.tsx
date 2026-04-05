@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PostCard } from "@/components/PostCard";
 import { authClient } from "@/lib/auth-client";
+import { ApiError, api } from "@/lib/api";
 import { useTranslation } from "react-i18next";
 
 interface Post {
@@ -28,6 +29,7 @@ export function UserPosts({ profileId }: UserPostsProps) {
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const [filter, setFilter] = useState<"recent" | "oldest" | "most_liked">(
     "recent",
   );
@@ -42,43 +44,28 @@ export function UserPosts({ profileId }: UserPostsProps) {
         const params = new URLSearchParams();
         params.set("filter", filter);
 
-        const res = await fetch(
-          `/api/posts/user/${profileId}?${params.toString()}`,
+        const data = await api.get<Post[]>(
+          `/posts/user/${profileId}?${params.toString()}`,
         );
-
-        if (!res.ok) {
-          console.error(t("FetchUserPostsError"), res.statusText);
-          return;
-        }
-
-        const data = await res.json();
         setPosts(data);
-      } catch (err) {
-        console.error(t("FetchUserPostsError"), err);
+        setErrorMessage("");
+      } catch {
+        setPosts([]);
+        setErrorMessage(t("FetchUserPostsError"));
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserPosts();
-  }, [profileId, filter]);
+    void fetchUserPosts();
+  }, [profileId, filter, t]);
 
   const handleLike = async (postId: number) => {
     try {
-      const res = await fetch(`/api/likes/toggle`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId }),
-      });
-
-      if (!res.ok) {
-        console.error(t("ToggleLikeFailed"), res.statusText);
-        return;
-      }
-
-      const data = await res.json();
+      const data = await api.post<{ likes: number; liked: boolean }>(
+        "/likes/toggle",
+        { postId },
+      );
 
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
@@ -87,30 +74,25 @@ export function UserPosts({ profileId }: UserPostsProps) {
             : post,
         ),
       );
-    } catch (err) {
-      console.error(t("ToggleLikeError"), err);
+      setErrorMessage("");
+    } catch {
+      setErrorMessage(t("ToggleLikeError"));
     }
   };
 
   const handleDelete = async (postId: number) => {
     try {
-      const res = await fetch(`/api/posts/${postId}`, {
-        method: "DELETE",
-      });
-
-      if (res.status === 403) {
-        console.error(t("DeletePostForbidden"));
-        return;
-      }
-
-      if (!res.ok) {
-        console.error(t("DeletePostError"), res.statusText);
-        return;
-      }
+      await api.delete(`/posts/${postId}`);
 
       setPosts((prev) => prev.filter((post) => post.id !== postId));
-    } catch (err) {
-      console.error(t("DeletePostError"), err);
+      setErrorMessage("");
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 403) {
+        setErrorMessage(t("DeletePostForbidden"));
+        return;
+      }
+
+      setErrorMessage(t("DeletePostError"));
     }
   };
 
@@ -135,11 +117,16 @@ export function UserPosts({ profileId }: UserPostsProps) {
       </div>
 
       <div className="mt-4 space-y-4">
+        {errorMessage ? (
+          <div className="rounded-md border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {errorMessage}
+          </div>
+        ) : null}
         {loading ? (
           <div className="text-center text-muted-foreground py-6">
             {t("Loading")}...
           </div>
-        ) : posts.length === 0 ? (
+        ) : posts.length === 0 && !errorMessage ? (
           <div className="text-center text-muted-foreground py-6">
             {t("NoPostsYet")}
           </div>
