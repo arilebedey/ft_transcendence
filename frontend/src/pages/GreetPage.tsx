@@ -49,10 +49,8 @@ export function GreetPage() {
                 </p>
               </div>
               {/*Reowrk en un component content.tsx qu'on pourra reutiliser partout*/}
-              <div className="space-y-3 text-lg text-muted-foreground">
-                <p>{t("shareContent")}</p>
-                <p>{t("followInterest")}</p>
-                <p>{t("discover")}</p>
+              <div className="text-lg text-muted-foreground text-center">
+                <p>{t("welcomeSubtitle")}</p>
               </div>
             </div>
 
