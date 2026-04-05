@@ -13,6 +13,7 @@ interface DropDownListProps {
 export function DropDownList({ currentUserId, authorId, onDelete, children }: DropDownListProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hasActions = currentUserId === authorId || Boolean(children);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -23,6 +24,10 @@ export function DropDownList({ currentUserId, authorId, onDelete, children }: Dr
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (!hasActions) {
+    return null;
+  }
 
   return (
     <div className="relative ml-auto shrink-0 self-start" ref={menuRef}>
