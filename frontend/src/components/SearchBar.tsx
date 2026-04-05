@@ -143,7 +143,7 @@ export function SearchBar({
   return (
     <div
       ref={containerRef}
-      className="relative flex w-full items-center gap-2 sm:pointer-events-auto sm:w-[300px] md:w-[400px] lg:w-[600px]"
+      className="relative flex w-full items-center sm:pointer-events-auto sm:w-[300px] md:w-[400px] lg:w-[600px]"
     >
       <div className="relative flex-1">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -159,21 +159,37 @@ export function SearchBar({
           }}
           onFocus={() => updateDropdownVisibility()}
           onKeyDown={handleKeyDown}
-          className="h-10 rounded-full border-none bg-secondary pl-12 pr-24 text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
+          className="h-10 rounded-full border-none bg-secondary pl-12 pr-20 text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
         />
 
         {query.trim().length > 0 && (
           <Button
             type="button"
-            variant="secondary"
-            size="sm"
+            variant="ghost"
+            size="icon"
             onClick={clearSearch}
             aria-label={t("ClearSearch")}
-            className="absolute right-2 top-1/2 h-8 -translate-y-1/2 rounded-full border border-border/60 px-2 text-xs shadow-sm"
+            className={`absolute top-1/2 h-8 w-8 -translate-y-1/2 rounded-full border-none bg-transparent shadow-none cursor-pointer hover:bg-transparent ${
+              showSortButton ? "right-10" : "right-2"
+            }`}
           >
             <X className="h-3.5 w-3.5" />
-            <span>{t("ClearSearch")}</span>
           </Button>
+        )}
+
+        {showSortButton && (
+          <div className="absolute right-2 top-1/2 -translate-y-1/2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => setShowFilterDropdown((v) => !v)}
+              aria-label={t("SortBy")}
+              className="h-8 w-8 rounded-full border-none bg-secondary shadow-none transition-colors hover:bg-secondary/80"
+            >
+              <Sliders className="h-4 w-4" />
+            </Button>
+          </div>
         )}
 
         {showDropdown && (
@@ -209,61 +225,46 @@ export function SearchBar({
             })}
           </div>
         )}
+
+        {showFilterDropdown && (
+          <div className="absolute right-0 mt-2 w-54 z-50">
+            <ListCard title={t("SortBy")}>
+              <ListItem
+                primary={t("MostRecent")}
+                action={filter === "recent" ? "✓" : undefined}
+                className="text-sm py-1.5"
+                onClick={() => {
+                  setFilter("recent");
+                  setShowFilterDropdown(false);
+                  onFilterChange?.("recent");
+                }}
+              />
+
+              <ListItem
+                primary={t("Oldest")}
+                action={filter === "oldest" ? "✓" : undefined}
+                className="text-sm py-1.5"
+                onClick={() => {
+                  setFilter("oldest");
+                  setShowFilterDropdown(false);
+                  onFilterChange?.("oldest");
+                }}
+              />
+
+              <ListItem
+                primary={t("MostLiked")}
+                action={filter === "most_liked" ? "✓" : undefined}
+                className="text-sm py-1.5"
+                onClick={() => {
+                  setFilter("most_liked");
+                  setShowFilterDropdown(false);
+                  onFilterChange?.("most_liked");
+                }}
+              />
+            </ListCard>
+          </div>
+        )}
       </div>
-
-      {showSortButton && (
-        <div className="relative">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => setShowFilterDropdown((v) => !v)}
-            aria-label={t("SortBy")}
-            className="h-12 w-12 rounded-full border-border/70 bg-card/90 shadow-sm backdrop-blur-sm transition-all hover:border-primary/40 hover:bg-accent/20"
-          >
-            <Sliders className="h-4 w-4" />
-          </Button>
-
-          {showFilterDropdown && (
-            <div className="absolute right-0 mt-2 w-54 z-50">
-              <ListCard title={t("SortBy")}>
-                <ListItem
-                  primary={t("MostRecent")}
-                  action={filter === "recent" ? "✓" : undefined}
-                  className="text-sm py-1.5"
-                  onClick={() => {
-                    setFilter("recent");
-                    setShowFilterDropdown(false);
-                    onFilterChange?.("recent");
-                  }}
-                />
-
-                <ListItem
-                  primary={t("Oldest")}
-                  action={filter === "oldest" ? "✓" : undefined}
-                  className="text-sm py-1.5"
-                  onClick={() => {
-                    setFilter("oldest");
-                    setShowFilterDropdown(false);
-                    onFilterChange?.("oldest");
-                  }}
-                />
-
-                <ListItem
-                  primary={t("MostLiked")}
-                  action={filter === "most_liked" ? "✓" : undefined}
-                  className="text-sm py-1.5"
-                  onClick={() => {
-                    setFilter("most_liked");
-                    setShowFilterDropdown(false);
-                    onFilterChange?.("most_liked");
-                  }}
-                />
-              </ListCard>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
