@@ -135,6 +135,22 @@
     background-color: var(--background);
     color: var(--foreground);
   }
+
+  input,
+  textarea,
+  select {
+    outline: none;
+  }
+
+  input:focus,
+  input:focus-visible,
+  textarea:focus,
+  textarea:focus-visible,
+  select:focus,
+  select:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
 }
 
 @layer utilities {

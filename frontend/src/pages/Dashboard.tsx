@@ -295,7 +295,7 @@ export function Dashboard() {
                   const id = parseInt(e.target.value);
                   setSelectedPostId(id);
                 }}
-                className="mt-2 w-full rounded-md border border-border bg-card text-card-foreground px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="mt-2 w-full rounded-md border border-border bg-card text-card-foreground px-3 py-2 text-sm focus:outline-none"
               >
                 {data.posts.map((post) => {
                   const displayText = post.content && post.content.trim() ? post.content : post.link || "(no content)";
