@@ -3,7 +3,7 @@ DEV_COMPOSE  = docker compose -f docker-compose.yaml
 ELK_COMPOSE  = docker compose -f docker-compose.elk.yaml
 DEV_ELK      = docker compose -f docker-compose.yaml -f docker-compose.elk.yaml
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := dev
 
 # ── Help ─────────────────────────────────────────────────────────────────────
 
@@ -12,8 +12,7 @@ help:
 	@echo "  ft_transcendence"
 	@echo ""
 	@echo "  ── Dev ─────────────────────────────────────────────────────────"
-	@echo "    make dev              Setup secrets + start full dev stack"
-	@echo "    make dev-elk          Start dev stack + ELK (Elastic/Logstash/Kibana)"
+	@echo "    make dev              Start dev stack + ELK (Elastic/Logstash/Kibana)"
 	@echo "    make infra            Start only db, minio, pgadmin"
 	@echo "    make migrate          Run DB migrations inside Docker"
 	@echo "    make restart-backend  Restart only the backend container"
@@ -59,17 +58,6 @@ migrate:
 # ── Dev ──────────────────────────────────────────────────────────────────────
 
 dev: setup
-	@echo "▶  Starting dev stack…"
-	$(DEV_COMPOSE) up -d --build --remove-orphans
-	@echo "▶  Running migrations…"
-	$(DEV_COMPOSE) run --rm migrate
-	@echo "✅ Dev stack is up."
-	@echo "   Frontend  → https://localhost:5173"
-	@echo "   Backend   → http://localhost:3000"
-	@echo "   pgAdmin   → http://localhost:8085"
-	@echo "   MinIO UI  → http://localhost:9001"
-
-dev-elk: setup
 	@echo "▶  Starting dev + ELK stack…"
 	$(DEV_ELK) up -d --build --remove-orphans
 	@echo "▶  Running migrations…"
@@ -77,7 +65,7 @@ dev-elk: setup
 	@echo "▶  Importing Kibana dashboards (background)…"
 	@bash scripts/elk-setup.sh import &
 	@echo "✅ Dev + ELK stack is up."
-	@echo "   Frontend      → http://localhost:5173"
+	@echo "   Frontend      → https://localhost:5173"
 	@echo "   Kibana        → https://localhost:5601"
 
 infra: setup
@@ -174,11 +162,7 @@ import-elk:
 .PHONY: help setup \
         dev dev-elk infra regenerate migrate restart-backend restart-frontend \
         build clean-images \
-        populate fix-docker  \
-        down clean fclean re \
-        logs logs-backend logs-frontend \
-        shell-backend shell-frontend ps \
-         populate fix-docker  \
+        populate fix-docker \
         down down-elk clean fclean re \
         logs logs-backend logs-frontend logs-elk \
         shell-backend shell-frontend ps \
