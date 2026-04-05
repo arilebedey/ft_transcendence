@@ -182,20 +182,20 @@ const resources = {
       PasteLink: "Paste link",
       PasteLinkError: "Unable to read from clipboard.",
       PasteLinkInvalid: "Clipboard doesn't contain a valid URL.",
-      Posts: "Posts",
+      Posts: "Seens",
       ProfileSeens: "Your seens",
       Cancel: "Cancel",
       Confirm: "Confirm",
       Delete: "Delete",
       Loading: "Loading",
-      NoPostsYet: "No posts yet.",
+      NoPostsYet: "No seen for the moment.",
       EmptyContent: "Content empty.",
-      LinkInclusion: "You must include a link in the post.",
-      FetchUserPostsError: "Failed to load user posts.",
+      LinkInclusion: "You must include a link in the seen.",
+      FetchUserPostsError: "Failed to load user seens.",
       ToggleLikeFailed: "Failed to update like.",
       ToggleLikeError: "Error while updating like.",
-      DeletePostForbidden: "You cannot delete this post.",
-      DeletePostError: "Error while deleting post.",
+      DeletePostForbidden: "You cannot delete this seen.",
+      DeletePostError: "Error while deleting seen.",
       nav: {
         home: "Home",
         messages: "Messages",
@@ -203,7 +203,7 @@ const resources = {
         apiDocs: "API docs",
       },
       liked: {
-        empty: "You haven't liked any posts yet.",
+        empty: "You haven't liked any seens yet.",
       },
       dashboard: {
         title: "Dashboard",
@@ -213,14 +213,14 @@ const resources = {
         accountLikesDesc: "Evolution of the total number of likes received",
         followersTitle: "Followers",
         followersDesc: "Evolution of the number of followers",
-        likesByPostTitle: "Likes per post",
-        likesByPostDesc: "Select a post to see the evolution of its likes",
+        likesByPostTitle: "Likes per seen",
+        likesByPostDesc: "Select a seen to see the evolution of its likes",
         totalLikes: "Total Likes",
         totalFollowers: "Total Followers",
-        totalPosts: "Total Posts",
+        totalPosts: "Total Seens",
         noData: "No data available",
         noLikes: "No likes yet",
-        noPosts: "No posts yet",
+        noPosts: "No seen for the moment",
       },
       noBio: "This user hasn't written a bio yet.",
       profileBioPlaceholder: "Tell us about yourself...",
@@ -340,24 +340,24 @@ const resources = {
         endpoints: {
           "list-posts": {
             description:
-              "List posts ordered by newest first. Supports limit/offset pagination.",
+              "List seens ordered by newest first. Supports limit/offset pagination.",
           },
           "list-likes": {
             description:
-              "List likes for a post and return the total like count.",
+              "List likes for a seen and return the total like count.",
           },
           "list-followers": {
             description:
               "List followers for a user and return follower/following totals.",
           },
           "create-post": {
-            description: "Create a new post owned by the API key's user.",
+            description: "Create a new seen owned by the API key's user.",
           },
           "update-post": {
-            description: "Replace the editable fields of a post you own.",
+            description: "Replace the editable fields of a seen you own.",
           },
           "delete-post": {
-            description: "Delete a post you own.",
+            description: "Delete a seen you own.",
           },
         },
       },
@@ -365,7 +365,7 @@ const resources = {
       NoUsersFound: "No users found.",
       NoResult: "No results for your search.",
       homeDefault:
-        "Here you’ll see your posts and those of the users you follow, share your ideas!",
+        "Here you’ll see your seens and those of the users you follow, share your ideas!",
       SearchPlaceholder: "@user, content",
       ClearSearch: "Clear",
       SearchUsers: "Search users",
@@ -398,21 +398,21 @@ const resources = {
       PasteLink: "Coller le lien",
       PasteLinkError: "Impossible de lire le presse-papiers.",
       PasteLinkInvalid: "Le presse-papiers ne contient pas d'URL valide.",
-      Posts: "Posts",
+      Posts: "Seens",
       ProfileSeens: "Vos seens",
       Cancel: "Annuler",
       Confirm: "Confirmer",
       Delete: "Supprimer",
       Loading: "Chargement",
-      NoPostsYet: "Aucun post pour le moment.",
+      NoPostsYet: "Aucun seen pour le moment.",
       EmptyContent: "Contenu vide.",
-      LinkInclusion: "Vous devez inclure un lien dans le post.",
+      LinkInclusion: "Vous devez inclure un lien dans le seen.",
       FetchUserPostsError:
-        "Erreur lors du chargement des posts de l'utilisateur.",
+        "Erreur lors du chargement des seens de l'utilisateur.",
       ToggleLikeFailed: "Erreur lors de la mise a jour du like.",
       ToggleLikeError: "Erreur pendant la mise a jour du like.",
-      DeletePostForbidden: "Vous ne pouvez pas supprimer ce post.",
-      DeletePostError: "Erreur lors de la suppression du post.",
+      DeletePostForbidden: "Vous ne pouvez pas supprimer ce seen.",
+      DeletePostError: "Erreur lors de la suppression du seen.",
       nav: {
         home: "Accueil",
         messages: "Messages",
@@ -420,7 +420,7 @@ const resources = {
         apiDocs: "Docs API",
       },
       liked: {
-        empty: "Vous n'avez encore aimé aucun post.",
+        empty: "Vous n'avez encore aimé aucun seen.",
       },
       dashboard: {
         title: "Dashboard",
@@ -430,15 +430,15 @@ const resources = {
         accountLikesDesc: "Évolution du nombre total de likes reçus",
         followersTitle: "Followers",
         followersDesc: "Évolution du nombre de followers",
-        likesByPostTitle: "Likes par post",
+        likesByPostTitle: "Likes par seen",
         likesByPostDesc:
-          "Sélectionnez un post pour voir l'évolution de ses likes",
+          "Sélectionnez un seen pour voir l'évolution de ses likes",
         totalLikes: "Likes totaux",
         totalFollowers: "Followers totaux",
-        totalPosts: "Posts totaux",
+        totalPosts: "Seens totaux",
         noData: "Pas de données disponibles",
         noLikes: "Aucun like pour le moment",
-        noPosts: "Aucun post pour le moment",
+        noPosts: "Aucun seen pour le moment",
       },
       editProfile: "Modifier le profil",
       Settings: "Parametres",
@@ -577,11 +577,11 @@ const resources = {
         endpoints: {
           "list-posts": {
             description:
-              "Liste les posts du plus récent au plus ancien. Prend en charge la pagination limit/offset.",
+              "Liste les seens du plus récent au plus ancien. Prend en charge la pagination limit/offset.",
           },
           "list-likes": {
             description:
-              "Liste les likes d'un post et renvoie le nombre total de likes.",
+              "Liste les likes d'un seen et renvoie le nombre total de likes.",
           },
           "list-followers": {
             description:
@@ -589,14 +589,14 @@ const resources = {
           },
           "create-post": {
             description:
-              "Crée un nouveau post appartenant à l'utilisateur de la clé API.",
+              "Crée un nouveau seen appartenant à l'utilisateur de la clé API.",
           },
           "update-post": {
             description:
-              "Remplace les champs modifiables d'un post dont vous êtes propriétaire.",
+              "Remplace les champs modifiables d'un seen dont vous êtes propriétaire.",
           },
           "delete-post": {
-            description: "Supprime un post dont vous êtes propriétaire.",
+            description: "Supprime un seen dont vous êtes propriétaire.",
           },
         },
       },
@@ -604,7 +604,7 @@ const resources = {
       NoUsersFound: "Aucun utilisateur trouvé",
       NoResult: "Aucun résultat pour votre recherche.",
       homeDefault:
-        "Ici s'afficheront vos posts et ceux des utilisateurs que vous suivez, partagez vos idées !",
+        "Ici s'afficheront vos seens et ceux des utilisateurs que vous suivez, partagez vos idées !",
       SearchPlaceholder: "@utilisateur, contenu",
       ClearSearch: "Effacer",
       SearchUsers: "Rechercher des utilisateurs",
@@ -637,20 +637,20 @@ const resources = {
       PasteLink: "Incolla link",
       PasteLinkError: "Impossibile leggere gli appunti.",
       PasteLinkInvalid: "Gli appunti non contengono un URL valido.",
-      Posts: "Post",
+      Posts: "Seens",
       ProfileSeens: "I tuoi seens",
       Cancel: "Annulla",
       Confirm: "Confermare",
       Supprimer: "Elimina",
       Loading: "Caricamento",
-      NoPostsYet: "Nessun post per il momento.",
+      NoPostsYet: "Nessun seen per il momento.",
       EmptyContent: "Contenuto vuoto.",
-      LinkInclusion: "Devi includere un link nel post.",
-      FetchUserPostsError: "Impossibile caricare i post dell'utente.",
+      LinkInclusion: "Devi includere un link nel seen.",
+      FetchUserPostsError: "Impossibile caricare i seens dell'utente.",
       ToggleLikeFailed: "Impossibile aggiornare il like.",
       ToggleLikeError: "Errore durante l'aggiornamento del like.",
-      DeletePostForbidden: "Non puoi eliminare questo post.",
-      DeletePostError: "Errore durante l'eliminazione del post.",
+      DeletePostForbidden: "Non puoi eliminare questo seen.",
+      DeletePostError: "Errore durante l'eliminazione del seen.",
       nav: {
         home: "Home",
         messages: "Messaggi",
@@ -658,7 +658,7 @@ const resources = {
         apiDocs: "API docs",
       },
       liked: {
-        empty: "Non hai ancora messo like a nessun post.",
+        empty: "Non hai ancora messo like a nessun seen.",
       },
       dashboard: {
         title: "Dashboard",
@@ -668,15 +668,15 @@ const resources = {
         accountLikesDesc: "Evoluzione del numero totale di Mi piace ricevuti",
         followersTitle: "Followers",
         followersDesc: "Evoluzione del numero di follower",
-        likesByPostTitle: "Mi piace per post",
+        likesByPostTitle: "Mi piace per seen",
         likesByPostDesc:
-          "Seleziona un post per vedere l'evoluzione dei suoi Mi piace",
+          "Seleziona un seen per vedere l'evoluzione dei suoi Mi piace",
         totalLikes: "Mi piace totali",
         totalFollowers: "Follower totali",
-        totalPosts: "Post totali",
+        totalPosts: "Seens totali",
         noData: "Nessun dato disponibile",
         noLikes: "Nessun mi piace per il momento",
-        noPosts: "Nessun post per il momento",
+        noPosts: "Nessun seen per il momento",
       },
       editProfile: "Modifica profilo",
       Settings: "Impostazioni",
@@ -813,11 +813,11 @@ const resources = {
         endpoints: {
           "list-posts": {
             description:
-              "Elenca i post ordinati dal più recente. Supporta la paginazione con limit/offset.",
+              "Elenca i seens ordinati dal più recente. Supporta la paginazione con limit/offset.",
           },
           "list-likes": {
             description:
-              "Elenca i like di un post e restituisce il conteggio totale dei like.",
+              "Elenca i like di un seen e restituisce il conteggio totale dei like.",
           },
           "list-followers": {
             description:
@@ -825,14 +825,14 @@ const resources = {
           },
           "create-post": {
             description:
-              "Crea un nuovo post appartenente all'utente della chiave API.",
+              "Crea un nuovo seen appartenente all'utente della chiave API.",
           },
           "update-post": {
             description:
-              "Sostituisce i campi modificabili di un post di tua proprietà.",
+              "Sostituisce i campi modificabili di un seen di tua proprietà.",
           },
           "delete-post": {
-            description: "Elimina un post di tua proprietà.",
+            description: "Elimina un seen di tua proprietà.",
           },
         },
       },
@@ -840,7 +840,7 @@ const resources = {
       NoUsersFound: "Nessun utente trovato",
       NoResult: "Nessun risultato per la tua ricerca.",
       homeDefault:
-        "Qui vedrai i tuoi post e quelli degli utenti che segui, condividi le tue idee!",
+        "Qui vedrai i tuoi seens e quelli degli utenti che segui, condividi le tue idee!",
       SearchPlaceholder: "@utente, contenuto",
       ClearSearch: "Cancella",
       SearchUsers: "Cerca utenti",
@@ -873,21 +873,21 @@ const resources = {
       PasteLink: "Pegar enlace",
       PasteLinkError: "No se pudo leer el portapapeles.",
       PasteLinkInvalid: "El portapapeles no contiene una URL válida.",
-      Posts: "Publicaciones",
+      Posts: "Seens",
       ProfileSeens: "Tus seens",
       Cancel: "Cancelar",
       Confirm: "Confirmar",
       Delete: "Eliminar",
       Loading: "Cargando",
-      NoPostsYet: "Aún no hay publicaciones.",
+      NoPostsYet: "No hay ningun seen por el momento.",
       EmptyContent: "Contenido vacío.",
-      LinkInclusion: "Debes incluir un enlace en la publicación.",
+      LinkInclusion: "Debes incluir un enlace en el seen.",
       FetchUserPostsError:
-        "No se pudieron cargar las publicaciones del usuario.",
+        "No se pudieron cargar los seens del usuario.",
       ToggleLikeFailed: "No se pudo actualizar el me gusta.",
       ToggleLikeError: "Error al actualizar el me gusta.",
-      DeletePostForbidden: "No puedes eliminar esta publicación.",
-      DeletePostError: "Error al eliminar la publicación.",
+      DeletePostForbidden: "No puedes eliminar este seen.",
+      DeletePostError: "Error al eliminar el seen.",
       nav: {
         home: "Inicio",
         messages: "Mensajes",
@@ -895,7 +895,7 @@ const resources = {
         apiDocs: "Docs API",
       },
       liked: {
-        empty: "Todavía no te gusta ninguna publicación.",
+        empty: "Todavía no te gusta ningun seen.",
       },
       dashboard: {
         title: "Panel",
@@ -905,15 +905,15 @@ const resources = {
         accountLikesDesc: "Evolución del número total de me gusta recibidos",
         followersTitle: "Followers",
         followersDesc: "Evolución del número de seguidores",
-        likesByPostTitle: "Me gusta por publicación",
+        likesByPostTitle: "Me gusta por seen",
         likesByPostDesc:
-          "Selecciona una publicación para ver la evolución de sus me gusta",
+          "Selecciona un seen para ver la evolución de sus me gusta",
         totalLikes: "Me gusta totales",
         totalFollowers: "Seguidores totales",
-        totalPosts: "Publicaciones totales",
+        totalPosts: "Seens totales",
         noData: "No hay datos disponibles",
         noLikes: "No hay me gusta por el momento",
-        noPosts: "No hay publicaciones por el momento",
+        noPosts: "No hay ningun seen por el momento",
       },
       editProfile: "Editar perfil",
       Settings: "Configuracion",
@@ -1051,11 +1051,11 @@ const resources = {
         endpoints: {
           "list-posts": {
             description:
-              "Lista las publicaciones ordenadas de la más reciente a la más antigua. Admite paginación con limit/offset.",
+              "Lista los seens ordenados del más reciente al más antiguo. Admite paginación con limit/offset.",
           },
           "list-likes": {
             description:
-              "Lista los me gusta de una publicación y devuelve el total de me gusta.",
+              "Lista los me gusta de un seen y devuelve el total de me gusta.",
           },
           "list-followers": {
             description:
@@ -1063,14 +1063,14 @@ const resources = {
           },
           "create-post": {
             description:
-              "Crea una nueva publicación propiedad del usuario de la clave API.",
+              "Crea un nuevo seen propiedad del usuario de la clave API.",
           },
           "update-post": {
             description:
-              "Reemplaza los campos editables de una publicación que te pertenece.",
+              "Reemplaza los campos editables de un seen que te pertenece.",
           },
           "delete-post": {
-            description: "Elimina una publicación que te pertenece.",
+            description: "Elimina un seen que te pertenece.",
           },
         },
       },
@@ -1078,7 +1078,7 @@ const resources = {
       NoUsersFound: "No se encontraron usuarios",
       NoResult: "No hay resultados para tu búsqueda.",
       homeDefault:
-        "Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
+        "Aquí verás tus seens y los de los usuarios que sigues, ¡comparte tus ideas!",
       SearchPlaceholder: "@usuario, contenido",
       ClearSearch: "Borrar",
       SearchUsers: "Buscar usuarios",
