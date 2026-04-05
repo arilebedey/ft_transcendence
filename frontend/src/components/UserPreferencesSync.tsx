@@ -1,7 +1,12 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { getProfileMe, profileMeQueryKey } from "@/lib/profile-api";
+import {
+  clearPendingLanguageSync,
+  getPendingLanguageSync,
+  syncPendingLanguage,
+} from "@/lib/auth-language";
 
 /**
  * Invisible component that re-applies the user's saved language preference
@@ -10,6 +15,7 @@ import { getProfileMe, profileMeQueryKey } from "@/lib/profile-api";
  */
 export function UserPreferencesSync() {
   const { i18n } = useTranslation();
+  const queryClient = useQueryClient();
   const { data: profile } = useQuery({
     queryKey: profileMeQueryKey,
     queryFn: getProfileMe,
@@ -17,13 +23,33 @@ export function UserPreferencesSync() {
   });
 
   useEffect(() => {
-    if (profile?.language) {
-      const langUpper = profile.language.toUpperCase();
-      if (i18n.language !== langUpper) {
-        i18n.changeLanguage(langUpper);
-      }
+    if (!profile?.language) {
+      return;
     }
-  }, [profile?.language, i18n]);
+
+    const pendingLanguage = getPendingLanguageSync();
+
+    if (pendingLanguage && pendingLanguage !== profile.language) {
+      void syncPendingLanguage()
+        .then((updatedProfile) => {
+          if (updatedProfile) {
+            queryClient.setQueryData(profileMeQueryKey, updatedProfile);
+          }
+        })
+        .catch(() => {});
+      return;
+    }
+
+    if (pendingLanguage === profile.language) {
+      clearPendingLanguageSync();
+    }
+
+    const langUpper = profile.language.toUpperCase();
+    if (i18n.language !== langUpper) {
+      i18n.changeLanguage(langUpper);
+      localStorage.setItem("app-language", langUpper);
+    }
+  }, [profile?.language, i18n, queryClient]);
 
   return null;
 }

@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { checkUsernameAvailable } from "@/lib/profile-api";
 import { LegalAgreement } from "@/components/auth/LegalAgreement";
+import {
+  getSelectedLanguage,
+  markPendingLanguageSync,
+  syncSelectedLanguage,
+} from "@/lib/auth-language";
 
 const signUpSchema = z
   .object({
@@ -79,7 +84,10 @@ export default function SignUpForm() {
         password: value.password,
       });
 
-      if (!error) return;
+      if (!error) {
+        await syncSelectedLanguage();
+        return;
+      }
 
       if (error.code == "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL")
         setSubmitError("Email already in use.");
@@ -244,19 +252,20 @@ export default function SignUpForm() {
           {form.state.isSubmitting ? "Creating account..." : t("signUp")}
         </Button>
 
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() =>
-            authClient.signIn.social({
-              provider: "google",
-              callbackURL: getSocialCallbackUrl(),
-            })
-          }
-        >
-          {t("ContinueWithGoogle")}
-        </Button>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={() => {
+          markPendingLanguageSync(getSelectedLanguage());
+          authClient.signIn.social({
+            provider: "google",
+            callbackURL: getSocialCallbackUrl(),
+          });
+        }}
+      >
+        {t("ContinueWithGoogle")}
+      </Button>
       </form>
     </>
   );
