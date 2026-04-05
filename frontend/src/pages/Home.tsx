@@ -44,6 +44,8 @@ import { useTranslation } from "react-i18next";
     const [searchQuery, setSearchQuery] = useState("");
     const [posts, setPosts] = useState<Post[]>([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const hasActiveSearch = searchQuery.trim().length > 0;
+    const showSortButton = hasActiveSearch && posts.length > 0;
 
     useEffect(() => {
       const fetchPosts = async () => {
@@ -104,6 +106,7 @@ import { useTranslation } from "react-i18next";
       <Layout
         onSearch={setSearchQuery}
         onFilterChange={setFilter}
+        showSortButton={showSortButton}
         showPostCreationButton={true}
         showThemeToggle={false}
         showLanguageToggle={false}
@@ -126,7 +129,7 @@ import { useTranslation } from "react-i18next";
               ) : null}
               {posts.length === 0 && !errorMessage ? (
                 <div className="py-6 text-center text-muted-foreground">
-                  {searchQuery ? t("NoResult") : t("homeDefault")}
+                  {hasActiveSearch ? t("NoResult") : t("homeDefault")}
                 </div>
               ) : (
                 posts.map((post, index) => (

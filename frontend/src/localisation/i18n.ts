@@ -17,7 +17,7 @@ const TOSen = {
       "9. Changes to the Terms: We may update these terms at any time. Updates will be posted on our site and take effect immediately. Continued use of the service constitutes acceptance of the updated Terms.",
       "10. Governing Law and Jurisdiction: These Terms are governed by the laws of our country of incorporation. Any disputes regarding interpretation or application will be subject to competent courts.",
       "11. Miscellaneous: If any part of these Terms is deemed invalid or unenforceable, the remaining provisions remain in effect. Failure to exercise a right does not constitute waiver of that right.",
-      "12. Acceptance: By checking the 'I accept the Terms of Service' box and creating an account, you confirm that you have read, understood, and accepted these Terms in their entirety."
+      "12. Acceptance: By checking the 'I accept the Terms of Service' box and creating an account, you confirm that you have read, understood, and accepted these Terms in their entirety.",
     ],
     privacy: "Privacy Policy",
     privacyContent: [
@@ -27,20 +27,21 @@ const TOSen = {
       "Messaging: Messages exchanged via our chat service are stored in our database and associated with your account.",
       "Files and avatars: Profile pictures you upload are stored via our internal storage service. These files are linked to your account.",
       "Data use: Your data is used only to operate the platform. We do not sell it or share it with third parties.",
-      "Security: Passwords are never stored in plain text."
+      "Security: Passwords are never stored in plain text.",
     ],
     about: "About",
     aboutContent: [
-      "Our platform enables people to connect, share content, and discover communities. We build tools to help people express themselves and find others with shared interests."
+      "Our platform enables people to connect, share content, and discover communities. We build tools to help people express themselves and find others with shared interests.",
     ],
-    copyright: "© 2026 Transcendence"
-  }
+    copyright: "© 2026 Transcendence",
+  },
 };
 
 const TOSfr = {
   legal: {
     terms: "Conditions générales d'utilisation",
-    modalTitle: "Conditions générales d'utilisation et politique de confidentialité",
+    modalTitle:
+      "Conditions générales d'utilisation et politique de confidentialité",
     termsContent: [
       "1. Introduction : Bienvenue sur notre réseau social. En utilisant nos services, vous acceptez de respecter ces conditions générales d'utilisation (CGU) ainsi que toutes les lois applicables. Ces règles visent à garantir une expérience sûre, respectueuse et agréable pour tous les utilisateurs.",
       "2. Inscription : Pour créer un compte, vous devez fournir des informations exactes, complètes et à jour. Vous êtes responsable de la confidentialité de vos identifiants et de toutes les activités réalisées avec votre compte. Tout usage non autorisé doit être signalé immédiatement.",
@@ -53,7 +54,7 @@ const TOSfr = {
       "9. Modifications des CGU : Nous pouvons modifier ces conditions à tout moment. Les modifications seront publiées sur notre site et entreront en vigueur immédiatement. Votre utilisation continue du service vaut acceptation des CGU mises à jour.",
       "10. Loi applicable et juridiction : Ces CGU sont régies par la législation en vigueur dans notre pays de siège social. Tout litige relatif à l’interprétation ou à l’application des présentes sera soumis aux tribunaux compétents.",
       "11. Dispositions diverses : Si une partie de ces CGU est jugée invalide ou inapplicable, les autres dispositions restent en vigueur. Le fait que nous n’exercions pas un droit ne constitue pas une renonciation à ce droit.",
-      "12. Acceptation : En cochant la case « J’accepte les conditions d’utilisation » et en créant un compte, vous confirmez avoir lu, compris et accepté l’intégralité de ces CGU."
+      "12. Acceptation : En cochant la case « J’accepte les conditions d’utilisation » et en créant un compte, vous confirmez avoir lu, compris et accepté l’intégralité de ces CGU.",
     ],
     privacy: "Politique de confidentialité",
     privacyContent: [
@@ -63,14 +64,14 @@ const TOSfr = {
       "Messagerie : Les messages échangés via notre service de chat sont stockés dans notre base de données et associés à votre compte.",
       "Fichiers et avatars : Les photos de profil que vous téléversez sont stockées via notre service de stockage interne. Ces fichiers sont liés à votre compte.",
       "Utilisation des données : Vos données sont utilisées uniquement pour le fonctionnement de la plateforme. Nous ne les vendons pas et ne les partageons pas avec des tiers.",
-      "Sécurité : Les mots de passe ne sont jamais stockés en clair."
+      "Sécurité : Les mots de passe ne sont jamais stockés en clair.",
     ],
     about: "À propos",
     aboutContent: [
-      "Notre plateforme permet aux personnes de se connecter, partager du contenu et découvrir des communautés. Nous créons des outils pour aider les utilisateurs à s'exprimer et à trouver d'autres personnes partageant les mêmes centres d'intérêt."
+      "Notre plateforme permet aux personnes de se connecter, partager du contenu et découvrir des communautés. Nous créons des outils pour aider les utilisateurs à s'exprimer et à trouver d'autres personnes partageant les mêmes centres d'intérêt.",
     ],
-    copyright: "© 2026 Transcendence"
-  }
+    copyright: "© 2026 Transcendence",
+  },
 };
 
 const TOSit = {
@@ -89,7 +90,7 @@ const TOSit = {
       "9. Modifiche ai Termini: Possiamo aggiornare questi termini in qualsiasi momento. Le modifiche saranno pubblicate sul nostro sito ed entreranno in vigore immediatamente. L’uso continuato del servizio costituisce accettazione dei Termini aggiornati.",
       "10. Legge applicabile e giurisdizione: Questi Termini sono disciplinati dalle leggi del nostro paese di costituzione. Qualsiasi controversia relativa all’interpretazione o all’applicazione sarà sottoposta ai tribunali competenti.",
       "11. Varie: Se una parte di questi Termini è ritenuta invalida o inapplicabile, le restanti disposizioni rimangono in vigore. Il mancato esercizio di un diritto non costituisce rinuncia a tale diritto.",
-      "12. Accettazione: Spuntando la casella 'Accetto i Termini di servizio' e creando un account, confermi di aver letto, compreso e accettato questi Termini nella loro interezza."
+      "12. Accettazione: Spuntando la casella 'Accetto i Termini di servizio' e creando un account, confermi di aver letto, compreso e accettato questi Termini nella loro interezza.",
     ],
     privacy: "Informativa sulla Privacy",
     privacyContent: [
@@ -99,14 +100,14 @@ const TOSit = {
       "Messaggistica: I messaggi scambiati tramite il nostro servizio di chat sono archiviati nel nostro database e associati al tuo account.",
       "File e avatar: Le foto del profilo che carichi sono memorizzate tramite il nostro servizio di storage interno. Questi file sono collegati al tuo account.",
       "Utilizzo dei dati: I tuoi dati sono utilizzati solo per il funzionamento della piattaforma. Non li vendiamo né li condividiamo con terzi.",
-      "Sicurezza: Le password non vengono mai memorizzate in chiaro."
+      "Sicurezza: Le password non vengono mai memorizzate in chiaro.",
     ],
     about: "Informazioni",
     aboutContent: [
-      "La nostra piattaforma consente alle persone di connettersi, condividere contenuti e scoprire comunità. Creiamo strumenti per aiutare gli utenti a esprimersi e trovare altri con interessi simili."
+      "La nostra piattaforma consente alle persone di connettersi, condividere contenuti e scoprire comunità. Creiamo strumenti per aiutare gli utenti a esprimersi e trovare altri con interessi simili.",
     ],
-    copyright: "© 2026 Transcendence"
-  }
+    copyright: "© 2026 Transcendence",
+  },
 };
 
 const TOSes = {
@@ -125,7 +126,7 @@ const TOSes = {
       "9. Cambios en los Términos: Podemos actualizar estos términos en cualquier momento. Las modificaciones se publicarán en nuestro sitio y entrarán en vigor inmediatamente. El uso continuo del servicio constituye aceptación de los Términos actualizados.",
       "10. Ley aplicable y jurisdicción: Estos Términos se rigen por las leyes de nuestro país de constitución. Cualquier disputa relacionada con la interpretación o aplicación estará sujeta a los tribunales competentes.",
       "11. Disposiciones varias: Si alguna parte de estos Términos se considera inválida o inaplicable, las disposiciones restantes permanecerán en vigor. La falta de ejercicio de un derecho no constituye renuncia al mismo.",
-      "12. Aceptación: Al marcar la casilla 'Acepto los Términos de Servicio' y crear una cuenta, confirmas que has leído, comprendido y aceptado estos Términos en su totalidad."
+      "12. Aceptación: Al marcar la casilla 'Acepto los Términos de Servicio' y crear una cuenta, confirmas que has leído, comprendido y aceptado estos Términos en su totalidad.",
     ],
     privacy: "Política de privacidad",
     privacyContent: [
@@ -135,14 +136,14 @@ const TOSes = {
       "Mensajería: Los mensajes intercambiados a través de nuestro servicio de chat se almacenan en nuestra base de datos y están asociados a tu cuenta.",
       "Archivos y avatares: Las fotos de perfil que subes se almacenan mediante nuestro servicio de almacenamiento interno. Estos archivos están vinculados a tu cuenta.",
       "Uso de los datos: Tus datos se utilizan únicamente para el funcionamiento de la plataforma. No los vendemos ni los compartimos con terceros.",
-      "Seguridad: Las contraseñas nunca se almacenan en texto plano."
+      "Seguridad: Las contraseñas nunca se almacenan en texto plano.",
     ],
     about: "Acerca de",
     aboutContent: [
-      "Nuestra plataforma permite a las personas conectarse, compartir contenido y descubrir comunidades. Construimos herramientas para ayudar a los usuarios a expresarse y encontrar a otros con intereses compartidos."
+      "Nuestra plataforma permite a las personas conectarse, compartir contenido y descubrir comunidades. Construimos herramientas para ayudar a los usuarios a expresarse y encontrar a otros con intereses compartidos.",
     ],
-    copyright: "© 2026 Transcendence"
-  }
+    copyright: "© 2026 Transcendence",
+  },
 };
 
 const resources = {
@@ -361,18 +362,19 @@ const resources = {
           },
         },
       },
-      ContinueWithGoogle:"Continue with Google",
+      ContinueWithGoogle: "Continue with Google",
       NoUsersFound: "No users found.",
       NoResult: "No results for your search.",
       homeDefault:
         "Here you’ll see your posts and those of the users you follow, share your ideas!",
-      SearchPlaceholder: "@user content",
+      SearchPlaceholder: "@user, content",
+      ClearSearch: "Clear",
       SearchUsers: "Search users",
-      SortBy:"Sort by",
-      MostRecent:"Most recent",
-      MostLiked:"Most liked",
-      Oldest:"Oldest",
-      Legal:"Legal notice",
+      SortBy: "Sort by",
+      MostRecent: "Most recent",
+      MostLiked: "Most liked",
+      Oldest: "Oldest",
+      Legal: "Legal notice",
       ...TOSen,
     },
   },
@@ -408,7 +410,8 @@ const resources = {
       NoPostsYet: "Aucun post pour le moment.",
       EmptyContent: "Contenu vide.",
       LinkInclusion: "Vous devez inclure un lien dans le post.",
-      FetchUserPostsError: "Erreur lors du chargement des posts de l'utilisateur.",
+      FetchUserPostsError:
+        "Erreur lors du chargement des posts de l'utilisateur.",
       ToggleLikeFailed: "Erreur lors de la mise a jour du like.",
       ToggleLikeError: "Erreur pendant la mise a jour du like.",
       DeletePostForbidden: "Vous ne pouvez pas supprimer ce post.",
@@ -599,18 +602,19 @@ const resources = {
           },
         },
       },
-      ContinueWithGoogle:"Continuer avec Google",
+      ContinueWithGoogle: "Continuer avec Google",
       NoUsersFound: "Aucun utilisateur trouvé",
       NoResult: "Aucun résultat pour votre recherche.",
       homeDefault:
         "Ici s'afficheront vos posts et ceux des utilisateurs que vous suivez, partagez vos idées !",
-      SearchPlaceholder: "@utilisateur contenu",
+      SearchPlaceholder: "@utilisateur, contenu",
+      ClearSearch: "Effacer",
       SearchUsers: "Rechercher des utilisateurs",
-      SortBy:"Trier par",
-      MostRecent:"Les plus récents",
-      MostLiked:"Les plus aimés",
-      Oldest:"Les plus anciens",
-      Legal:"Mentions légales",
+      SortBy: "Trier par",
+      MostRecent: "Les plus récents",
+      MostLiked: "Les plus aimés",
+      Oldest: "Les plus anciens",
+      Legal: "Mentions légales",
       ...TOSfr,
     },
   },
@@ -835,18 +839,19 @@ const resources = {
           },
         },
       },
-      ContinueWithGoogle:"Continua con Google",
+      ContinueWithGoogle: "Continua con Google",
       NoUsersFound: "Nessun utente trovato",
       NoResult: "Nessun risultato per la tua ricerca.",
       homeDefault:
         "Qui vedrai i tuoi post e quelli degli utenti che segui, condividi le tue idee!",
-      SearchPlaceholder: "@utente contenuto",
+      SearchPlaceholder: "@utente, contenuto",
+      ClearSearch: "Cancella",
       SearchUsers: "Cerca utenti",
-      SortBy:"Ordina per",
-      MostRecent:"Più recenti",
-      MostLiked:"Più apprezzati",
-      Oldest:"Più vecchi",
-      Legal:"Note legali",
+      SortBy: "Ordina per",
+      MostRecent: "Più recenti",
+      MostLiked: "Più apprezzati",
+      Oldest: "Più vecchi",
+      Legal: "Note legali",
       ...TOSit,
     },
   },
@@ -882,7 +887,8 @@ const resources = {
       NoPostsYet: "Aún no hay publicaciones.",
       EmptyContent: "Contenido vacío.",
       LinkInclusion: "Debes incluir un enlace en la publicación.",
-      FetchUserPostsError: "No se pudieron cargar las publicaciones del usuario.",
+      FetchUserPostsError:
+        "No se pudieron cargar las publicaciones del usuario.",
       ToggleLikeFailed: "No se pudo actualizar el me gusta.",
       ToggleLikeError: "Error al actualizar el me gusta.",
       DeletePostForbidden: "No puedes eliminar esta publicación.",
@@ -1072,17 +1078,19 @@ const resources = {
           },
         },
       },
-      ContinueWithGoogle:"Continuar con Google", 
+      ContinueWithGoogle: "Continuar con Google",
       NoUsersFound: "No se encontraron usuarios",
-      NoResult:"No hay resultados para tu búsqueda.",
-      homeDefault:"Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
-      SearchPlaceholder:"@usuario contenido",
-      SearchUsers:"Buscar usuarios",
-      SortBy:"Ordenar por",
-      MostRecent:"Más recientes",
-      MostLiked:"Más gustados",
-      Oldest:"Más antiguos",
-      Legal:"Aviso legal",
+      NoResult: "No hay resultados para tu búsqueda.",
+      homeDefault:
+        "Aquí verás tus publicaciones y las de los usuarios que sigues, ¡comparte tus ideas!",
+      SearchPlaceholder: "@usuario, contenido",
+      ClearSearch: "Borrar",
+      SearchUsers: "Buscar usuarios",
+      SortBy: "Ordenar por",
+      MostRecent: "Más recientes",
+      MostLiked: "Más gustados",
+      Oldest: "Más antiguos",
+      Legal: "Aviso legal",
       ...TOSes,
     },
   },

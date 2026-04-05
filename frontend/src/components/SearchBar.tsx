@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Sliders, Search } from "lucide-react";
+import { Sliders, Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -18,9 +18,14 @@ interface UserResult {
 interface SearchBarProps {
   onSearch?: (query: string) => void;
   onFilterChange?: (filter: "recent" | "oldest" | "most_liked") => void;
+  showSortButton?: boolean;
 }
 
-export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
+export function SearchBar({
+  onSearch,
+  onFilterChange,
+  showSortButton = true,
+}: SearchBarProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,10 +100,16 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
     navigate(`/profile/${name}`);
   };
 
+  const clearSearch = () => {
+    setQuery("");
+    setShowDropdown(false);
+    setShowFilterDropdown(false);
+    onSearch?.("");
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
-      setQuery("");
-      setShowDropdown(false);
+      clearSearch();
     }
 
     if (e.key === "Enter") {
@@ -148,8 +159,22 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
           }}
           onFocus={() => updateDropdownVisibility()}
           onKeyDown={handleKeyDown}
-          className="pl-12 h-12 text-base rounded-full bg-secondary border-none focus-visible:ring-primary"
+          className="h-10 rounded-full border-none bg-secondary pl-12 pr-24 text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
         />
+
+        {query.trim().length > 0 && (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={clearSearch}
+            aria-label={t("ClearSearch")}
+            className="absolute right-2 top-1/2 h-8 -translate-y-1/2 rounded-full border border-border/60 px-2 text-xs shadow-sm"
+          >
+            <X className="h-3.5 w-3.5" />
+            <span>{t("ClearSearch")}</span>
+          </Button>
+        )}
 
         {showDropdown && (
           <div className="absolute left-0 mt-2 w-[calc(100%-11rem)] bg-card border rounded-xl shadow-lg overflow-hidden z-40">
@@ -186,57 +211,59 @@ export function SearchBar({ onSearch, onFilterChange }: SearchBarProps) {
         )}
       </div>
 
-      <div className="relative">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={() => setShowFilterDropdown((v) => !v)}
-          aria-label={t("SortBy")}
-          className="h-12 w-12 rounded-full border-border/70 bg-card/90 shadow-sm backdrop-blur-sm transition-all hover:border-primary/40 hover:bg-accent/20"
-        >
-          <Sliders className="h-4 w-4" />
-        </Button>
+      {showSortButton && (
+        <div className="relative">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => setShowFilterDropdown((v) => !v)}
+            aria-label={t("SortBy")}
+            className="h-12 w-12 rounded-full border-border/70 bg-card/90 shadow-sm backdrop-blur-sm transition-all hover:border-primary/40 hover:bg-accent/20"
+          >
+            <Sliders className="h-4 w-4" />
+          </Button>
 
-        {showFilterDropdown && (
-          <div className="absolute right-0 mt-2 w-54 z-50">
-            <ListCard title={t("SortBy")}>
-              <ListItem
-                primary={t("MostRecent")}
-                action={filter === "recent" ? "✓" : undefined}
-                className="text-sm py-1.5"
-                onClick={() => {
-                  setFilter("recent");
-                  setShowFilterDropdown(false);
-                  onFilterChange?.("recent");
-                }}
-              />
+          {showFilterDropdown && (
+            <div className="absolute right-0 mt-2 w-54 z-50">
+              <ListCard title={t("SortBy")}>
+                <ListItem
+                  primary={t("MostRecent")}
+                  action={filter === "recent" ? "✓" : undefined}
+                  className="text-sm py-1.5"
+                  onClick={() => {
+                    setFilter("recent");
+                    setShowFilterDropdown(false);
+                    onFilterChange?.("recent");
+                  }}
+                />
 
-              <ListItem
-                primary={t("Oldest")}
-                action={filter === "oldest" ? "✓" : undefined}
-                className="text-sm py-1.5"
-                onClick={() => {
-                  setFilter("oldest");
-                  setShowFilterDropdown(false);
-                  onFilterChange?.("oldest");
-                }}
-              />
+                <ListItem
+                  primary={t("Oldest")}
+                  action={filter === "oldest" ? "✓" : undefined}
+                  className="text-sm py-1.5"
+                  onClick={() => {
+                    setFilter("oldest");
+                    setShowFilterDropdown(false);
+                    onFilterChange?.("oldest");
+                  }}
+                />
 
-              <ListItem
-                primary={t("MostLiked")}
-                action={filter === "most_liked" ? "✓" : undefined}
-                className="text-sm py-1.5"
-                onClick={() => {
-                  setFilter("most_liked");
-                  setShowFilterDropdown(false);
-                  onFilterChange?.("most_liked");
-                }}
-              />
-            </ListCard>
-          </div>
-        )}
-      </div>
+                <ListItem
+                  primary={t("MostLiked")}
+                  action={filter === "most_liked" ? "✓" : undefined}
+                  className="text-sm py-1.5"
+                  onClick={() => {
+                    setFilter("most_liked");
+                    setShowFilterDropdown(false);
+                    onFilterChange?.("most_liked");
+                  }}
+                />
+              </ListCard>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
