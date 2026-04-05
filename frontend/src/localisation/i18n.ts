@@ -149,10 +149,8 @@ const TOSes = {
 const resources = {
   EN: {
     translation: {
-      welcome: "Connect, share, and discover with our community",
-      shareContent: "Share the content you watch",
-      followInterest: "Follow other's interests",
-      discover: "Discover!",
+      welcome: "Your internet journey",
+      welcomeSubtitle: "A place to share the best links of the internet",
       signIn: "Sign in",
       createAccount: "Create account",
       signUp: "Sign up",
@@ -381,10 +379,8 @@ const resources = {
   },
   FR: {
     translation: {
-      welcome: "Connectez, partagez et découvrez avec notre communauté",
-      shareContent: "Partagez le contenu que vous regardez",
-      followInterest: "Suivez les intérêts des autres",
-      discover: "Découvrez !",
+      welcome: "Votre voyage sur Internet",
+      welcomeSubtitle: "Un endroit pour partager les meilleurs liens d'Internet",
       signIn: "Se connecter",
       createAccount: "Créer un compte",
       signUp: "S'inscrire",
@@ -622,10 +618,8 @@ const resources = {
   },
   IT: {
     translation: {
-      welcome: "Connettiti, condividi e scopri con la nostra comunità",
-      shareContent: "Condividi il contenuto che guardi",
-      followInterest: "Segui gli interessi degli altri",
-      discover: "Scopri!",
+      welcome: "Il tuo viaggio su Internet",
+      welcomeSubtitle: "Un posto dove condividere i migliori link di Internet",
       signIn: "Accedi",
       createAccount: "Crea account",
       signUp: "Iscriviti",
@@ -860,10 +854,8 @@ const resources = {
   },
   ES: {
     translation: {
-      welcome: "Conéctate, comparte y descubre con nuestra comunidad",
-      shareContent: "Comparte el contenido que ves",
-      followInterest: "Sigue los intereses de otros",
-      discover: "¡Descubre!",
+      welcome: "Tu viaje por Internet",
+      welcomeSubtitle: "Un lugar para compartir los mejores enlaces de Internet",
       signIn: "Iniciar sesión",
       createAccount: "Crear cuenta",
       signUp: "Registrarse",
