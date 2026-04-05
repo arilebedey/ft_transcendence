@@ -17,6 +17,8 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-special: var(--special);
+  --color-special-foreground: var(--special-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -29,6 +31,30 @@
 }
 
 @layer base {
+  [data-theme="earth"] {
+    --background: #241a14;
+    --foreground: #f2e7d8;
+    --card: #2f241d;
+    --card-foreground: #f2e7d8;
+    --popover: #2f241d;
+    --popover-foreground: #f2e7d8;
+    --primary: #c58b4d;
+    --primary-foreground: #1b120d;
+    --secondary: #433229;
+    --secondary-foreground: #e6d3bb;
+    --special: #7b3f33;
+    --special-foreground: #fff1eb;
+    --muted: #342821;
+    --muted-foreground: #b49d88;
+    --accent: #5a4335;
+    --accent-foreground: #f7efe6;
+    --destructive: #d1634c;
+    --destructive-foreground: #fff1eb;
+    --border: #5b4638;
+    --input: #5b4638;
+    --ring: #c58b4d;
+  }
+
   [data-theme="forest"] {
     --background: #0a1a0a;
     --foreground: #d8e8d4;
@@ -40,6 +66,8 @@
     --primary-foreground: #021408;
     --secondary: #1a2e1a;
     --secondary-foreground: #a8c8a2;
+    --special: #6d4c2f;
+    --special-foreground: #f6efe6;
     --muted: #122012;
     --muted-foreground: #6a8a65;
     --accent: #1f3a1f;
@@ -62,6 +90,8 @@
     --primary-foreground: #eff6ff;
     --secondary: #1e2d4a;
     --secondary-foreground: #cbd5e1;
+    --special: #8a5cf6;
+    --special-foreground: #f6f3ff;
     --muted: #162032;
     --muted-foreground: #7a8ba8;
     --accent: #1e3a5f;
@@ -84,6 +114,8 @@
     --primary-foreground: #f8fafc;
     --secondary: #e2e8f0;
     --secondary-foreground: #334155;
+    --special: #b45309;
+    --special-foreground: #fff7ed;
     --muted: #f1f5f9;
     --muted-foreground: #64748b;
     --accent: #e2e8f0;

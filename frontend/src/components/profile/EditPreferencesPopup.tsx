@@ -7,13 +7,14 @@ import { MobileModal } from "@/components/ui/MobileModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { Trees, Moon, Sun, Globe, LogOut } from "lucide-react";
+import { Trees, Moon, Sun, Globe, LogOut, Mountain } from "lucide-react";
 import { type Theme, useThemeStore } from "@/stores/theme-store";
 import { authClient } from "@/lib/auth-client";
 import { useIsMobileViewport } from "@/hooks/useIsMobileViewport";
 import { profileMeQueryKey, updateProfileMe } from "@/lib/profile-api";
 
 const themes: { value: Theme; icon: ReactNode }[] = [
+  { value: "earth", icon: <Mountain className="h-4 w-4" /> },
   { value: "forest", icon: <Trees className="h-4 w-4" /> },
   {
     value: "dark-blue",
@@ -102,7 +103,7 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
         {/* Theme */}
         <div className="space-y-3">
           <Label className="pb-3">{t("Theme")}</Label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {themes.map((th) => (
               <button
                 key={th.value}

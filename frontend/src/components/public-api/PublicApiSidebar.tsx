@@ -49,16 +49,16 @@ export function PublicApiSidebar({
               key={section.id}
               type="button"
               onClick={() => onSelectSection(section.id)}
-              variant={selectedSection === section.id ? "default" : "outline"}
+              variant="ghost"
               className={cn(
-                "h-auto w-full justify-start rounded-xl px-3 py-3 text-left text-sm transition",
+                "h-auto w-full justify-start rounded-xl border px-3 py-3 text-left text-sm transition focus-visible:ring-0 focus-visible:ring-offset-0",
                 section.id === "keys"
                   ? selectedSection === section.id
-                    ? "border-emerald-700 bg-emerald-600 text-white hover:bg-emerald-600"
-                    : "border-emerald-600 bg-emerald-500 text-white hover:bg-emerald-600 hover:text-white"
+                    ? "border-special bg-special text-special-foreground hover:bg-special/90"
+                    : "border-special/40 bg-card text-foreground hover:border-special hover:bg-special/10"
                   : selectedSection === section.id
-                    ? "border-foreground"
-                    : "hover:bg-accent/60",
+                    ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "border-input bg-card text-foreground hover:bg-accent/60 hover:text-foreground",
               )}
             >
               {section.label}

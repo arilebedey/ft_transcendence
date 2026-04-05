@@ -21,8 +21,8 @@ export class UpdateUserDataDto {
   bio?: string;
 
   @IsOptional()
-  @IsIn(['light', 'dark-blue', 'forest'])
-  theme?: 'light' | 'dark-blue' | 'forest';
+  @IsIn(['light', 'dark-blue', 'forest', 'earth'])
+  theme?: 'light' | 'dark-blue' | 'forest' | 'earth';
 
   @IsOptional()
   @IsIn(['en', 'fr', 'es', 'it'])
