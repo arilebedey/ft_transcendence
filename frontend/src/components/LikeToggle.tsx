@@ -1,14 +1,21 @@
 import { Heart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface LikeToggleProps {
   likes: number;
   liked: boolean;
   onToggle: () => void;
+  className?: string;
 }
 
-export const LikeToggle = ({ likes, liked, onToggle }: LikeToggleProps) => {
+export const LikeToggle = ({
+  likes,
+  liked,
+  onToggle,
+  className,
+}: LikeToggleProps) => {
   const [pop, setPop] = useState(false);
 
   const handleClick = () => {
@@ -27,7 +34,10 @@ export const LikeToggle = ({ likes, liked, onToggle }: LikeToggleProps) => {
     <Button
       variant="ghost"
       size="sm"
-      className="gap-2 text-muted-foreground hover:text-primary"
+      className={cn(
+        "h-auto gap-2 pb-0.5 pt-1 text-muted-foreground hover:text-primary",
+        className,
+      )}
       onClick={handleClick}
     >
       <Heart

@@ -12,14 +12,13 @@
  * - Filtrer les posts en fonction du suivi de l'utilisateur
  */
 
-  import { useState } from "react";
-  import { useEffect } from "react";
-  import { Layout } from "@/components/Layout";
-  import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
-  import { PostCard } from "@/components/ui/post-card";
-  import { Button } from "@/components/ui/button";
-  import { authClient } from "@/lib/auth-client";
-  import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useEffect } from "react";
+import { Layout } from "@/components/Layout";
+import { NewPostModal } from "@/components/NewPostModal";
+import { PostCard } from "@/components/PostCard";
+import { authClient } from "@/lib/auth-client";
+import { useTranslation } from "react-i18next";
 
   interface Post {
     id: number;
@@ -35,10 +34,7 @@
   }
 
   export const Home = () => {
-    const MAX_POST_LENGTH = 300;
-    const [submitError, setSubmitError] = useState("");
     const [postFormOpen, setPostFormOpen] = useState(false);
-    const [newPostContent, setNewPostContent] = useState("");
     const [filter, setFilter] = useState<'recent' | 'oldest' | 'most_liked'>('recent');
     const { t } = useTranslation();
     const sessionResult = authClient.useSession();
@@ -70,65 +66,6 @@
     
       fetchPosts();
     }, [searchQuery, filter]);
-
-    function extractLink(text: string): { url?: string; contentWithoutLink: string } {
-      const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/i;
-    
-      const match = urlRegex.exec(text);
-    
-      if (!match) {
-        return { contentWithoutLink: text.trim() };
-      }
-    
-      const rawUrl = match[0];
-
-      const contentWithoutLink = text.replace(rawUrl, "").trim();
-
-      let normalizedUrl = rawUrl;
-      if (!/^https?:\/\//i.test(normalizedUrl)) {
-        normalizedUrl = "https://" + normalizedUrl;
-      }
-    
-      return {
-        url: normalizedUrl,
-        contentWithoutLink,
-      };
-    }
-
-    const handleConfirmPost = async () => {
-      if (!newPostContent) {
-        setSubmitError(t("EmptyContent"));
-        return;
-      }
-  
-      const { url, contentWithoutLink } = extractLink(newPostContent);
-      if (!url) {
-        setSubmitError(t("LinkInclusion"));
-        return;
-      }
-
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: contentWithoutLink,
-          link: url,
-        }),
-      });
-
-      if (!response.ok) {
-        setSubmitError(t("PostCreationError"));
-        return;
-      }
-    
-      const createdPost = await response.json();
-    
-      setPosts((prev) => [createdPost, ...prev]);
-      setNewPostContent("");
-      setPostFormOpen(false);
-    };
 
     const handleLike = async (postId: number) => {
       try {
@@ -189,67 +126,36 @@
         showPostCreationButton={true}
         showThemeToggle={false}
         showLanguageToggle={false}
-        onPostCreationClick={() => setPostFormOpen(prev => !prev)}
+        onPostCreationClick={() => setPostFormOpen(true)}
       >
-        {postFormOpen && (
-          <div className="transition-all duration-300 ease-in-out w-full max-w-4xl mx-auto mt-4 px-4">
-            <Card className="shadow-md">
-              <CardHeader></CardHeader>
+        {postFormOpen ? (
+          <NewPostModal
+            onClose={() => setPostFormOpen(false)}
+            onCreated={(createdPost) => setPosts((prev) => [createdPost, ...prev])}
+          />
+        ) : null}
 
-              <CardContent className="px-6 pb-6 pt-0 sm:px-8">
-                <textarea
-                  rows={5}
-                  maxLength={MAX_POST_LENGTH}
-                  className="w-full min-h-36 rounded-md border bg-transparent p-4 resize-y focus:outline-none focus:ring-2"
-                  value={newPostContent}
-                  onChange={(e) =>{
-                    setNewPostContent(e.target.value);
-                    setSubmitError("");
-                  }}
-                />
-                <div className="text-right text-sm text-muted-foreground mt-1">
-                  {newPostContent.length} / {MAX_POST_LENGTH}
+        <div className="flex justify-center px-4 py-4 sm:px-6 sm:py-6">
+          <div className="w-full max-w-5xl space-y-4">
+            <div className="w-full space-y-4 transition-all duration-300 ease-in-out">
+              {posts.length === 0 ? (
+                <div className="py-6 text-center text-muted-foreground">
+                  {searchQuery ? t("NoResult") : t("homeDefault")}
                 </div>
-                {submitError && (
-                  <div className="p-2 text-sm bg-destructive/10 border border-destructive/20 text-destructive rounded-md mt-2">
-                    {submitError}
-                </div>
-                )}
-              </CardContent>
-
-              <CardFooter className="justify-end gap-2 px-6 pb-6 pt-0 sm:px-8">
-                <Button variant="outline" onClick={() => setPostFormOpen(false)}>
-                  {t("Cancel")}
-                </Button>
-                <Button onClick={handleConfirmPost}>
-                  {t("Confirm")}
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-        )}
-
-        <div
-          className={`max-w-2xl mx-auto px-4 py-6 space-y-4 transition-all duration-300 ease-in-out ${
-            postFormOpen ? "mt-4" : "mt-0"
-          }`}
-        >
-          {posts.length === 0 ? (
-            <div className="text-center text-muted-foreground py-6">
-              {searchQuery ? t("NoResult") : t("homeDefault")}
+              ) : (
+                posts.map((post, index) => (
+                  <PostCard
+                    key={post.id}
+                    post={post}
+                    index={index}
+                    currentUserId={currentUserId}
+                    onLike={() => handleLike(post.id)}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
             </div>
-          ) : (
-            posts.map((post, index) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                index={index}
-                currentUserId={currentUserId}
-                onLike={() => handleLike(post.id)}
-                onDelete={handleDelete}
-              />
-            ))
-          )}
+          </div>
         </div>
       </Layout>
     );

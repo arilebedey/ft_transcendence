@@ -20,10 +20,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LikeToggle } from "@/components/LikeToggle";
 import { DropDownList } from "@/components/dropdown-list";
-import {
-  getProfileById,
-  profileByIdQueryKey,
-} from "@/lib/profile-api";
+import { getProfileById, profileByIdQueryKey } from "@/lib/profile-api";
 import { type PublicProfileData } from "@/lib/profile-api";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { cn } from "@/lib/utils";
@@ -81,7 +78,7 @@ export function PostCard({
       )}
       style={{ animationDelay: `${index * 100}ms` }}
     >
-      <CardContent className="px-4 pt-4 sm:px-6">
+      <CardContent className="px-4 pb-3 pt-4 sm:px-6">
         <div className="flex min-w-0 gap-3">
           <div
             className="shrink-0"
@@ -110,16 +107,7 @@ export function PostCard({
                 currentUserId={currentUserId}
                 authorId={post.author.id}
                 onDelete={() => onDelete?.(post.id)}
-              >
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(post.link);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors duration-200"
-                >
-                  {t("CopyLink")}
-                </button>
-              </DropDownList>
+              />
             </div>
 
             <p className="mt-2 text-foreground leading-relaxed break-words">
@@ -142,6 +130,7 @@ export function PostCard({
                 likes={post.likes}
                 liked={post.liked}
                 onToggle={() => onLike && onLike()}
+                className="-ml-2 px-2 py-1"
               />
             </div>
           </div>
