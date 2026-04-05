@@ -45,7 +45,7 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
     @Session() session: UserSession,
   ) {
-    const userId = session.user.id;
+    const userId = session?.user?.id;
     const socketData = client.data as ChatSocketData;
 
     if (!userId) {
