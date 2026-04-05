@@ -28,7 +28,6 @@ interface UserCardProps {
 export function UserCard({ profile, isOwnProfile }: UserCardProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { t } = useTranslation();
   const fallbackActionError = "Something went wrong. Please try again.";
   const [stats, setStats] = useState({ followers: 0, following: 0 });
   const [bio, setBio] = useState(profile.bio ?? "");
@@ -47,7 +46,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
     "followers" | "following" | null
   >(null);
   const online = usePresenceStatus(profile.id, profile.online);
-  
+
   useEffect(() => {
     if (isOwnProfile) {
       setLoadingFollow(false);
@@ -77,7 +76,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
 
   useEffect(() => {
     if (!profile?.id) return;
-  
+
     const fetchStats = async () => {
       try {
         const data = await getFollowStats(profile.id);
@@ -86,7 +85,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
         setActionError(fallbackActionError);
       }
     };
-  
+
     void fetchStats();
   }, [fallbackActionError, profile?.id]);
 
@@ -98,7 +97,10 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
 
     setActionError("");
     setIsFollowing(nextIsFollowing);
-    setStats((prev) => ({ ...prev, followers: prev.followers + followersDelta }));
+    setStats((prev) => ({
+      ...prev,
+      followers: prev.followers + followersDelta,
+    }));
 
     try {
       if (nextIsFollowing) {
@@ -160,9 +162,7 @@ export function UserCard({ profile, isOwnProfile }: UserCardProps) {
     },
     onError: (error) => {
       setActionError(
-        error instanceof Error
-          ? error.message
-          : fallbackActionError,
+        error instanceof Error ? error.message : fallbackActionError,
       );
     },
   });
