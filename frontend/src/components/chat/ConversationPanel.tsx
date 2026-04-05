@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowLeft, SendHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useMessages } from "@/hooks/useMessages";
 import { Button } from "@/components/ui/button";
 import { MessageBubble } from "./MessageBubble";
 import { Chat, Participant } from "@/lib/chat.types";
 import { PresenceDot } from "@/components/PresenceDot";
+import { UserAvatar } from "@/components/profile/UserAvatar";
 
 interface ConversationPanelProps {
   conversationId: string | null;
@@ -30,6 +32,7 @@ export function ConversationPanel({
   onBack,
 }: ConversationPanelProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     messages,
     loading,
@@ -59,6 +62,7 @@ export function ConversationPanel({
   const [content, setContent] = useState("");
 
   const activeParticipant = participant ?? draftParticipant ?? null;
+  const canOpenParticipantProfile = Boolean(activeParticipant?.name);
 
   const scrollToBottom = (behavior: ScrollBehavior) => {
     const container = messagesContainerRef.current;
@@ -142,6 +146,11 @@ export function ConversationPanel({
     await sendMessage(trimmed);
   };
 
+  const handleOpenParticipantProfile = () => {
+    if (!activeParticipant?.name) return;
+    navigate(`/profile/${encodeURIComponent(activeParticipant.name)}`);
+  };
+
   return (
     <section className="flex h-full w-full flex-col bg-card md:rounded-2xl md:border overflow-hidden">
       <div className="sticky top-0 z-10 flex items-center gap-3 border-b px-4 py-4">
@@ -157,22 +166,35 @@ export function ConversationPanel({
           </Button>
         ) : null}
 
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-foreground">
-              {activeParticipant?.name ?? t("chat.conversation.titleFallback")}
-            </h2>
-            <PresenceDot
-              online={activeParticipant?.online}
-              className="shrink-0"
-            />
+        <button
+          type="button"
+          onClick={handleOpenParticipantProfile}
+          disabled={!canOpenParticipantProfile}
+          className="flex min-w-0 items-center gap-3 rounded-xl text-left transition-colors enabled:cursor-pointer enabled:hover:bg-accent/40 enabled:px-2 enabled:py-1 disabled:cursor-default"
+        >
+          <UserAvatar
+            name={activeParticipant?.name ?? "?"}
+            avatarUrl={activeParticipant?.avatarUrl}
+            className="h-10 w-10 shrink-0"
+          />
+
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="truncate text-base font-semibold text-foreground">
+                {activeParticipant?.name ?? t("chat.conversation.titleFallback")}
+              </h2>
+              <PresenceDot
+                online={activeParticipant?.online}
+                className="shrink-0"
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {conversationId
+                ? t("chat.conversation.live")
+                : t("chat.conversation.new")}
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {conversationId
-              ? t("chat.conversation.live")
-              : t("chat.conversation.new")}
-          </p>
-        </div>
+        </button>
       </div>
 
       <div
