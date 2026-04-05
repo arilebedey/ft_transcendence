@@ -35,7 +35,7 @@ export const LikeToggle = ({
       variant="ghost"
       size="sm"
       className={cn(
-        "h-auto gap-2 pb-0.5 pt-1 text-muted-foreground hover:text-primary",
+        "h-auto gap-2 pb-0.5 pt-1 text-muted-foreground hover:text-primary cursor-pointer",
         className,
       )}
       onClick={handleClick}

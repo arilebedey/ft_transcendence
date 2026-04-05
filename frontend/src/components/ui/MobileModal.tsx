@@ -34,7 +34,7 @@ export function MobileModal({
       )}
     >
       <div
-        className={cn("absolute inset-0 bg-black/30", overlayClassName)}
+        className={cn("absolute inset-0 cursor-pointer bg-black/30", overlayClassName)}
         onClick={onClose}
       />
 

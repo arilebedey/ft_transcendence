@@ -72,7 +72,7 @@ export function NewChatSearch({ onSelectUser, onClose }: NewChatSearchProps) {
                 key={user.id}
                 type="button"
                 onClick={() => onSelectUser(user)}
-                className="flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors hover:bg-accent/40"
+                className="flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors hover:bg-accent/40"
               >
                 <UserAvatar
                   name={user.name}

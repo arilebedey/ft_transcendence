@@ -107,7 +107,7 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
               <button
                 key={th.value}
                 onClick={() => setTheme(th.value)}
-                className={`flex items-center gap-2 flex-1 justify-center rounded-md border px-3 py-2 text-sm transition-colors ${
+                className={`flex cursor-pointer items-center gap-2 flex-1 justify-center rounded-md border px-3 py-2 text-sm transition-colors ${
                   theme === th.value
                     ? "bg-primary text-primary-foreground border-primary shadow-sm"
                     : "bg-card text-muted-foreground border-input hover:text-foreground hover:bg-secondary"
@@ -127,12 +127,12 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
               {t("language")}
             </span>
           </Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {languages.map((lang) => (
               <button
                 key={lang}
                 onClick={() => handleLanguageSelect(lang)}
-                className={`flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+                className={`flex cursor-pointer items-center justify-center rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
                   selectedLanguage === lang
                     ? "bg-primary text-primary-foreground border-primary shadow-sm"
                     : "bg-card text-muted-foreground border-input hover:text-foreground hover:bg-secondary"

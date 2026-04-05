@@ -34,7 +34,7 @@ export function DropDownList({ currentUserId, authorId, onDelete, children }: Dr
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 rounded-full"
+        className="h-8 w-8 rounded-full cursor-pointer"
         onClick={() => setMenuOpen(prev => !prev)}
       >
         <MoreHorizontal className="h-4 w-4" />

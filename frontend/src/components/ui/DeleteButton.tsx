@@ -29,7 +29,7 @@ export function DeleteButton({ onDelete }: DeleteButtonProps) {
     <button
       onClick={handleClick}
       className={`
-        w-full text-left px-4 py-2 text-sm
+        w-full cursor-pointer text-left px-4 py-2 text-sm
         bg-transparent
         ${confirm ? "text-red-700" : "text-red-500"}
         hover:bg-red-50 hover:text-red-700

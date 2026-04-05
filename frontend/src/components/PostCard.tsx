@@ -73,7 +73,7 @@ export function PostCard({
   return (
     <Card
       className={cn(
-        "animate-fade-in card-hover w-full max-w-full min-w-0 overflow-hidden",
+        "animate-fade-in card-hover w-full max-w-full min-w-0 overflow-hidden cursor-default",
         className,
       )}
       style={{ animationDelay: `${index * 100}ms` }}
@@ -81,7 +81,7 @@ export function PostCard({
       <CardContent className="px-4 pb-3 pt-4 sm:px-6">
         <div className="flex min-w-0 gap-3">
           <div
-            className="shrink-0"
+            className="shrink-0 self-start cursor-pointer"
             onClick={() => navigate(`/profile/${userName}`)}
           >
             <UserAvatar
@@ -94,7 +94,7 @@ export function PostCard({
           <div className="flex-1 min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
               <span
-                className="min-w-0 max-w-full break-words font-semibold"
+                className="min-w-0 max-w-full break-words font-semibold cursor-pointer"
                 onClick={() => navigate(`/profile/${userName}`)}
               >
                 {userName}
@@ -119,7 +119,7 @@ export function PostCard({
                 href={post.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 block max-w-full break-all text-sm text-primary"
+                className="mt-2 block max-w-full break-all text-sm text-primary cursor-pointer"
               >
                 {post.link}
               </a>
