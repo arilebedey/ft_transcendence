@@ -18,6 +18,7 @@ import { Layout } from "@/components/Layout";
 import { NewPostModal } from "@/components/NewPostModal";
 import { PostCard } from "@/components/PostCard";
 import { authClient } from "@/lib/auth-client";
+import { ApiError, api } from "@/lib/api";
 import { useTranslation } from "react-i18next";
 
   interface Post {
@@ -42,6 +43,7 @@ import { useTranslation } from "react-i18next";
     const currentUserId = session?.user?.id;
     const [searchQuery, setSearchQuery] = useState("");
     const [posts, setPosts] = useState<Post[]>([]);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
       const fetchPosts = async () => {
@@ -49,40 +51,25 @@ import { useTranslation } from "react-i18next";
           const params = new URLSearchParams();
           params.set("filter", filter);
           if (searchQuery.trim()) params.set("q", searchQuery.trim());
-    
-          const res = await fetch(`/api/posts/search?${params.toString()}`);
-    
-          if (!res.ok) {
-            console.error("Erreur fetch posts:", res.statusText);
-            return;
-          }
-    
-          const data = await res.json();
+
+          const data = await api.get<Post[]>(`/posts/search?${params.toString()}`);
           setPosts(data);
-        } catch (err) {
-          console.error("Erreur fetch posts (exception):", err);
+          setErrorMessage("");
+        } catch {
+          setPosts([]);
+          setErrorMessage(t("FetchUserPostsError"));
         }
       };
     
-      fetchPosts();
-    }, [searchQuery, filter]);
+      void fetchPosts();
+    }, [searchQuery, filter, t]);
 
     const handleLike = async (postId: number) => {
       try {
-        const res = await fetch(`/api/likes/toggle`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ postId }),
-        });
-
-        if (!res.ok) {
-          console.error("Toggle like failed:", res.statusText);
-          return;
-        }
-    
-        const data = await res.json();
+        const data = await api.post<{ likes: number; liked: boolean }>(
+          "/likes/toggle",
+          { postId },
+        );
 
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
@@ -91,31 +78,25 @@ import { useTranslation } from "react-i18next";
               : post
           )
         );
-      } catch (err) {
-        console.error("Error toggling like:", err);
+        setErrorMessage("");
+      } catch {
+        setErrorMessage(t("ToggleLikeError"));
       }
     };
 
     async function handleDelete(postId: number) {
       try {
-        const res = await fetch(`/api/posts/${postId}`, {
-          method: "DELETE",
-        });
-    
-        if (res.status === 403) {
-          console.error("Vous ne pouvez pas supprimer ce post (Forbidden)");
-          return;
-        }
-    
-        if (!res.ok) {
-          console.error("Erreur lors de la suppression du post", res.statusText);
+        await api.delete(`/posts/${postId}`);
+
+        setPosts(prev => prev.filter(post => post.id !== postId));
+        setErrorMessage("");
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 403) {
+          setErrorMessage(t("DeletePostForbidden"));
           return;
         }
 
-        setPosts(prev => prev.filter(post => post.id !== postId));
-    
-      } catch (err) {
-        console.error("Erreur lors de la suppression du post", err);
+        setErrorMessage(t("DeletePostError"));
       }
     }
 
@@ -138,7 +119,12 @@ import { useTranslation } from "react-i18next";
         <div className="flex justify-center px-4 py-4 sm:px-6 sm:py-6">
           <div className="w-full max-w-5xl space-y-4">
             <div className="w-full space-y-4 transition-all duration-300 ease-in-out">
-              {posts.length === 0 ? (
+              {errorMessage ? (
+                <div className="rounded-md border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  {errorMessage}
+                </div>
+              ) : null}
+              {posts.length === 0 && !errorMessage ? (
                 <div className="py-6 text-center text-muted-foreground">
                   {searchQuery ? t("NoResult") : t("homeDefault")}
                 </div>

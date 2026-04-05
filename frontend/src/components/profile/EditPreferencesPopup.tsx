@@ -58,9 +58,6 @@ export function EditPreferencesPopup({ onClose }: EditPreferencesPopupProps) {
         queryClient.setQueryData(profileMeQueryKey, updatedProfile);
         onClose();
       },
-      onError: (err) => {
-        console.error("Failed to save language preference:", err);
-      },
     });
 
   const handleLanguageSelect = (lang: Language) => {
