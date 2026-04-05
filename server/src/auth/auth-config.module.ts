@@ -139,8 +139,8 @@ function getUA(ctx: any): string {
                 }
               }
 
-              // Log sign-in attempt before processing
-              if (ctx.path.startsWith('/sign-in')) {
+              // Log sign-in attempt before processing (email/password only)
+              if (ctx.path === '/sign-in/email') {
                 const body = ctx.body as { email?: string } | undefined;
                 authLogger.log(
                   `[AUTH] Sign-in attempt for "${body?.email ?? 'unknown'}" from ${ip}`,
@@ -153,8 +153,8 @@ function getUA(ctx: any): string {
               const ua = getUA(ctx);
               const newSession = ctx.context.newSession;
 
-              // Failed sign-in (no session created)
-              if (ctx.path.startsWith('/sign-in') && !newSession) {
+              // Failed sign-in (email/password only — OAuth goes through /callback)
+              if (ctx.path === '/sign-in/email' && !newSession) {
                 const body = ctx.body as { email?: string } | undefined;
                 authLogger.warn(
                   `[SECURITY] Failed sign-in for "${body?.email ?? 'unknown'}" from ${ip}`,
@@ -184,7 +184,7 @@ function getUA(ctx: any): string {
                 username = fallbackUsername(username, id);
               }
 
-              // Successful sign-up
+              // Successful sign-up (email/password)
               if (ctx.path.startsWith('/sign-up')) {
                 await database
                   .insert(userData)
@@ -198,25 +198,86 @@ function getUA(ctx: any): string {
                   userId: id,
                   userName: username,
                   email,
+                  provider: 'email',
                   userProfileUrl: `http://localhost:5173/profile/${username}`,
                   ip,
                   userAgent: ua,
                 });
               }
 
-              // Successful sign-in
-              if (ctx.path.startsWith('/sign-in')) {
+              // Successful sign-in (email/password)
+              if (ctx.path === '/sign-in/email') {
+                // Fetch username from userData instead of using session name
+                const userRecord = await database
+                  .select({ name: userData.name })
+                  .from(userData)
+                  .where(eq(userData.id, id))
+                  .limit(1);
+                const displayName = userRecord[0]?.name ?? name;
+
                 authLogger.log(
-                  `[AUTH] Signed in: ${name} (${email}) from ${ip}`,
+                  `[AUTH] Signed in: ${displayName} (${email}) from ${ip}`,
                 );
                 authLogger.event('auth.signin', {
                   userId: id,
-                  userName: name,
+                  userName: displayName,
                   email,
-                  userProfileUrl: `http://localhost:5173/profile/${name}`,
+                  provider: 'email',
+                  userProfileUrl: `http://localhost:5173/profile/${displayName}`,
                   ip,
                   userAgent: ua,
                 });
+              }
+
+              // OAuth callback (Google, etc.)
+              if (ctx.path.startsWith('/callback/') || ctx.path === '/callback/:id') {
+                // ctx.path returns the route pattern (":id"), extract provider from actual request URL
+                const reqUrl = ctx.request?.url ?? '';
+                const callbackMatch = reqUrl.match(/\/callback\/([^?/]+)/);
+                const provider = (callbackMatch?.[1] && callbackMatch[1] !== ':id')
+                  ? callbackMatch[1]
+                  : 'oauth';
+
+                const existingUser = await database
+                  .select({ name: userData.name })
+                  .from(userData)
+                  .where(eq(userData.id, id))
+                  .limit(1);
+
+                if (existingUser.length === 0) {
+                  await database
+                    .insert(userData)
+                    .values({ id, name: username, email })
+                    .onConflictDoNothing();
+
+                  authLogger.log(
+                    `[AUTH] New account via ${provider}: ${username} (${email}) from ${ip}`,
+                  );
+                  authLogger.event('auth.signup', {
+                    userId: id,
+                    userName: username,
+                    email,
+                    provider,
+                    userProfileUrl: `http://localhost:5173/profile/${username}`,
+                    ip,
+                    userAgent: ua,
+                  });
+                } else {
+                  const displayName = existingUser[0].name ?? name;
+
+                  authLogger.log(
+                    `[AUTH] Signed in via ${provider}: ${displayName} (${email}) from ${ip}`,
+                  );
+                  authLogger.event('auth.signin', {
+                    userId: id,
+                    userName: displayName,
+                    email,
+                    provider,
+                    userProfileUrl: `http://localhost:5173/profile/${displayName}`,
+                    ip,
+                    userAgent: ua,
+                  });
+                }
               }
             }),
           },
