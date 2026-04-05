@@ -61,7 +61,7 @@ export default function LoginForm() {
       password: "",
     },
     validators: {
-      onChange: loginSchema,
+      onSubmit: loginSchema,
     },
     listeners: {
       onChange: () => {
