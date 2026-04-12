@@ -20,7 +20,7 @@ help:
 	@echo ""
 	@echo "  ── Build ───────────────────────────────────────────────────────"
 	@echo "    make build            Rebuild dev application images"
-	@echo "    make clean-images     Remove local dev images"
+	@echo "    make clean-images     Remove local app images only"
 	@echo ""
 	@echo "  ── Teardown ────────────────────────────────────────────────────"
 	@echo "    make down             Stop dev stack"
@@ -93,8 +93,8 @@ build: setup
 	@echo "✅ Dev images built."
 
 clean-images:
-	docker image rm -f ft_transcendence-backend:dev ft_transcendence-frontend:dev 2>/dev/null || true
-	@echo "✅ Dev images removed."
+	docker image rm -f ft_transcendence-backend:dev ft_transcendence-frontend:dev ft_transcendence-backend:migrate 2>/dev/null || true
+	@echo "✅ Local app images removed."
 
 # ── Teardown ─────────────────────────────────────────────────────────────────
 
@@ -107,13 +107,11 @@ down-elk:
 	@echo "✅ ELK stack stopped."
 
 clean:
-	-$(ELK_COMPOSE) down -v --remove-orphans
-	$(DEV_COMPOSE) down -v --remove-orphans
+	$(DEV_ELK) down -v --remove-orphans
 	@echo "✅ Dev + ELK stacks stopped and volumes removed."
 
 fclean:
-	-$(ELK_COMPOSE) down -v --remove-orphans --rmi local
-	$(DEV_COMPOSE) down -v --remove-orphans --rmi local
+	$(DEV_ELK) down -v --remove-orphans --rmi all
 	@echo "✅ Dev + ELK full cleanup done (containers, volumes, images)."
 
 re: clean regenerate dev
