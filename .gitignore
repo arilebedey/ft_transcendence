@@ -1,10 +1,8 @@
 node_modules/
 secrets
-.env
 *.vite*
 venv/
 venv
 *.ctx
 *.tmp
 populate.sql
-*.env
