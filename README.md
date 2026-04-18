@@ -1,4 +1,4 @@
-\*This project has been created as part of the 42 curriculum by chrleroy, alebdev, tbabou and pgrataco
+This project has been created as part of the 42 curriculum by [cuistobal](https://github.com/cuistobal), [arilebedey](https://github.com/arilebedey/), [theaux42](https://github.com/thx-42) and [Wingeul](https://github.com/Wingeul)
 
 # ft_transcendence
 
@@ -10,38 +10,19 @@
 
 **Instructions**
 
-- **Prerequisites:** Node.js >= 18, pnpm or npm, Docker & Docker Compose, PostgreSQL (or use Docker), environment variables (see `.env.example`).
+- **Prerequisites:** Docker & Docker Compose
 - **Setup (development):**
 
 ```bash
 # from repo root
-cp secrets/db_password.txt .env # or create .env with required vars
-pnpm install
-pnpm --filter server dev # or follow Makefile / docker-compose for full stack
-pnpm --filter frontend dev
+make
 ```
-
-- **Setup (docker):**
-
-```bash
-docker compose up --build
-```
-
-- **Run tests / lint:** see `Makefile` and `server/package.json` scripts.
-
-**Resources**
-
-- Project docs and internal notes: `docs/` folder.
-- Drizzle ORM: https://orm.drizzle.team/
-- NestJS: https://docs.nestjs.com/
-- React + Vite: https://vitejs.dev/
-- AI usage: I used an AI assistant to help draft code changes and documentation (refactoring SQL to Drizzle ORM, drafting `README.md`). The AI aided in drafting and refactoring but all code was reviewed and adapted by the team.
 
 **Team Information**
 
-- alebedev — Role: Tech Lead / Developer. Responsibilities: backend architecture, DB schema, Drizzle integration && code reviews.
-- `<login2>` — Role: Scrum master && devloper. Responsibilities: Maintining the Trello && Devops
-- `<login3>` — Role: Project Manager / Developer. Responsibilities: frontend and backend devlopment.
+- arilebedey — Role: Tech Lead / Developer. Responsibilities: backend architecture, DB schema, Drizzle integration && code reviews.
+- theaux42 — Role: Scrum master && devloper. Responsibilities: Maintining the Trello && Devops
+- Wingeul — Role: Project Manager / Developer. Responsibilities: frontend and backend devlopment.
 - chrleroy — Role: Product Owner / Developer Responsabilites: Enforce system design && responsivness of the front-end
 
 **Project Management**
@@ -102,6 +83,14 @@ Relationships: `post.user_id -> user.id`, `post_like.post_id -> post.id`, `post_
 
 For each module include implementation notes and which team members worked on them.
 
+**Resources**
+
+- Project docs and internal notes: `docs/` folder.
+- Drizzle ORM: https://orm.drizzle.team/
+- NestJS: https://docs.nestjs.com/
+- React + Vite: https://vitejs.dev/
+- AI usage: I used an AI assistant to help draft code changes and documentation (refactoring SQL to Drizzle ORM, drafting `README.md`). The AI aided in drafting and refactoring but all code was reviewed and adapted by the team.
+
 **Individual Contributions**
 
 - `alebedev`: backend API endpoints, Drizzle schemas, dashboard analytics.
@@ -112,30 +101,12 @@ For each module include implementation notes and which team members worked on th
 **Database Schema (detailed)**
 
 - See `server/drizzle/0000_init_tables.sql` and `server/src/*/*.schema.ts` for Drizzle table definitions.
-- Important tables and keys:
-  - `post(id serial PK, user_id text FK, content text, created_at timestamp)`
-  - `post_like(id serial PK, user_id text FK, post_id int FK, created_at timestamp)`
-  - `follow(follower_id text, following_id text, created_at timestamp)` (composite PK)
 
 **Known Limitations**
 
 - Some analytics queries use in-memory accumulation instead of window functions for portability.
 - Tests coverage: add more integration tests for socket flows and DB migrations.
 
-**How to contribute**
+**Credits**
 
-- Fork the repo, create a feature branch, open a PR with description and linked issue.
-- Follow commit message conventions and include tests where applicable.
-
-**License & Credits**
-
-- Add your preferred license here.
-- Credits to 42 curriculum and all team members.
-
----
-
-If you want, I can now:
-
-- fill the placeholders with actual team logins if you provide them, or
-- shorten/expand any section, or
-- generate a contributors table from your git history.
+- Credits to the 42 staff and all team members.
